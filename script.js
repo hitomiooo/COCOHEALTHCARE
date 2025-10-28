@@ -1,11 +1,44 @@
 // ページの読み込みが完了したら、保存された記録を読み込む
-document.addEventListener('DOMContentLoaded', loadRecords);
+document.addEventListener('DOMContentLoaded', function() {
+    loadRecords(); // 既存の記録を読み込む
+
+    // 日付フィールドに今日の日付をセット
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // 月は0から始まるため+1
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+
+    // 写真入力欄の変更イベントを監視
+    document.getElementById('dogPhoto').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const photoPreview = document.getElementById('photoPreview');
+        photoPreview.innerHTML = ''; // 既存のプレビューをクリア
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                photoPreview.appendChild(img);
+            };
+            reader.readAsDataURL(file); // ファイルをBase64として読み込む
+        }
+    });
+});
 
 // フォームの送信イベントを監視
-document.getElementById('healthForm').addEventListener('submit', function(event) {
+document.getElementById('healthForm').addEventListener('submit', async function(event) {
     // フォームのデフォルトの送信動作をキャンセル
     event.preventDefault(); 
     
+    // 写真データをBase64として取得
+    const photoFile = document.getElementById('dogPhoto').files[0];
+    let photoBase64 = null;
+    if (photoFile) {
+        photoBase64 = await convertFileToBase64(photoFile); // ファイルをBase64に変換
+    }
+
     // 1. フォームからデータを取得する
     const record = {
         id: Date.now(), // 削除や編集のためのユニークID
@@ -20,6 +53,7 @@ document.getElementById('healthForm').addEventListener('submit', function(event)
         appetiteNight: document.getElementById('appetiteNight').value,
         sleepTime: document.getElementById('sleepTime').value,
         walk: document.getElementById('walk').value,
+        dogPhoto: photoBase64, // 写真データを追加
         otherNotes: document.getElementById('otherNotes').value,
     };
 
@@ -29,13 +63,31 @@ document.getElementById('healthForm').addEventListener('submit', function(event)
     // 3. 記録リストを再読み込みする
     loadRecords();
 
-    // 4. フォームをリセットする (日付以外)
-    // ※日付は翌日のために保持しておくと便利な場合もあるので、ここではリセットしない
-    // document.getElementById('healthForm').reset();
+    // 4. フォームをリセットする (日付と写真プレビュー以外)
     document.getElementById('poopCount').value = 0;
     document.getElementById('peeCount').value = 0;
     document.getElementById('otherNotes').value = "";
+    document.getElementById('dogPhoto').value = ""; // ファイル入力欄をクリア
+    document.getElementById('photoPreview').innerHTML = ''; // プレビューをクリア
 });
+
+/**
+ * ファイルをBase64エンコードされた文字列に変換する関数
+ * @param {File} file - 変換するファイルオブジェクト
+ * @returns {Promise<string|null>} Base64文字列またはnull
+ */
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            resolve(null);
+        }
+    });
+}
 
 /**
  * データをブラウザ(localStorage)に保存する関数
@@ -78,6 +130,7 @@ function loadRecords() {
 
         recordItem.innerHTML = `
             <h4>${formattedDate} ${record.weather}</h4>
+            ${record.dogPhoto ? `<div class="record-photo"><img src="${record.dogPhoto}" alt="今日のわんこ"></div>` : ''}
             <p><strong>お通じ:</strong> ${record.poopCount}回 (${record.poopQuality})</p>
             <p><strong>おしっこ:</strong> ${record.peeCount}回 (${record.peeColor})</p>
             <p><strong>食欲:</strong> 朝:${record.appetiteMorning} 昼:${record.appetiteNoon} 晩:${record.appetiteNight}</p>
