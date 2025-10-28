@@ -32,6 +32,7 @@
                 <option value="☁️">☁️ 曇り</option>
                 <option value="☂️">☂️ 雨</option>
                 <option value="☃️">☃️ 雪</option>
+                <option value="不明">　不明</option>
             </select>
             
             <label for="dogPhoto">今日のココちゃん 📸:</label>
@@ -39,7 +40,7 @@
             <div id="photoPreview" class="photo-preview"></div>
             
             <fieldset>
-                <legend>お通じ💩</legend>
+                <legend>お通じ</legend>
                 <label for="poopCount">回数:</label>
                 <input type="number" id="poopCount" min="0" value="0">
                 <label for="poopQuality">質:</label>
@@ -64,7 +65,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>食欲🍖</legend>
+                <legend>食欲</legend>
                 <label for="appetiteMorning">朝:</label>
                 <select id="appetiteMorning">
                     <option value="完食">完食</option>
@@ -87,11 +88,19 @@
 
             <label for="sleepTime">睡眠の様子:</label>
             <select id="sleepTime">
+                <option value="不明">不明</option>
                 <option value="ずっと寝てる">ずっと寝てる</option>
                 <option value="起きてる時間が長い">起きてる時間が長い</option>
                 <option value="寝たり起きたり移動多い">寝たり起きたり移動多い</option>
             </select>
 
+            <label for="walk">散歩:</label>
+            <select id="walk">
+                <option value="行ってない">行ってない</option>
+                <option value="庭">庭</option>
+                <option value="時又">時又</option>
+                <option value="アジア電子">アジア電子</option>
+            </select>
             <label for="otherNotes">その他（メモ）:</label>
             <textarea id="otherNotes" rows="3"></textarea>
             
@@ -108,7 +117,6 @@
     </main>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js" type="module"></script>
     <script src="script.js" type="module"></script>
 </body>
