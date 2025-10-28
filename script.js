@@ -20,12 +20,12 @@ import {
 
 // === Firebase 設定 (あなたの設定に置き換え済みのはず) ===
 const firebaseConfig = {
-  apiKey: "AIzaSyAQg5PX4ToZ4S9sqV3Y4qxfQ3kfDn7zQMY",
-  authDomain: "coco-healthcare-2bc8d.firebaseapp.com",
-  projectId: "coco-healthcare-2bc8d",
-  storageBucket: "coco-healthcare-2bc8d.firebasestorage.app",
-  messagingSenderId: "1063625651724",
-  appId: "1:1063625651724:web:0cff11f6468e981fbea029"
+  apiKey: "AIzaSyC0FNQfqZ0mp3S05iNazzAiKXtePRSnPPs",
+  authDomain: "coco-healthcare-f7148.firebaseapp.com",
+  projectId: "coco-healthcare-f7148",
+  storageBucket: "coco-healthcare-f7148.firebasestorage.app",
+  messagingSenderId: "540184690469",
+  appId: "1:540184690469:web:25fa55b3dbe5afc59324cc"
 
 };
 
@@ -509,6 +509,7 @@ function resizeAndEncode(file, maxSize = 600, quality = 0.5) {
         reader.readAsDataURL(file);
     });
 }
+
 
 
 
