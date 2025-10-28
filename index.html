@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>わんこ健康管理手帳</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>わんこ健康管理手帳 🐾</h1>
+    </header>
+
+    <main>
+        <form id="healthForm">
+            <h3>今日の記録</h3>
+            
+            <label for="date">日付:</label>
+            <input type="date" id="date" required>
+
+            <label for="weather">天気:</label>
+            <select id="weather">
+                <option value="☀️">☀️ 晴れ</option>
+                <option value="☁️">☁️ 曇り</option>
+                <option value="☂️">☂️ 雨</option>
+                <option value="☃️">☃️ 雪</option>
+            </select>
+
+            <fieldset>
+                <legend>お通じ</legend>
+                <label for="poopCount">回数:</label>
+                <input type="number" id="poopCount" min="0" value="0">
+                <label for="poopQuality">質:</label>
+                <select id="poopQuality">
+                    <option value="良い">良い</option>
+                    <option value="普通">普通</option>
+                    <option value="緩い">緩い</option>
+                    <option value="下痢">下痢</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>おしっこ</legend>
+                <label for="peeCount">回数:</label>
+                <input type="number" id="peeCount" min="0" value="0">
+                <label for="peeColor">濃さ:</label>
+                <select id="peeColor">
+                    <option value="薄い">薄い</option>
+                    <option value="普通">普通</option>
+                    <option value="濃い">濃い</option>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>食欲</legend>
+                <label for="appetiteMorning">朝:</label>
+                <select id="appetiteMorning">
+                    <option value="完食">完食</option>
+                    <option value="半分">半分</option>
+                    <option value="ほぼ食べず">ほぼ食べず</option>
+                </select>
+                <label for="appetiteNoon">昼:</label>
+                <select id="appetiteNoon">
+                    <option value="完食">完食</option>
+                    <option value="半分">半分</option>
+                    <option value="ほぼ食べず">ほぼ食べず</option>
+                </select>
+                <label for="appetiteNight">晩:</label>
+                <select id="appetiteNight">
+                    <option value="完食">完食</option>
+                    <option value="半分">半分</option>
+                    <option value="ほぼ食べず">ほぼ食べず</option>
+                </select>
+            </fieldset>
+
+            <label for="sleepTime">睡眠時間 (h):</label>
+            <input type="number" id="sleepTime" min="0" max="24" step="0.5" value="8">
+
+            <label for="walk">散歩:</label>
+            <select id="walk">
+                <option value="行った">行った</option>
+                <option value="行ってない">行ってない</option>
+            </select>
+
+            <label for="otherNotes">その他（メモ）:</label>
+            <textarea id="otherNotes" rows="3"></textarea>
+
+            <button type="submit">記録する</button>
+        </form>
+
+        <hr>
+
+        <h2>これまでの記録</h2>
+        <div id="recordList">
+            <p>まだ記録がありません。</p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
