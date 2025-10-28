@@ -33,9 +33,9 @@ const firebaseConfig = {
 // ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-    "your-email@gmail.com", // ★ あなた自身のメアド
-    "friend1@example.com",  // ★ 許可したい人のメアド
-    "family@example.com"    // ★ 許可したい人のメアド
+    "fine2025contact@gmail.com", // ★ あなた自身のメアド
+    "ohtm1103@yahoo.co.jp",  // ★ 許可したい人のメアド
+    "1103ohtm@gmail.com"    // ★ 許可したい人のメアド
 ];
 // ★★★=================================================★★★
 
@@ -508,3 +508,4 @@ function resizeAndEncode(file, maxSize = 600, quality = 0.5) {
         reader.readAsDataURL(file);
     });
 }
+
