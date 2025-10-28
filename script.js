@@ -22,7 +22,7 @@ const firebaseConfig = {
   storageBucket: "coco-healthcare-59401.firebasestorage.app",
   messagingSenderId: "986920233821",
   appId: "1:986920233821:web:96ff08e9f118d557a816b4"
-
+    
 };
 
 // ★★★=================================================★★★
@@ -30,9 +30,9 @@ const firebaseConfig = {
 // ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-  'fine2025contact@gmail.com',
-  '1103ohtm@gmail.com',
-  'tatsuya51801736@gmail.com' 
+    'fine2025contact@gmail.com',
+    '1103ohtm@gmail.com',
+    'tatsuya51801736@gmail.com'
 ];
 // ★★★=================================================★★★
 
@@ -124,10 +124,14 @@ function initializeAppLogic() {
     if (appInitialized) return;
     appInitialized = true;
 
+    // フォームのイベントリスナー
     document.getElementById('healthForm').addEventListener('submit', handleFormSubmit);
     document.getElementById('date').addEventListener('change', handleDateChange);
     document.getElementById('dogPhoto').addEventListener('change', handlePhotoPreview);
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
+    
+    // ★ スタンプ機能のイベントリスナーを追加 ★
+    document.getElementById('stampPad').addEventListener('click', handleStampClick);
 
     const todayString = getFormattedDate(new Date());
     document.getElementById('date').value = todayString;
@@ -144,6 +148,35 @@ function getFormattedDate(date) {
 function handleDateChange(event) {
     loadRecordForDate(event.target.value);
 }
+
+/**
+ * ★★★ スタンプボタンが押されたときの処理 ★★★
+ * (ここが追加された関数です)
+ */
+function handleStampClick(event) {
+    // クリックされたのが .stamp-btn クラスのボタンか確認
+    if (event.target.classList.contains('stamp-btn')) {
+        const stamp = event.target.textContent; // ボタンの絵文字を取得
+        const memoTextArea = document.getElementById('otherNotes');
+        
+        // テキストエリアの現在のカーソル位置を取得
+        const cursorPos = memoTextArea.selectionStart;
+        const textBefore = memoTextArea.value.substring(0, cursorPos);
+        const textAfter = memoTextArea.value.substring(cursorPos);
+        
+        // カーソル位置にスタンプを挿入
+        memoTextArea.value = textBefore + stamp + textAfter;
+        
+        // スタンプ挿入後にカーソル位置をスタンプの直後に移動
+        const newPos = cursorPos + stamp.length;
+        memoTextArea.selectionStart = newPos;
+        memoTextArea.selectionEnd = newPos;
+        
+        // テキストエリアにフォーカスを戻す
+        memoTextArea.focus();
+    }
+}
+
 
 /**
  * 写真プレビュー (Base64に変換)
@@ -170,7 +203,7 @@ async function handlePhotoPreview(event) {
 }
 
 /**
- * ★★★ フォーム送信 (新項目対応) ★★★
+ * フォーム送信 (新項目対応)
  */
 async function handleFormSubmit(event) {
     event.preventDefault(); 
@@ -189,18 +222,17 @@ async function handleFormSubmit(event) {
             }
         }
 
-        // ★ 新しいフォーム項目を取得
         const recordData = {
             date: date,
             weather: document.getElementById('weather').value,
-            temperatureFeel: document.getElementById('temperatureFeel').value, // ①体感気温
-            conditionCoco: document.getElementById('conditionCoco').value,     // ②ココ体調
-            conditionNono: document.getElementById('conditionNono').value,     // ③ノノ体調
-            conditionMomo: document.getElementById('conditionMomo').value,     // ④モモ体調
-            medPimo: document.getElementById('medPimo').checked,               // ⑤薬
+            temperatureFeel: document.getElementById('temperatureFeel').value,
+            conditionCoco: document.getElementById('conditionCoco').value,
+            conditionNono: document.getElementById('conditionNono').value,
+            conditionMomo: document.getElementById('conditionMomo').value,
+            medPimo: document.getElementById('medPimo').checked,
             medLactu: document.getElementById('medLactu').checked,
             medConseve: document.getElementById('medConseve').checked,
-            poopMorning: document.getElementById('poopMorning').checked,       // ⑥お通じ
+            poopMorning: document.getElementById('poopMorning').checked,
             poopEvening: document.getElementById('poopEvening').checked,
             poopNight: document.getElementById('poopNight').checked,
             peeCount: document.getElementById('peeCount').value,
@@ -242,7 +274,7 @@ async function handleFormSubmit(event) {
 }
 
 /**
- * ★★★ Firestoreから読み込み (新項目対応アコーディオン) ★★★
+ * Firestoreから読み込み (新項目対応アコーディオン)
  */
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return; 
@@ -272,20 +304,15 @@ async function loadAllRecordsFromFirestore() {
             recordItem.className = 'record-item';
 
             const formattedDate = new Date(record.date).toLocaleDateString('ja-JP');
-
-            // ★ 新しい項目をアコーディオン内部（.record-body）に追加
             
-            // 体調の文字列を作成
             let conditionStr = `ココ:${record.conditionCoco || '○'} | ノノ:${record.conditionNono || '○'} | モモ:${record.conditionMomo || '○'}`;
             
-            // お通じの文字列を作成
             let poopStr = [
                 record.poopMorning ? '朝' : '',
                 record.poopEvening ? '夕' : '',
                 record.poopNight ? '夜' : ''
-            ].filter(Boolean).join(', ') || 'なし'; // trueのものだけ選んでカンマで繋ぐ
+            ].filter(Boolean).join(', ') || 'なし';
 
-            // 薬の文字列を作成 (チェックが入っているものだけ表示)
             let medStr = [
                 record.medPimo ? 'ピモベハート' : '',
                 record.medLactu ? 'ラクツロース' : '',
@@ -371,7 +398,7 @@ function loadRecordById(id) {
 }
 
 /**
- * ★★★ フォーム入力 (新項目対応) ★★★
+ * フォーム入力 (新項目対応)
  */
 function populateForm(record) {
     document.getElementById('healthForm').reset();
@@ -379,16 +406,11 @@ function populateForm(record) {
     document.getElementById('date').value = record.date;
     document.getElementById('weather').value = record.weather;
     
-    // ★ 新項目をフォームにセット
-    // (データが存在しない場合も考慮)
     document.getElementById('temperatureFeel').value = record.temperatureFeel || 'ちょうどいい';
     document.getElementById('conditionCoco').value = record.conditionCoco || '○';
     document.getElementById('conditionNono').value = record.conditionNono || '○';
     document.getElementById('conditionMomo').value = record.conditionMomo || '○';
     
-    // チェックボックス (データが存在しない = false)
-    // 薬: record.medPimo が undefined や null の場合は false になる
-    // v9以前のデータ(medPimo=undefined) と v10のデータ(medPimo=true/false)両方に対応
     document.getElementById('medPimo').checked = record.medPimo === true;
     document.getElementById('medLactu').checked = record.medLactu === true;
     document.getElementById('medConseve').checked = record.medConseve === true;
@@ -397,7 +419,6 @@ function populateForm(record) {
     document.getElementById('poopEvening').checked = record.poopEvening === true;
     document.getElementById('poopNight').checked = record.poopNight === true;
 
-    // 既存項目
     document.getElementById('peeCount').value = record.peeCount || 0;
     document.getElementById('peeColor').value = record.peeColor || '普通';
     document.getElementById('appetiteMorning').value = record.appetiteMorning || '完食';
@@ -407,7 +428,6 @@ function populateForm(record) {
     document.getElementById('walk').value = record.walk || '行ってない';
     document.getElementById('otherNotes').value = record.otherNotes || '';
 
-    // 写真
     currentPhotoBase64 = null; 
     const photoPreview = document.getElementById('photoPreview');
     photoPreview.innerHTML = '';
@@ -420,7 +440,7 @@ function populateForm(record) {
 }
 
 /**
- * ★★★ フォームクリア (新項目対応) ★★★
+ * フォームクリア (新項目対応)
  */
 function clearForm(dateString) {
     document.getElementById('healthForm').reset(); 
@@ -430,24 +450,20 @@ function clearForm(dateString) {
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
     
-    // ★ デフォルト値を再設定
     document.getElementById('temperatureFeel').value = 'ちょうどいい';
     document.getElementById('conditionCoco').value = '○';
     document.getElementById('conditionNono').value = '○';
     document.getElementById('conditionMomo').value = '○';
     document.getElementById('sleepTime').value = 'ずっと寝てる';
     
-    // ★ 薬のデフォルトチェックをONに
     document.getElementById('medPimo').checked = true;
     document.getElementById('medLactu').checked = true;
     document.getElementById('medConseve').checked = true;
     
-    // ★ お通じのデフォルトチェックをOFFに
     document.getElementById('poopMorning').checked = false;
     document.getElementById('poopEvening').checked = false;
     document.getElementById('poopNight').checked = false;
 
-    // ★ 既存項目のデフォルト値も設定
     document.getElementById('peeCount').value = 0;
     document.getElementById('peeColor').value = '普通';
     document.getElementById('appetiteMorning').value = '完食';
@@ -547,4 +563,3 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
         reader.readAsDataURL(file);
     });
 }
-
