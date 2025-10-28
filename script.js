@@ -52,7 +52,8 @@ async function handlePhotoPreview(event) {
         img.src = currentPhotoData;
         photoPreview.appendChild(img);
     } else {
-        currentPhotoData = null;
+        // 既存の写真を保持（クリアしない）
+        // currentPhotoData = null; // ← ファイル未選択時に写真を消さないようにコメントアウト
     }
 }
 
@@ -65,6 +66,16 @@ async function handleFormSubmit(event) {
 
     const existingId = document.getElementById('recordId').value;
     const date = document.getElementById('date').value;
+    
+    // ★写真が「選択」されていれば、それを優先する
+    const photoFile = document.getElementById('dogPhoto').files[0];
+    if (photoFile) {
+        currentPhotoData = await convertFileToBase64(photoFile); // ファイル選択を優先
+    }
+    // currentPhotoData は、
+    // 1. 既存データ読み込み時のデータ
+    // 2. 新規ファイル選択時のデータ
+    // のどちらかが入っている
 
     // 1. フォームからデータを取得
     const record = {
@@ -110,6 +121,9 @@ async function handleFormSubmit(event) {
 
     // 4. リストを再読み込み
     loadAllRecordsList();
+    
+    // 5. フォームの状態を「更新完了」状態にする
+    loadRecordForDate(date);
     
     alert("記録を保存しました。");
 }
