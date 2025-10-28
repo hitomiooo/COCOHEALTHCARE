@@ -16,12 +16,13 @@ import {
 
 // === Firebase 設定 (ここで置き換える) ===
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET", // ※Storageは使わないがConfigには必要
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
+  authDomain: "coco-healthcare-59401.firebaseapp.com",
+  projectId: "coco-healthcare-59401",
+  storageBucket: "coco-healthcare-59401.firebasestorage.app",
+  messagingSenderId: "986920233821",
+  appId: "1:986920233821:web:96ff08e9f118d557a816b4"
+
 };
 
 // ★★★=================================================★★★
@@ -29,9 +30,9 @@ const firebaseConfig = {
 // ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-    "your-email@gmail.com", // ★ あなた自身のメアド
-    "friend1@example.com",  // ★ 許可したい人のメアド
-    "family@example.com"    // ★ 許可したい人のメアド
+  'fine2025contact@gmail.com',
+  '1103ohtm@gmail.com',
+  'tatsuya51801736@gmail.com' 
 ];
 // ★★★=================================================★★★
 
@@ -546,3 +547,4 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
         reader.readAsDataURL(file);
     });
 }
+
