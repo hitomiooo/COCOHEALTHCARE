@@ -34,7 +34,14 @@
                 <option value="☂️">☂️ 雨</option>
                 <option value="☃️">☃️ 雪</option>
             </select>
-       
+            
+            <label for="temperatureFeel">体感気温👫:</label>
+            <select id="temperatureFeel">
+                <option value="暑い">暑い</option>
+                <option value="寒い">寒い</option>
+                <option value="ちょうどいい">ちょうどいい</option>
+            </select>
+
             <fieldset>
                 <legend>体調チェック💪</legend>
                 <label for="conditionCoco">ココ:</label>
@@ -62,6 +69,8 @@
                 <label><input type="checkbox" id="medPimo" checked> ピモベハート</label>
                 <label><input type="checkbox" id="medLactu" checked> ラクツロース</label>
                 <label><input type="checkbox" id="medConseve" checked> コンセーブ</label>
+                <label><input type="checkbox" id="medConseve" checked> プレガバリン</label>
+                
             </fieldset>
 
             <fieldset class="checkbox-group">
@@ -120,11 +129,26 @@
                 <option value="アジア電子">アジア電子</option>
             </select>
 
-            <label for="dogPhoto">今日のぴーぴ 📸:</label>
+            <label for="dogPhoto">今日のわんこ 📸:</label>
             <input type="file" id="dogPhoto" accept="image/*">
             <div id="photoPreview" class="photo-preview"></div>
 
             <label for="otherNotes">その他（メモ）:</label>
+            <div id="stampPad" class="stamp-pad">
+                <button type="button" class="stamp-btn">💩</button>
+                <button type="button" class="stamp-btn">💧</button>
+                <button type="button" class="stamp-btn">👍</button>
+                <button type="button" class="stamp-btn">🏥</button>
+                <button type="button" class="stamp-btn">💊</button>
+                <button type="button" class="stamp-btn">❤️</button>
+                <button type="button" class="stamp-btn">🍖</button>
+                <button type="button" class="stamp-btn">⚠️</button>
+                <button type="button" class="stamp-btn">🐶</button>
+                <button type="button" class="stamp-btn">😺</button>
+                <button type="button" class="stamp-btn">🤮</button>
+                <button type="button" class="stamp-btn">🤒</button>
+                
+            </div>
             <textarea id="otherNotes" rows="3" placeholder="お通じの質・回数などはこちらへ"></textarea>
             
             <button type="submit" id="saveButton">記録する</button>
@@ -146,4 +170,3 @@
     <script src="script.js" type="module"></script>
 </body>
 </html>
-
