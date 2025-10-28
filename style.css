@@ -215,3 +215,20 @@ button[type="submit"]:hover {
 .edit-btn-small:hover {
     background-color: #616161;
 }
+
+/* ★★★ チェックボックスグループ (ここから追加) ★★★ */
+.checkbox-group {
+    grid-template-columns: 1fr; /* 1列レイアウト */
+}
+.checkbox-group label {
+    display: flex; /* チェックボックスとテキストを横並びにする */
+    align-items: center; /* 縦方向の中央揃え */
+    font-weight: normal; /* ラベルの太字を解除 */
+    margin-bottom: 0; /* ラベル下のマージンをリセット */
+    padding: 5px 0; /* 少し上下に隙間を空ける */
+}
+.checkbox-group input[type="checkbox"] {
+    width: auto; /* 幅を自動に戻す */
+    margin-right: 8px; /* チェックボックスとテキストの間隔 */
+}
+/* ★★★ (ここまで追加) ★★★ */
