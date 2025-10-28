@@ -4,17 +4,17 @@ import {
     getFirestore, collection, addDoc, getDocs, doc, 
     updateDoc, deleteDoc, query, orderBy, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-// ★ 認証モジュール (signInWithPopup に変更)
+// ★ 認証モジュール (signInWithPopup)
 import {
     getAuth,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithPopup, // ★ 変更点 1
+    signInWithPopup, // ポップアップ方式
     signOut
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 
-// === Firebase 設定 (あなたの設定) ===
+// === Firebase 設定 (ここで置き換える) ===
 const firebaseConfig = {
   apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
   authDomain: "coco-healthcare-59401.firebaseapp.com",
@@ -26,12 +26,13 @@ const firebaseConfig = {
 };
 
 // ★★★=================================================★★★
-// ★★★    アクセスを許可する人のメールアドレス          ★★★
+// ★★★    ここを編集！ アクセスを許可する人の       ★★★
+// ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-    "fine2025contact@gmail.com", 
-    "1103ohtm@gmail.com",  
-    "ohtm1103@yahoo.co.jp"    
+    "fine2025contact@gmail.com", // ★ あなた自身のメアド
+    "1103ohtm@gmail.com",  // ★ 許可したい人のメアド
+    "tatsuya51801736@gmail.com"    // ★ 許可したい人のメアド
 ];
 // ★★★=================================================★★★
 
@@ -43,7 +44,7 @@ const auth = getAuth(app);
 const recordsCollection = collection(db, 'records');
 
 // === グローバル変数 ===
-let currentPhotoBase64 = null; 
+let currentPhotoBase64 = null; // Base64文字列を保持
 let allRecordsCache = [];
 let currentUser = null; 
 
@@ -72,18 +73,14 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// ★★★ 変更点 2: ログインボタンの処理 ★★★
+// ログインボタンの処理 (ポップアップ方式)
 loginButton.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();
-    // signInWithRedirect から signInWithPopup に変更
     signInWithPopup(auth, provider)
         .then((result) => {
-            // ログイン成功
-            // この後 onAuthStateChanged が自動的に呼ばれる
             console.log("ポップアップログイン成功:", result.user.email);
         })
         .catch((error) => {
-            // ログイン失敗（ポップアップを閉じた、など）
             console.error("ポップアップログイン失敗:", error);
             if (error.code === 'auth/popup-closed-by-user') {
                 alert("ログインがキャンセルされました。");
@@ -97,9 +94,6 @@ loginButton.addEventListener('click', () => {
 logoutButton.addEventListener('click', () => {
     signOut(auth);
 });
-
-// (↓... showLoginScreen, showAccessDenied, showApp などの
-//    残りの関数は、以前のコードから一切変更ありません ...)
 
 function showLoginScreen() {
     mainContent.style.display = 'none';
@@ -124,6 +118,7 @@ function showApp(user) {
     initializeAppLogic();
 }
 
+// ★★★ アプリ本体のロジック ★★★
 let appInitialized = false;
 function initializeAppLogic() {
     if (appInitialized) return;
@@ -150,6 +145,9 @@ function handleDateChange(event) {
     loadRecordForDate(event.target.value);
 }
 
+/**
+ * 写真プレビュー (Base64に変換)
+ */
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
@@ -158,6 +156,7 @@ async function handlePhotoPreview(event) {
         photoPreview.innerHTML = '🔄 圧縮中...';
         try {
             currentPhotoBase64 = await resizeAndEncode(file, 300, 0.4); 
+            
             const img = document.createElement('img');
             img.src = currentPhotoBase64;
             photoPreview.innerHTML = '';
@@ -170,6 +169,9 @@ async function handlePhotoPreview(event) {
     }
 }
 
+/**
+ * フォーム送信 (Firestore + Base64)
+ */
 async function handleFormSubmit(event) {
     event.preventDefault(); 
     const saveButton = document.getElementById('saveButton');
@@ -230,6 +232,10 @@ async function handleFormSubmit(event) {
     }
 }
 
+/**
+ * ★★★ Firestoreから読み込み (アコーディオン版) ★★★
+ * (ここが前回変更された関数です)
+ */
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return; 
 
@@ -256,18 +262,51 @@ async function loadAllRecordsFromFirestore() {
 
             const recordItem = document.createElement('div');
             recordItem.className = 'record-item';
-            recordItem.onclick = () => loadRecordById(id);
 
             const formattedDate = new Date(record.date).toLocaleDateString('ja-JP');
 
+            // ★ 構造を変更 (header と body)
             recordItem.innerHTML = `
-                <h4>${formattedDate} ${record.weather}</h4>
-                ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="わんこ"></div>` : ''}
-                <p><strong>お通じ:</strong> ${record.poopCount}回 (${record.poopQuality})</p>
-                <p><strong>睡眠:</strong> ${record.sleepTime}</p>
-                <p><strong>散歩:</strong> ${record.walk}</p>
-                ${record.otherNotes ? `<p><strong>メモ:</strong> ${record.otherNotes.replace(/\n/g, '<br>')}</p>` : ''}
+                <div class="record-header">
+                    <h4>${formattedDate} ${record.weather}</h4>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="record-body">
+                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="わんこ"></div>` : ''}
+                    <p><strong>お通じ:</strong> ${record.poopCount}回 (${record.poopQuality})</p>
+                    <p><strong>おしっこ:</strong> ${record.peeCount}回 (${record.peeColor})</p>
+                    <p><strong>食欲:</strong> 朝:${record.appetiteMorning} 昼:${record.appetiteNoon} 晩:${record.appetiteNight}</p>
+                    <p><strong>睡眠:</strong> ${record.sleepTime}</p>
+                    <p><strong>散歩:</strong> ${record.walk}</p>
+                    ${record.otherNotes ? `<p><strong>メモ:</strong> ${record.otherNotes.replace(/\n/g, '<br>')}</p>` : ''}
+                    <button class="edit-btn-small">この日を編集する</button>
+                </div>
             `;
+            
+            // ★ クリックイベントの変更
+            const header = recordItem.querySelector('.record-header');
+            const body = recordItem.querySelector('.record-body');
+            const icon = recordItem.querySelector('.toggle-icon');
+            
+            // ヘッダーをクリックしたら開閉する
+            header.onclick = () => {
+                const isHidden = body.style.display === 'none' || body.style.display === '';
+                if (isHidden) {
+                    body.style.display = 'block';
+                    icon.textContent = '▲';
+                } else {
+                    body.style.display = 'none';
+                    icon.textContent = '▼';
+                }
+            };
+            
+            // 編集ボタンをクリックしたらフォームに読み込む
+            const editButton = recordItem.querySelector('.edit-btn-small');
+            editButton.onclick = (e) => {
+                e.stopPropagation(); // ヘッダーへのクリックイベント伝播を防ぐ
+                loadRecordById(id);
+            };
+
             recordListDiv.appendChild(recordItem);
         });
         
@@ -279,6 +318,7 @@ async function loadAllRecordsFromFirestore() {
         recordListDiv.innerHTML = '<p>⚠️ データの読み込みに失敗しました。</p>';
     }
 }
+
 
 function loadRecordForDate(dateString) {
     const record = allRecordsCache.find(r => r.date === dateString);
@@ -300,10 +340,13 @@ function loadRecordById(id) {
         populateForm(record);
         document.getElementById('saveButton').textContent = '記録を更新する';
         document.getElementById('deleteButton').style.display = 'block';
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0); // ページ上部のフォームにスクロール
     }
 }
 
+/**
+ * フォーム入力 (Base64)
+ */
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
@@ -320,7 +363,8 @@ function populateForm(record) {
     document.getElementById('walk').value = record.walk;
     document.getElementById('otherNotes').value = record.otherNotes;
 
-    currentPhotoBase64 = null; 
+    // 写真
+    currentPhotoBase64 = null; // 新規ファイル選択をリセット
     const photoPreview = document.getElementById('photoPreview');
     photoPreview.innerHTML = '';
     if (record.dogPhotoBase64) {
@@ -331,6 +375,9 @@ function populateForm(record) {
     document.getElementById('dogPhoto').value = ""; 
 }
 
+/**
+ * フォームクリア
+ */
 function clearForm(dateString) {
     document.getElementById('healthForm').reset(); 
     document.getElementById('recordId').value = '';
@@ -338,9 +385,13 @@ function clearForm(dateString) {
     
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
+    // デフォルト値を再設定
     document.getElementById('sleepTime').value = 'ずっと寝てる';
 }
 
+/**
+ * 削除 (Firestoreのみ)
+ */
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
     if (!idToDelete) {
@@ -371,6 +422,9 @@ async function deleteCurrentRecord() {
     }
 }
 
+/**
+ * ボタンの有効/無効を切り替え
+ */
 function toggleLoading(isLoading, buttonText = null) {
     const saveButton = document.getElementById('saveButton');
     const deleteButton = document.getElementById('deleteButton');
@@ -384,6 +438,9 @@ function toggleLoading(isLoading, buttonText = null) {
     }
 }
 
+/**
+ * 圧縮関数 (Base64を返す)
+ */
 function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -411,6 +468,7 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
                 
+                // Base64文字列を返す
                 const dataUrl = canvas.toDataURL('image/jpeg', quality);
                 resolve(dataUrl);
             };
@@ -421,4 +479,3 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
         reader.readAsDataURL(file);
     });
 }
-
