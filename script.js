@@ -4,35 +4,34 @@ import {
     getFirestore, collection, addDoc, getDocs, doc, 
     updateDoc, deleteDoc, query, orderBy, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-// ★ Storageモジュールは削除
+// ★ 認証モジュール (signInWithPopup に変更)
 import {
     getAuth,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithRedirect,
+    signInWithPopup, // ★ 変更点 1
     signOut
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 
-// === Firebase 設定 (ここで置き換える) ===
- const firebaseConfig = {
- apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
- authDomain: "coco-healthcare-59401.firebaseapp.com",
- projectId: "coco-healthcare-59401",
- storageBucket: "coco-healthcare-59401.firebasestorage.app",
- messagingSenderId: "986920233821",
- appId: "1:986920233821:web:96ff08e9f118d557a816b4"
+// === Firebase 設定 (あなたの設定) ===
+const firebaseConfig = {
+  apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
+  authDomain: "coco-healthcare-59401.firebaseapp.com",
+  projectId: "coco-healthcare-59401",
+  storageBucket: "coco-healthcare-59401.firebasestorage.app",
+  messagingSenderId: "986920233821",
+  appId: "1:986920233821:web:96ff08e9f118d557a816b4"
 
 };
 
 // ★★★=================================================★★★
-// ★★★    ここを編集！ アクセスを許可する人の       ★★★
-// ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
+// ★★★    アクセスを許可する人のメールアドレス          ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-    "fine2025contact@gmail.com", // ★ あなた自身のメアド
-    "1103ohtm@gmail.com",  // ★ 許可したい人のメアド
-    "ohtm1103@yahoo.co.jp"    // ★ 許可したい人のメアド
+    "fine2025contact@gmail.com", 
+    "11033ohtm@gmail.com",  
+    "ohtm1103@yahoo.co.jp"    
 ];
 // ★★★=================================================★★★
 
@@ -44,7 +43,7 @@ const auth = getAuth(app);
 const recordsCollection = collection(db, 'records');
 
 // === グローバル変数 ===
-let currentPhotoBase64 = null; // ★ Base64文字列を保持
+let currentPhotoBase64 = null; 
 let allRecordsCache = [];
 let currentUser = null; 
 
@@ -56,7 +55,9 @@ const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
 
 
-// ★★★ 認証ロジック (変更なし) ★★★
+// ★★★ 認証ロジック ★★★
+
+// ログイン状態を監視する
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
@@ -70,12 +71,36 @@ onAuthStateChanged(auth, (user) => {
         showLoginScreen();
     }
 });
+
+// ★★★ 変更点 2: ログインボタンの処理 ★★★
 loginButton.addEventListener('click', () => {
-    signInWithRedirect(auth, new GoogleAuthProvider());
+    const provider = new GoogleAuthProvider();
+    // signInWithRedirect から signInWithPopup に変更
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            // ログイン成功
+            // この後 onAuthStateChanged が自動的に呼ばれる
+            console.log("ポップアップログイン成功:", result.user.email);
+        })
+        .catch((error) => {
+            // ログイン失敗（ポップアップを閉じた、など）
+            console.error("ポップアップログイン失敗:", error);
+            if (error.code === 'auth/popup-closed-by-user') {
+                alert("ログインがキャンセルされました。");
+            } else {
+                alert("ログインに失敗しました: " + error.message);
+            }
+        });
 });
+
+// ログアウトボタン
 logoutButton.addEventListener('click', () => {
     signOut(auth);
 });
+
+// (↓... showLoginScreen, showAccessDenied, showApp などの
+//    残りの関数は、以前のコードから一切変更ありません ...)
+
 function showLoginScreen() {
     mainContent.style.display = 'none';
     authSection.style.display = 'block';
@@ -99,7 +124,6 @@ function showApp(user) {
     initializeAppLogic();
 }
 
-// ★★★ アプリ本体のロジック ★★★
 let appInitialized = false;
 function initializeAppLogic() {
     if (appInitialized) return;
@@ -126,9 +150,6 @@ function handleDateChange(event) {
     loadRecordForDate(event.target.value);
 }
 
-/**
- * ★★★ 写真プレビュー (Base64に変換) ★★★
- */
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
@@ -136,11 +157,9 @@ async function handlePhotoPreview(event) {
     if (file) {
         photoPreview.innerHTML = '🔄 圧縮中...';
         try {
-            // ★ Firestoreに保存するため、さらに強力に圧縮 (300px, 品質40%)
             currentPhotoBase64 = await resizeAndEncode(file, 300, 0.4); 
-            
             const img = document.createElement('img');
-            img.src = currentPhotoBase64; // Base64をそのまま表示
+            img.src = currentPhotoBase64;
             photoPreview.innerHTML = '';
             photoPreview.appendChild(img);
         } catch (error) {
@@ -151,9 +170,6 @@ async function handlePhotoPreview(event) {
     }
 }
 
-/**
- * ★★★ フォーム送信 (Firestore + Base64) ★★★
- */
 async function handleFormSubmit(event) {
     event.preventDefault(); 
     const saveButton = document.getElementById('saveButton');
@@ -163,7 +179,6 @@ async function handleFormSubmit(event) {
         const existingId = document.getElementById('recordId').value;
         const date = document.getElementById('date').value;
 
-        // ★ 新しいBase64写真が選択されていなければ、キャッシュ（allRecordsCache）から既存のBase64を取得
         let photoData = currentPhotoBase64;
         if (!photoData && existingId) {
             const existingRecord = allRecordsCache.find(r => r.id === existingId);
@@ -185,7 +200,7 @@ async function handleFormSubmit(event) {
             sleepTime: document.getElementById('sleepTime').value,
             walk: document.getElementById('walk').value,
             otherNotes: document.getElementById('otherNotes').value,
-            dogPhotoBase64: photoData, // ★ Base64文字列を保存
+            dogPhotoBase64: photoData,
             updatedAt: serverTimestamp(),
             ownerEmail: currentUser.email 
         };
@@ -215,9 +230,6 @@ async function handleFormSubmit(event) {
     }
 }
 
-/**
- * ★★★ Firestoreから読み込み (Base64) ★★★
- */
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return; 
 
@@ -292,9 +304,6 @@ function loadRecordById(id) {
     }
 }
 
-/**
- * ★★★ フォーム入力 (Base64) ★★★
- */
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
@@ -311,8 +320,7 @@ function populateForm(record) {
     document.getElementById('walk').value = record.walk;
     document.getElementById('otherNotes').value = record.otherNotes;
 
-    // ★ 写真
-    currentPhotoBase64 = null; // 新規ファイル選択をリセット
+    currentPhotoBase64 = null; 
     const photoPreview = document.getElementById('photoPreview');
     photoPreview.innerHTML = '';
     if (record.dogPhotoBase64) {
@@ -333,9 +341,6 @@ function clearForm(dateString) {
     document.getElementById('sleepTime').value = 'ずっと寝てる';
 }
 
-/**
- * ★★★ 削除 (Firestoreのみ) ★★★
- */
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
     if (!idToDelete) {
@@ -348,7 +353,6 @@ async function deleteCurrentRecord() {
     toggleLoading(true, '削除中...');
 
     try {
-        // ★ Storageの削除は不要
         const docRef = doc(db, 'records', idToDelete);
         await deleteDoc(docRef);
 
@@ -380,9 +384,6 @@ function toggleLoading(isLoading, buttonText = null) {
     }
 }
 
-/**
- * ★★★ 圧縮関数 (Base64を返す) ★★★
- */
 function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -410,7 +411,6 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // ★ Base64文字列を返す
                 const dataUrl = canvas.toDataURL('image/jpeg', quality);
                 resolve(dataUrl);
             };
