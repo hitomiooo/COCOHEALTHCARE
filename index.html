@@ -76,11 +76,18 @@
             <label for="sleepTime">睡眠時間 (h):</label>
             <input type="number" id="sleepTime" min="0" max="24" step="0.5" value="8">
 
-            <label for="walk">散歩:</label>
+           <label for="walk">散歩:</label>
             <select id="walk">
-                <option value="行った">行った</option>
                 <option value="行ってない">行ってない</option>
+                <option value="庭">庭</option>
+                <option value="時又">時又</option>
+                <option value="アジア電子">アジア電子</option>
             </select>
+
+            <label for="dogPhoto">今日のわんこ 📸:</label>
+            <input type="file" id="dogPhoto" accept="image/*">
+            <div id="photoPreview" class="photo-preview">
+                </div>
 
             <label for="otherNotes">その他（メモ）:</label>
             <textarea id="otherNotes" rows="3"></textarea>
