@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ココちゃん健康管理手帳 (Firebase版)</title>
+    <title>ぴーぴ健康管理手帳 (Firebase版)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>ココちゃん健康管理手帳 🐾</h1>
+        <h1>ぴーぴ健康管理手帳 🐾</h1>
     </header>
 
     <div id="authSection">
@@ -16,12 +16,13 @@
         <button id="loginButton" style="display: none;">Googleアカウントでログイン</button>
         <button id="logoutButton" style="display: none;">ログアウト</button>
     </div>
+
     <main id="mainContent" style="display: none;">
         
         <form id="healthForm">
             <input type="hidden" id="recordId">
             
-            <h3>記録フォーム (日付を選んで入力・編集)</h3>
+            <h3>記録フォーム</h3>
             
             <label for="date">日付:</label>
             <input type="date" id="date" required>
@@ -32,24 +33,42 @@
                 <option value="☁️">☁️ 曇り</option>
                 <option value="☂️">☂️ 雨</option>
                 <option value="☃️">☃️ 雪</option>
-                <option value="不明">　不明</option>
             </select>
-            
-            <label for="dogPhoto">今日のココちゃん 📸:</label>
-            <input type="file" id="dogPhoto" accept="image/*">
-            <div id="photoPreview" class="photo-preview"></div>
-            
+       💪
             <fieldset>
-                <legend>お通じ</legend>
-                <label for="poopCount">回数:</label>
-                <input type="number" id="poopCount" min="0" value="0">
-                <label for="poopQuality">質:</label>
-                <select id="poopQuality">
-                    <option value="良い">良い</option>
-                    <option value="普通">普通</option>
-                    <option value="緩い">緩い</option>
-                    <option value="下痢">下痢</option>
+                <legend>体調チェック💪</legend>
+                <label for="conditionCoco">ココ:</label>
+                <select id="conditionCoco">
+                    <option value="○">○</option>
+                    <option value="△">△</option>
+                    <option value="×">×</option>
                 </select>
+                <label for="conditionNono">ノノ:</label>
+                <select id="conditionNono">
+                    <option value="○">○</option>
+                    <option value="△">△</option>
+                    <option value="×">×</option>
+                </select>
+                <label for="conditionMomo">モモ:</label>
+                <select id="conditionMomo">
+                    <option value="○">○</option>
+                    <option value="△">△</option>
+                    <option value="×">×</option>
+                </select>
+            </fieldset>
+
+            <fieldset class="checkbox-group">
+                <legend>服用中薬💊</legend>
+                <label><input type="checkbox" id="medPimo" checked> ピモベハート</label>
+                <label><input type="checkbox" id="medLactu" checked> ラクツロース</label>
+                <label><input type="checkbox" id="medConseve" checked> コンセーブ</label>
+            </fieldset>
+
+            <fieldset class="checkbox-group">
+                <legend>お通じ💩（回数・質はメモ欄へ）</legend>
+                <label><input type="checkbox" id="poopMorning"> 朝</label>
+                <label><input type="checkbox" id="poopEvening"> 夕</label>
+                <label><input type="checkbox" id="poopNight"> 夜</label>
             </fieldset>
 
             <fieldset>
@@ -65,7 +84,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>食欲</legend>
+                <legend>食欲🍖</legend>
                 <label for="appetiteMorning">朝:</label>
                 <select id="appetiteMorning">
                     <option value="完食">完食</option>
@@ -88,7 +107,6 @@
 
             <label for="sleepTime">睡眠の様子:</label>
             <select id="sleepTime">
-                <option value="不明">不明</option>
                 <option value="ずっと寝てる">ずっと寝てる</option>
                 <option value="起きてる時間が長い">起きてる時間が長い</option>
                 <option value="寝たり起きたり移動多い">寝たり起きたり移動多い</option>
@@ -101,8 +119,13 @@
                 <option value="時又">時又</option>
                 <option value="アジア電子">アジア電子</option>
             </select>
+
+            <label for="dogPhoto">今日のぴーぴ 📸:</label>
+            <input type="file" id="dogPhoto" accept="image/*">
+            <div id="photoPreview" class="photo-preview"></div>
+
             <label for="otherNotes">その他（メモ）:</label>
-            <textarea id="otherNotes" rows="3"></textarea>
+            <textarea id="otherNotes" rows="3" placeholder="お通じの質・回数などはこちらへ"></textarea>
             
             <button type="submit" id="saveButton">記録する</button>
             <button type="button" id="deleteButton" class="delete-btn" style="display: none;">この日の記録を削除</button>
@@ -115,9 +138,11 @@
             <p>🔄 データを読み込み中...</p>
         </div>
     </main>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js" type="module"></script>
+
     <script src="script.js" type="module"></script>
 </body>
 </html>
