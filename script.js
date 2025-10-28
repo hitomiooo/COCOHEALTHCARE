@@ -30,7 +30,7 @@ const firebaseConfig = {
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
     "fine2025contact@gmail.com", 
-    "11033ohtm@gmail.com",  
+    "1103ohtm@gmail.com",  
     "ohtm1103@yahoo.co.jp"    
 ];
 // ★★★=================================================★★★
@@ -421,3 +421,4 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
         reader.readAsDataURL(file);
     });
 }
+
