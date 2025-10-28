@@ -39,98 +39,116 @@ function handleDateChange(event) {
 }
 
 /**
- * 写真が選択されたときにプレビューを表示
+ * 写真が選択されたときにプレビューを表示（★圧縮処理を追加）
  */
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
-    photoPreview.innerHTML = ''; // 既存のプレビューをクリア
-
+    
     if (file) {
-        currentPhotoData = await convertFileToBase64(file); // Base64に変換して保持
-        const img = document.createElement('img');
-        img.src = currentPhotoData;
-        photoPreview.appendChild(img);
+        photoPreview.innerHTML = '🔄 圧縮中...'; // 処理中メッセージ
+        try {
+            // ★画像をリサイズ・圧縮してからBase64に変換
+            currentPhotoData = await resizeAndEncode(file, 800, 0.7); // 最大800px, 品質70%
+            
+            const img = document.createElement('img');
+            img.src = currentPhotoData;
+            photoPreview.innerHTML = ''; // "圧縮中"を消去
+            photoPreview.appendChild(img);
+        } catch (error) {
+            console.error("写真の処理中にエラー:", error);
+            photoPreview.innerHTML = '⚠️ 写真の読み込みに失敗';
+            currentPhotoData = null;
+        }
     } else {
-        // 既存の写真を保持（クリアしない）
-        // currentPhotoData = null; // ← ファイル未選択時に写真を消さないようにコメントアウト
+        // ファイル選択がキャンセルされた場合（何もしない、元の写真データを保持）
+        // フォームクリア時に currentPhotoData は null になる
     }
 }
 
 /**
- * フォームの「記録する」ボタンが押されたときの処理
- * (新規作成と更新の両方を担う)
+ * フォームの「記録する」ボタンが押されたときの処理（★エラー処理と二重送信防止を追加）
  */
 async function handleFormSubmit(event) {
     event.preventDefault(); // デフォルトの送信をキャンセル
 
-    const existingId = document.getElementById('recordId').value;
-    const date = document.getElementById('date').value;
-    
-    // ★写真が「選択」されていれば、それを優先する
-    const photoFile = document.getElementById('dogPhoto').files[0];
-    if (photoFile) {
-        currentPhotoData = await convertFileToBase64(photoFile); // ファイル選択を優先
-    }
-    // currentPhotoData は、
-    // 1. 既存データ読み込み時のデータ
-    // 2. 新規ファイル選択時のデータ
-    // のどちらかが入っている
+    const saveButton = document.getElementById('saveButton');
+    saveButton.disabled = true; // ボタンを無効化
+    saveButton.textContent = '保存中...';
 
-    // 1. フォームからデータを取得
-    const record = {
-        id: existingId ? parseInt(existingId) : Date.now(), // 既存IDがあればそれを使う
-        date: date,
-        weather: document.getElementById('weather').value,
-        poopCount: document.getElementById('poopCount').value,
-        poopQuality: document.getElementById('poopQuality').value,
-        peeCount: document.getElementById('peeCount').value,
-        peeColor: document.getElementById('peeColor').value,
-        appetiteMorning: document.getElementById('appetiteMorning').value,
-        appetiteNoon: document.getElementById('appetiteNoon').value,
-        appetiteNight: document.getElementById('appetiteNight').value,
-        sleepTime: document.getElementById('sleepTime').value,
-        walk: document.getElementById('walk').value,
-        otherNotes: document.getElementById('otherNotes').value,
-        dogPhoto: currentPhotoData // プレビュー中の写真データ
-    };
+    try {
+        const existingId = document.getElementById('recordId').value;
+        const date = document.getElementById('date').value;
 
-    // 2. 全データを取得
-    const records = getAllRecords();
+        // currentPhotoData は handlePhotoPreview で
+        // 既にリサイズ・エンコードされて設定されている
 
-    if (existingId) {
-        // --- 更新処理 ---
-        const index = records.findIndex(r => r.id == existingId);
-        if (index !== -1) {
-            records[index] = record; // 既存のデータを上書き
+        // 1. フォームからデータを取得
+        const record = {
+            id: existingId ? parseInt(existingId) : Date.now(),
+            date: date,
+            weather: document.getElementById('weather').value,
+            poopCount: document.getElementById('poopCount').value,
+            poopQuality: document.getElementById('poopQuality').value,
+            peeCount: document.getElementById('peeCount').value,
+            peeColor: document.getElementById('peeColor').value,
+            appetiteMorning: document.getElementById('appetiteMorning').value,
+            appetiteNoon: document.getElementById('appetiteNoon').value,
+            appetiteNight: document.getElementById('appetiteNight').value,
+            sleepTime: document.getElementById('sleepTime').value,
+            walk: document.getElementById('walk').value,
+            otherNotes: document.getElementById('otherNotes').value,
+            dogPhoto: currentPhotoData // リサイズ済みの写真データ
+        };
+
+        // 2. 全データを取得
+        const records = getAllRecords();
+
+        if (existingId) {
+            // --- 更新処理 ---
+            const index = records.findIndex(r => r.id == existingId);
+            if (index !== -1) {
+                records[index] = record;
+            }
+        } else {
+            // --- 新規作成処理 ---
+            const existingRecord = records.find(r => r.date === date);
+            if (existingRecord) {
+                alert("エラー: その日付の記録は既に存在します。フォームは既存のデータを読み込みます。");
+                loadRecordForDate(date);
+                return; // finallyブロックは実行される
+            }
+            records.unshift(record);
         }
-    } else {
-        // --- 新規作成処理 ---
-        // 同じ日付のデータが既にないか確認（多重登録防止）
-        const existingRecord = records.find(r => r.date === date);
-        if (existingRecord) {
-            alert("エラー: その日付の記録は既に存在します。フォームは既存のデータを読み込みます。");
-            loadRecordForDate(date); // 既存データを読み込む
-            return;
+
+        // 3. データを保存 (★ここで容量オーバーエラーが起きる可能性がある)
+        saveAllRecords(records);
+        
+        // 4. リストを再読み込み
+        loadAllRecordsList();
+        
+        // 5. フォームの状態を「更新完了」状態にする
+        loadRecordForDate(date);
+        
+        alert("記録を保存しました。");
+
+    } catch (error) {
+        // ★エラー処理
+        console.error("保存中にエラーが発生しました:", error);
+        if (error.name === 'QuotaExceededError') {
+            alert("保存に失敗しました。\n\n写真が多すぎるか、ブラウザの保存容量（約5MB）の上限に達しました。\n\n古い記録をいくつか削除してください。");
+        } else {
+            alert("不明なエラーが発生しました: " + error.message);
         }
-        records.unshift(record); // 配列の先頭に追加
+    } finally {
+        // ★成功しても失敗しても、ボタンを元に戻す
+        saveButton.disabled = false;
+        // ボタンのテキストは loadRecordForDate によって '記録する' または '記録を更新する' に戻される
     }
-
-    // 3. データを保存
-    saveAllRecords(records);
-
-    // 4. リストを再読み込み
-    loadAllRecordsList();
-    
-    // 5. フォームの状態を「更新完了」状態にする
-    loadRecordForDate(date);
-    
-    alert("記録を保存しました。");
 }
 
 /**
  * 指定された日付のデータをフォームに読み込む
- * @param {string} dateString - "YYYY-MM-DD"
  */
 function loadRecordForDate(dateString) {
     const records = getAllRecords();
@@ -151,7 +169,6 @@ function loadRecordForDate(dateString) {
 
 /**
  * リスト項目がクリックされたときに、そのIDのデータを読み込む
- * @param {number} id - レコードID
  */
 function loadRecordById(id) {
     const records = getAllRecords();
@@ -168,7 +185,6 @@ function loadRecordById(id) {
 
 /**
  * フォームを指定されたレコードデータで埋める
- * @param {object} record 
  */
 function populateForm(record) {
     document.getElementById('recordId').value = record.id;
@@ -198,7 +214,6 @@ function populateForm(record) {
 
 /**
  * フォームをクリアする (日付は保持)
- * @param {string} dateString - 保持する日付
  */
 function clearForm(dateString) {
     document.getElementById('recordId').value = '';
@@ -253,7 +268,6 @@ function deleteCurrentRecord() {
 
 /**
  * LocalStorageから全データを取得
- * @returns {Array} 記録の配列
  */
 function getAllRecords() {
     return JSON.parse(localStorage.getItem('dogHealthRecords') || '[]');
@@ -261,11 +275,12 @@ function getAllRecords() {
 
 /**
  * LocalStorageに全データを保存
- * @param {Array} records 記録の配列
  */
 function saveAllRecords(records) {
     // 日付の降順（新しい順）にソートしてから保存
     records.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    // ★ここで "QuotaExceededError" が発生する可能性がある
     localStorage.setItem('dogHealthRecords', JSON.stringify(records));
 }
 
@@ -273,7 +288,7 @@ function saveAllRecords(records) {
  * LocalStorageからデータを読み込み、画面下の「これまでの記録」リストを生成する
  */
 function loadAllRecordsList() {
-    const records = getAllRecords(); // 日付順にソート済みのデータを取得
+    const records = getAllRecords();
     const recordListDiv = document.getElementById('recordList');
     recordListDiv.innerHTML = '';
 
@@ -285,8 +300,6 @@ function loadAllRecordsList() {
     records.forEach(record => {
         const recordItem = document.createElement('div');
         recordItem.className = 'record-item';
-        
-        // ★クリックで編集フォームに読み込む機能を追加
         recordItem.onclick = () => loadRecordById(record.id);
 
         const formattedDate = new Date(record.date).toLocaleDateString('ja-JP');
@@ -304,16 +317,51 @@ function loadAllRecordsList() {
     });
 }
 
+
 /**
- * ファイルをBase64エンコードされた文字列に変換する
- * @param {File} file
- * @returns {Promise<string>} Base64文字列
+ * ★★★ 新しい関数 ★★★
+ * ファイルをリサイズ・圧縮してBase64エンコードされた文字列に変換する
+ * @param {File} file - 変換するファイル
+ * @param {number} maxSize - 最大の幅または高さ (px)
+ * @param {number} quality - 画質 (0.0 〜 1.0)
+ * @returns {Promise<string>} 圧縮されたBase64文字列
  */
-function convertFileToBase64(file) {
+function resizeAndEncode(file, maxSize = 800, quality = 0.7) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+
+                // アスペクト比を維持しつつリサイズ
+                if (width > height) {
+                    if (width > maxSize) {
+                        height *= maxSize / width;
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width *= maxSize / height;
+                        height = maxSize;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // JPEG形式、指定された品質でBase64に変換
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = reject;
+            img.src = event.target.result;
+        };
+        reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
