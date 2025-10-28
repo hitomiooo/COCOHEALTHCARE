@@ -94,3 +94,25 @@ button[type="submit"]:hover {
 .record-item p {
     margin: 5px 0;
 }
+
+/* ★追加: 写真プレビューと記録写真のスタイル */
+.photo-preview {
+    margin-top: 10px;
+    border: 1px dashed #ccc;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* 画像がはみ出さないように */
+}
+.photo-preview img, .record-photo img {
+    max-width: 100%;
+    max-height: 200px; /* プレビューや記録写真の最大高さを設定 */
+    display: block;
+    border-radius: 4px;
+    object-fit: contain; /* アスペクト比を保ちつつ収める */
+}
+.record-photo {
+    margin-top: 10px;
+    text-align: center; /* 写真を中央に */
+}
