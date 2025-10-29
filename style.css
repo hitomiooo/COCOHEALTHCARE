@@ -1,240 +1,246 @@
-/* 基本設定 */
+/* === 基本スタイル === */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    background-color: #f8f8f8;
-    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
     margin: 0;
     padding: 0;
-}
-
-main {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #f8f9fa;
+    color: #333;
 }
 
 header {
-    background-color: #4a90e2;
+    background-color: #007bff;
     color: white;
-    padding: 1rem;
+    padding: 15px 20px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
 }
 
-/* フォームのスタイル */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* 項目間のスペース */
-}
-
-label {
-    font-weight: bold;
-    margin-bottom: -10px; /* ラベルと入力欄を近づける */
-}
-
-input[type="date"],
-input[type="number"],
-input[type="file"],
-select,
-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* paddingを含めて幅100%にする */
-}
-
-fieldset {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2列レイアウト */
-    gap: 10px;
-}
-
-legend {
-    font-weight: bold;
-    padding: 0 5px;
-}
-
-button[type="submit"] {
-    background-color: #4a90e2;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-button[type="submit"]:hover {
-    background-color: #357abd;
-}
-
-/* 写真プレビューと記録写真のスタイル */
-.photo-preview {
-    margin-top: 10px;
-    border: 1px dashed #ccc;
-    min-height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden; /* 画像がはみ出さないように */
-}
-.photo-preview img, .record-photo img {
-    max-width: 100%;
-    max-height: 200px; /* プレビューや記録写真の最大高さを設定 */
-    display: block;
-    border-radius: 4px;
-    object-fit: contain; /* アスペクト比を保ちつつ収める */
-}
-.record-photo {
-    margin-top: 10px;
-    text-align: center; /* 写真を中央に */
-}
-
-/* 削除ボタンのスタイル */
-.delete-btn {
-    background-color: #e74c3c; /* 赤色 */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 10px; /* 保存ボタンとの間に隙間を空ける */
-}
-
-.delete-btn:hover {
-    background-color: #c0392b; /* 少し濃い赤色 */
-}
-
-/* 認証エリアのスタイル */
-#authSection {
+main, #authSection {
     max-width: 600px;
     margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
+    padding: 15px;
+    background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
+#authSection {
+    text-align: center;
+}
 #authStatus {
     font-size: 1.1em;
     margin-bottom: 15px;
+    line-height: 1.5;
 }
 
-#loginButton, #logoutButton {
-    background-color: #4285F4; /* Googleブルー */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-#loginButton:hover {
-    background-color: #357ae8;
-}
-
-#logoutButton {
-    background-color: #757575; /* グレー */
-}
-#logoutButton:hover {
-    background-color: #616161;
-}
-
-/* 記録リスト（アコーディオン） */
-.record-item {
-    background-color: #fdfdfd;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    cursor: default; /* デフォルトのカーソルに戻す */
-    padding: 0; /* 内側の余白をリセット */
-}
-.record-item:hover {
-    background-color: #fdfdfd; /* ホバー色をリセット */
-}
-
-.record-header {
+/* === フォームの基本スタイル (スマホ対応) === */
+form {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer; /* ヘッダーだけクリック可能に */
-    padding: 15px; /* ヘッダーの余白 */
-}
-.record-header:hover {
-    background-color: #f9f9f9; /* ヘッダーのみホバー色 */
-}
-.record-header h4 {
-    margin: 0; /* h4のデフォルトマージンをリセット */
-    color: #4a90e2;
-}
-.toggle-icon {
-    font-size: 0.8em;
-    color: #888;
-    margin-left: 10px; /* 見出しとの隙間 */
+    flex-direction: column;
 }
 
-.record-body {
-    padding: 15px;
-    border-top: 1px solid #eee;
-    background-color: #fafafa; /* 詳細部分の背景色 */
-    display: none; /* ★ デフォルトで非表示 */
-}
-.record-body p {
-    margin: 5px 0;
+label, fieldset legend {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    display: block; /* ラベルは基本的にブロック要素に */
 }
 
-/* 小さい編集ボタン */
-.edit-btn-small {
-    background-color: #757575;
-    color: white;
-    font-size: 14px;
-    padding: 5px 10px;
-    border: none;
+input,
+select,
+textarea,
+button {
+    /* 文字サイズを16px以上にすると、タップ時の自動ズームを防げます */
+    font-size: 16px;
+    padding: 10px 8px; /* 内側の余白を確保し、タップしやすくします */
+    margin-bottom: 15px; /* 各要素の下に余白 */
+    
+    /* 基本的に画面幅いっぱいに広げます */
+    width: 100%;
+    
+    /* paddingを含めて幅100%にするための設定 */
+    box-sizing: border-box;
+    
+    border: 1px solid #ccc;
     border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.2s;
-}
-.edit-btn-small:hover {
-    background-color: #616161;
 }
 
-/* ★★★ チェックボックスグループ (ここから追加) ★★★ */
-.checkbox-group {
-    grid-template-columns: 1fr; /* 1列レイアウト */
+textarea {
+    line-height: 1.5;
 }
+
+button {
+    cursor: pointer;
+    border: none;
+    color: white;
+}
+
+/* 記録ボタン */
+#saveButton {
+    background-color: #007bff;
+    font-size: 18px;
+    font-weight: bold;
+}
+#saveButton:hover {
+    background-color: #0056b3;
+}
+
+/* 削除ボタン */
+#deleteButton {
+    background-color: #f44336;
+    font-weight: bold;
+}
+#deleteButton:hover {
+    background-color: #c62828;
+}
+
+/* ログイン・ログアウトボタン */
+#loginButton, #logoutButton {
+    font-size: 16px;
+    padding: 12px;
+}
+#loginButton {
+    background-color: #4285F4;
+}
+#logoutButton {
+    background-color: #6c757d;
+}
+
+
+/* === フォームの個別調整 (スマホ対応) === */
+
+fieldset {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+fieldset legend {
+    font-size: 1em; /* legendは少し大きめに */
+    padding: 0 5px;
+}
+
+/* ファイル選択欄 */
+input[type="file"] {
+    border: none;
+    padding-left: 0;
+}
+
+/* 写真プレビュー */
+.photo-preview {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+.photo-preview img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+/* 体調チェック (ココ、ノノなど) */
+fieldset label[for^="condition"] {
+    display: inline-block;
+    width: auto;
+    margin-right: 5px;
+}
+fieldset select[id^="condition"] {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 8px 5px; /* 少し小さく */
+}
+
+/* チェックボックスグループ (薬, お通じ) */
 .checkbox-group label {
-    display: flex; /* チェックボックスとテキストを横並びにする */
-    align-items: center; /* 縦方向の中央揃え */
-    font-weight: normal; /* ラベルの太字を解除 */
-    margin-bottom: 0; /* ラベル下のマージンをリセット */
-    padding: 5px 0; /* 少し上下に隙間を空ける */
+    display: inline-block;
+    width: auto;
+    margin-right: 15px;
+    margin-bottom: 5px;
+    font-weight: normal;
 }
 .checkbox-group input[type="checkbox"] {
-    width: auto; /* 幅を自動に戻す */
-    margin-right: 8px; /* チェックボックスとテキストの間隔 */
+    width: auto;
+    margin-right: 5px;
+    transform: scale(1.2);
+    vertical-align: middle;
 }
-/* ★★★ (ここまで追加) ★★★ */
-/* (今までのスタイルはそのまま) */
 
-/* ★★★ 月ごとアコーディオン (ここから追加) ★★★ */
+/* おしっこ (回数と濃さ) */
+fieldset label[for="peeCount"],
+fieldset label[for="peeColor"] {
+    display: inline-block;
+    width: auto;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+input#peeCount {
+    width: 80px;
+    display: inline-block;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+select#peeColor {
+     width: auto;
+     display: inline-block;
+     vertical-align: middle;
+}
+
+/* 食欲 (朝昼晩) */
+fieldset label[for^="appetite"] {
+    display: inline-block;
+    width: auto;
+    margin-right: 5px;
+}
+fieldset select[id^="appetite"] {
+    width: auto;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    padding: 8px 5px; /* 少し小さく */
+}
+
+/* スタンプボタン */
+.stamp-pad {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.stamp-btn {
+    width: auto;
+    font-size: 14px;
+    padding: 5px 8px;
+    margin-bottom: 0;
+    flex-grow: 1;
+    min-width: 50px;
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ccc;
+}
+.stamp-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* === 記録リスト === */
+hr {
+    border: none;
+    border-top: 2px solid #eee;
+    margin: 25px 0;
+}
+
+h2 {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+/* ★★★ 月ごとアコーディオン (ここから) ★★★ */
 .month-header {
     background-color: #e9ecef; /* 月ヘッダーの背景色 */
     padding: 12px 15px;
@@ -261,11 +267,79 @@ button[type="submit"]:hover {
     border-left: 2px solid #eee;
     margin-left: 5px;
 }
+/* ★★★ (ここまで) ★★★ */
 
+
+/* 日ごとのアコーディオン */
+.record-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-top: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
 /* 月グループ内の日ごとのアイテム */
 .month-body .record-item {
     margin-top: 5px;
     margin-bottom: 5px;
     box-shadow: none; /* 影をシンプルに */
+    border-width: 1px 0 0 0; /* 上線だけにする */
+    border-radius: 0;
 }
-/* ★★★ (ここまで追加) ★★★ */
+.month-body .record-item:first-child {
+    border-top: none;
+}
+
+
+.record-header {
+    padding: 10px 12px;
+    background-color: #fdfdfd;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px 5px 0 0;
+}
+.record-header h4 {
+    margin: 0;
+    font-size: 1.1em;
+}
+.toggle-icon {
+    font-size: 0.9em;
+    color: #555;
+    transition: transform 0.2s;
+}
+
+.record-body {
+    display: none; /* デフォルトで非表示 */
+    padding: 12px;
+    border-top: 1px solid #eee;
+    line-height: 1.6;
+}
+.record-body p {
+    margin: 5px 0 10px 0;
+}
+.record-body p strong {
+    color: #007bff;
+    margin-right: 5px;
+}
+.record-body .record-photo {
+    max-width: 300px;
+    margin-top: 10px;
+}
+.record-body .record-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.edit-btn-small {
+    font-size: 15px;
+    width: 100%;
+    max-width: 200px;
+    padding: 8px;
+    margin-top: 10px;
+    background-color: #28a745;
+}
+.edit-btn-small:hover {
+    background-color: #218838;
+}
