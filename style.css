@@ -232,3 +232,40 @@ button[type="submit"]:hover {
     margin-right: 8px; /* チェックボックスとテキストの間隔 */
 }
 /* ★★★ (ここまで追加) ★★★ */
+/* (今までのスタイルはそのまま) */
+
+/* ★★★ 月ごとアコーディオン (ここから追加) ★★★ */
+.month-header {
+    background-color: #e9ecef; /* 月ヘッダーの背景色 */
+    padding: 12px 15px;
+    margin-top: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+.month-header:hover {
+    background-color: #dde1e5;
+}
+.month-header h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.month-body {
+    display: none; /* ★ 月の詳細はデフォルトで非表示 */
+    padding-left: 15px; /* 日付を少しインデント（字下げ） */
+    border-left: 2px solid #eee;
+    margin-left: 5px;
+}
+
+/* 月グループ内の日ごとのアイテム */
+.month-body .record-item {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: none; /* 影をシンプルに */
+}
+/* ★★★ (ここまで追加) ★★★ */
