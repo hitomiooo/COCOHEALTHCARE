@@ -1,8 +1,8 @@
 // === Firebase SDKモジュールをインポート ===
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, getDocs, doc, 
-    updateDoc, deleteDoc, query, orderBy, serverTimestamp 
+import {
+    getFirestore, collection, addDoc, getDocs, doc,
+    updateDoc, deleteDoc, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 // ★ 認証モジュール (signInWithPopup)
 import {
@@ -22,17 +22,16 @@ const firebaseConfig = {
   storageBucket: "coco-healthcare-59401.firebasestorage.app",
   messagingSenderId: "986920233821",
   appId: "1:986920233821:web:96ff08e9f118d557a816b4"
-    
+
 };
 
 // ★★★=================================================★★★
-// ★★★    ここを編集！ アクセスを許可する人の       ★★★
-// ★★★    Googleメールアドレスをカンマ(,)区切りで入力 ★★★
+// ★★★    アクセスを許可する人のメールアドレス          ★★★
 // ★★★=================================================★★★
 const ALLOWED_EMAIL_LIST = [
-    'fine2025contact@gmail.com',
-    '1103ohtm@gmail.com',
-    'tatsuya51801736@gmail.com'
+   'fine2025contact@gmail.com',
+   '1103ohtm@gmail.com',
+   'tatsuya51801736@gmail.com'
 ];
 // ★★★=================================================★★★
 
@@ -40,13 +39,13 @@ const ALLOWED_EMAIL_LIST = [
 // === Firebase の初期化 ===
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app); 
+const auth = getAuth(app);
 const recordsCollection = collection(db, 'records');
 
 // === グローバル変数 ===
 let currentPhotoBase64 = null; // Base64文字列を保持
 let allRecordsCache = [];
-let currentUser = null; 
+let currentUser = null;
 
 // === HTML要素 ===
 const mainContent = document.getElementById('mainContent');
@@ -111,7 +110,7 @@ function showAccessDenied(user) {
 }
 function showApp(user) {
     mainContent.style.display = 'block';
-    authSection.style.display = 'block'; 
+    authSection.style.display = 'block';
     authStatus.innerHTML = `ようこそ、 ${user.displayName} さん<br><strong>(${user.email})</strong>`;
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
@@ -129,8 +128,8 @@ function initializeAppLogic() {
     document.getElementById('date').addEventListener('change', handleDateChange);
     document.getElementById('dogPhoto').addEventListener('change', handlePhotoPreview);
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
-    
-    // ★ スタンプ機能のイベントリスナーを追加 ★
+
+    // スタンプ機能のイベントリスナーを追加
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
 
     const todayString = getFormattedDate(new Date());
@@ -150,28 +149,27 @@ function handleDateChange(event) {
 }
 
 /**
- * ★★★ スタンプボタンが押されたときの処理 ★★★
- * (ここが追加された関数です)
+ * スタンプボタンが押されたときの処理
  */
 function handleStampClick(event) {
     // クリックされたのが .stamp-btn クラスのボタンか確認
     if (event.target.classList.contains('stamp-btn')) {
         const stamp = event.target.textContent; // ボタンの絵文字を取得
         const memoTextArea = document.getElementById('otherNotes');
-        
+
         // テキストエリアの現在のカーソル位置を取得
         const cursorPos = memoTextArea.selectionStart;
         const textBefore = memoTextArea.value.substring(0, cursorPos);
         const textAfter = memoTextArea.value.substring(cursorPos);
-        
+
         // カーソル位置にスタンプを挿入
         memoTextArea.value = textBefore + stamp + textAfter;
-        
+
         // スタンプ挿入後にカーソル位置をスタンプの直後に移動
         const newPos = cursorPos + stamp.length;
         memoTextArea.selectionStart = newPos;
         memoTextArea.selectionEnd = newPos;
-        
+
         // テキストエリアにフォーカスを戻す
         memoTextArea.focus();
     }
@@ -184,12 +182,12 @@ function handleStampClick(event) {
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
-    
+
     if (file) {
         photoPreview.innerHTML = '🔄 圧縮中...';
         try {
-            currentPhotoBase64 = await resizeAndEncode(file, 300, 0.4); 
-            
+            currentPhotoBase64 = await resizeAndEncode(file, 300, 0.4);
+
             const img = document.createElement('img');
             img.src = currentPhotoBase64;
             photoPreview.innerHTML = '';
@@ -203,10 +201,10 @@ async function handlePhotoPreview(event) {
 }
 
 /**
- * フォーム送信 (新項目対応)
+ * フォーム送信 (ビビ・プレガバリン対応)
  */
 async function handleFormSubmit(event) {
-    event.preventDefault(); 
+    event.preventDefault();
     const saveButton = document.getElementById('saveButton');
     toggleLoading(true, '保存中...');
 
@@ -229,9 +227,11 @@ async function handleFormSubmit(event) {
             conditionCoco: document.getElementById('conditionCoco').value,
             conditionNono: document.getElementById('conditionNono').value,
             conditionMomo: document.getElementById('conditionMomo').value,
+            conditionBibi: document.getElementById('conditionBibi').value, // ★ ビビ追加
             medPimo: document.getElementById('medPimo').checked,
             medLactu: document.getElementById('medLactu').checked,
             medConseve: document.getElementById('medConseve').checked,
+            medPrega: document.getElementById('medPrega').checked, // ★ プレガバリン追加
             poopMorning: document.getElementById('poopMorning').checked,
             poopEvening: document.getElementById('poopEvening').checked,
             poopNight: document.getElementById('poopNight').checked,
@@ -245,7 +245,7 @@ async function handleFormSubmit(event) {
             otherNotes: document.getElementById('otherNotes').value,
             dogPhotoBase64: photoData,
             updatedAt: serverTimestamp(),
-            ownerEmail: currentUser.email 
+            ownerEmail: currentUser.email
         };
 
         if (existingId) {
@@ -260,10 +260,10 @@ async function handleFormSubmit(event) {
             }
             await addDoc(recordsCollection, recordData);
         }
-        
+
         alert("記録を保存しました。");
         await loadAllRecordsFromFirestore();
-        loadRecordForDate(date); 
+        loadRecordForDate(date);
 
     } catch (error) {
         console.error("保存中にエラーが発生しました:", error);
@@ -274,57 +274,100 @@ async function handleFormSubmit(event) {
 }
 
 /**
- * Firestoreから読み込み (新項目対応アコーディオン)
+ * ★★★ Firestoreから読み込み (★月ごとアコーディオン対応版★) ★★★
+ * (ここが前回変更された関数です)
  */
 async function loadAllRecordsFromFirestore() {
-    if (!currentUser) return; 
+    if (!currentUser) return;
 
     const recordListDiv = document.getElementById('recordList');
     recordListDiv.innerHTML = '<p>🔄 データを読み込み中...</p>';
-    
+
     try {
         const q = query(recordsCollection, orderBy('date', 'desc'));
         const querySnapshot = await getDocs(q);
-        
-        allRecordsCache = []; 
-        recordListDiv.innerHTML = ''; 
+
+        allRecordsCache = [];
+        recordListDiv.innerHTML = '';
 
         if (querySnapshot.empty) {
             recordListDiv.innerHTML = '<p>まだ記録がありません。</p>';
             return;
         }
 
+        let currentMonthYear = null;
+        let currentMonthBody = null; // 現在の月の日付を入れるコンテナ
+
         querySnapshot.forEach(doc => {
             const record = doc.data();
             const id = doc.id;
-            
+
             allRecordsCache.push({ id, ...record });
 
+            // --- ★ 月ごとのグループ化ロジック (ここから) ★ ---
+            const recordDate = new Date(record.date + 'T00:00:00'); // JSTで日付を解釈
+            const monthYear = `${recordDate.getFullYear()}年 ${recordDate.getMonth() + 1}月`; // 例: "2025年 10月"
+
+            // もし新しい月が始まったら、新しい月ヘッダーを作る
+            if (monthYear !== currentMonthYear) {
+                currentMonthYear = monthYear;
+
+                // 1. 月ヘッダー (例: 2025年 10月 ▼)
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `
+                    <h3>${monthYear}</h3>
+                    <span class="toggle-icon">▼</span>
+                `;
+
+                // 2. その月の日付を入れるコンテナ
+                currentMonthBody = document.createElement('div');
+                currentMonthBody.className = 'month-body'; // (CSSで display: none になっている)
+
+                // 3. 月ヘッダーにクリックで開閉する機能を追加
+                const monthToggleIcon = monthHeader.querySelector('.toggle-icon');
+                monthHeader.onclick = () => {
+                    const isHidden = currentMonthBody.style.display === 'none' || currentMonthBody.style.display === '';
+                    currentMonthBody.style.display = isHidden ? 'block' : 'none';
+                    monthToggleIcon.textContent = isHidden ? '▲' : '▼';
+                };
+
+                // 4. メインのリストに月ヘッダーとコンテナを追加
+                recordListDiv.appendChild(monthHeader);
+                recordListDiv.appendChild(currentMonthBody);
+            }
+            // --- ★ 月ごとのグループ化ロジック (ここまで) ★ ---
+
+
+            // --- 日ごとのアコーディオンを作成 ---
             const recordItem = document.createElement('div');
             recordItem.className = 'record-item';
 
-            const formattedDate = new Date(record.date).toLocaleDateString('ja-JP');
-            
-            let conditionStr = `ココ:${record.conditionCoco || '○'} | ノノ:${record.conditionNono || '○'} | モモ:${record.conditionMomo || '○'}`;
-            
+            // 日付の表示を「〇日 (天気)」に変更
+            const dayOnly = `${recordDate.getDate()}日`;
+
+            // (体調や薬の文字列作成ロジックは変更なし)
+            let conditionStr = `ココ:${record.conditionCoco || '○'} | ノノ:${record.conditionNono || '○'} | モモ:${record.conditionMomo || '○'} | ビビ:${record.conditionBibi || '○'}`;
             let poopStr = [
                 record.poopMorning ? '朝' : '',
                 record.poopEvening ? '夕' : '',
                 record.poopNight ? '夜' : ''
             ].filter(Boolean).join(', ') || 'なし';
-
             let medStr = [
                 record.medPimo ? 'ピモベハート' : '',
                 record.medLactu ? 'ラクツロース' : '',
-                record.medConseve ? 'コンセーブ' : ''
+                record.medConseve ? 'コンセーブ' : '',
+                record.medPrega ? 'プレガバリン' : ''
             ].filter(Boolean).join(', ') || 'なし';
 
+            // 日ごとのHTML
             recordItem.innerHTML = `
                 <div class="record-header">
-                    <h4>${formattedDate} ${record.weather} (体感:${record.temperatureFeel || '?'})</h4>
+                    <h4>${dayOnly} ${record.weather}</h4>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="record-body">
+                    <p><strong>体感:</strong> ${record.temperatureFeel || '?'}</p>
                     <p><strong>体調:</strong> ${conditionStr}</p>
                     <p><strong>お通じ:</strong> ${poopStr}</p>
                     <p><strong>服用薬:</strong> ${medStr}</p>
@@ -334,35 +377,35 @@ async function loadAllRecordsFromFirestore() {
                     <p><strong>睡眠:</strong> ${record.sleepTime}</p>
                     <p><strong>散歩:</strong> ${record.walk}</p>
                     ${record.otherNotes ? `<p><strong>メモ:</strong> ${record.otherNotes.replace(/\n/g, '<br>')}</p>` : ''}
-                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="わんこ"></div>` : ''}
+                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="ぴーぴ"></div>` : ''}
                     <button class="edit-btn-small">この日を編集する</button>
                 </div>
             `;
-            
+
+            // 日ごとの開閉ロジック (変更なし)
             const header = recordItem.querySelector('.record-header');
             const body = recordItem.querySelector('.record-body');
             const icon = recordItem.querySelector('.toggle-icon');
-            
             header.onclick = () => {
                 const isHidden = body.style.display === 'none' || body.style.display === '';
-                if (isHidden) {
-                    body.style.display = 'block';
-                    icon.textContent = '▲';
-                } else {
-                    body.style.display = 'none';
-                    icon.textContent = '▼';
-                }
+                body.style.display = isHidden ? 'block' : 'none';
+                icon.textContent = isHidden ? '▲' : '▼';
             };
-            
+
+            // 編集ボタンのロジック (変更なし)
             const editButton = recordItem.querySelector('.edit-btn-small');
             editButton.onclick = (e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 loadRecordById(id);
             };
 
-            recordListDiv.appendChild(recordItem);
+            // ★ 日ごとのアイテムを「今月のコンテナ」に追加する
+            if (currentMonthBody) {
+                currentMonthBody.appendChild(recordItem);
+            }
         });
-        
+
+        // フォームの初期化 (変更なし)
         const todayString = document.getElementById('date').value;
         loadRecordForDate(todayString);
 
@@ -380,7 +423,7 @@ function loadRecordForDate(dateString) {
         document.getElementById('saveButton').textContent = '記録を更新する';
         document.getElementById('deleteButton').style.display = 'block';
     } else {
-        clearForm(dateString); 
+        clearForm(dateString);
         document.getElementById('saveButton').textContent = '記録する';
         document.getElementById('deleteButton').style.display = 'none';
     }
@@ -389,32 +432,34 @@ function loadRecordForDate(dateString) {
 function loadRecordById(id) {
     const record = allRecordsCache.find(r => r.id === id);
     if (record) {
-        document.getElementById('date').value = record.date; 
+        document.getElementById('date').value = record.date;
         populateForm(record);
         document.getElementById('saveButton').textContent = '記録を更新する';
         document.getElementById('deleteButton').style.display = 'block';
-        window.scrollTo(0, 0); // ページ上部のフォームにスクロール
+        window.scrollTo(0, 0);
     }
 }
 
 /**
- * フォーム入力 (新項目対応)
+ * フォーム入力 (ビビ・プレガバリン対応)
  */
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
     document.getElementById('date').value = record.date;
     document.getElementById('weather').value = record.weather;
-    
+
     document.getElementById('temperatureFeel').value = record.temperatureFeel || 'ちょうどいい';
     document.getElementById('conditionCoco').value = record.conditionCoco || '○';
     document.getElementById('conditionNono').value = record.conditionNono || '○';
     document.getElementById('conditionMomo').value = record.conditionMomo || '○';
-    
+    document.getElementById('conditionBibi').value = record.conditionBibi || '○';
+
     document.getElementById('medPimo').checked = record.medPimo === true;
     document.getElementById('medLactu').checked = record.medLactu === true;
     document.getElementById('medConseve').checked = record.medConseve === true;
-    
+    document.getElementById('medPrega').checked = record.medPrega === true;
+
     document.getElementById('poopMorning').checked = record.poopMorning === true;
     document.getElementById('poopEvening').checked = record.poopEvening === true;
     document.getElementById('poopNight').checked = record.poopNight === true;
@@ -428,7 +473,7 @@ function populateForm(record) {
     document.getElementById('walk').value = record.walk || '行ってない';
     document.getElementById('otherNotes').value = record.otherNotes || '';
 
-    currentPhotoBase64 = null; 
+    currentPhotoBase64 = null;
     const photoPreview = document.getElementById('photoPreview');
     photoPreview.innerHTML = '';
     if (record.dogPhotoBase64) {
@@ -436,30 +481,32 @@ function populateForm(record) {
         img.src = record.dogPhotoBase64;
         photoPreview.appendChild(img);
     }
-    document.getElementById('dogPhoto').value = ""; 
+    document.getElementById('dogPhoto').value = "";
 }
 
 /**
- * フォームクリア (新項目対応)
+ * フォームクリア (ビビ・プレガバリン対応)
  */
 function clearForm(dateString) {
-    document.getElementById('healthForm').reset(); 
+    document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = '';
-    document.getElementById('date').value = dateString; 
-    
+    document.getElementById('date').value = dateString;
+
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
-    
+
     document.getElementById('temperatureFeel').value = 'ちょうどいい';
     document.getElementById('conditionCoco').value = '○';
     document.getElementById('conditionNono').value = '○';
     document.getElementById('conditionMomo').value = '○';
+    document.getElementById('conditionBibi').value = '○';
     document.getElementById('sleepTime').value = 'ずっと寝てる';
-    
+
     document.getElementById('medPimo').checked = true;
     document.getElementById('medLactu').checked = true;
     document.getElementById('medConseve').checked = true;
-    
+    document.getElementById('medPrega').checked = true;
+
     document.getElementById('poopMorning').checked = false;
     document.getElementById('poopEvening').checked = false;
     document.getElementById('poopNight').checked = false;
@@ -483,7 +530,7 @@ async function deleteCurrentRecord() {
         return;
     }
     if (!confirm('本当にこの日の記録を削除しますか？')) {
-        return; 
+        return;
     }
     toggleLoading(true, '削除中...');
 
@@ -492,11 +539,11 @@ async function deleteCurrentRecord() {
         await deleteDoc(docRef);
 
         alert("記録を削除しました。");
-        
+
         await loadAllRecordsFromFirestore();
         const todayString = getFormattedDate(new Date());
         document.getElementById('date').value = todayString;
-        loadRecordForDate(todayString); 
+        loadRecordForDate(todayString);
 
     } catch (error) {
         console.error("削除中にエラー:", error);
@@ -551,7 +598,7 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                
+
                 // Base64文字列を返す
                 const dataUrl = canvas.toDataURL('image/jpeg', quality);
                 resolve(dataUrl);
