@@ -344,3 +344,35 @@ h2 {
 .edit-btn-small:hover {
     background-color: #218838;
 }
+
+/* --- 日付と天気の幅を自動調整 (ここから追加) --- */
+
+/* 日付と天気の入力欄の幅を100%から自動に変更 */
+input#date,
+select#weather {
+    width: auto;           /* 幅を自動調整 */
+    display: inline-block; /* 横並び・折り返しを許可 */
+    vertical-align: middle;/* 上下の位置を揃える */
+}
+
+/* 日付と天気のラベルもインライン（横並び）に変更 */
+label[for="date"],
+label[for="weather"] {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 5px;     /* 入力欄との隙間 */
+}
+
+/* 天気の入力欄（ラベル）が折り返した時の調整 */
+label[for="weather"] {
+    margin-left: 10px; /* 日付と天気が横並びになった時の隙間 */
+}
+/* スマホで折り返した時、天気が日付の真下に来ないように調整 */
+@media (max-width: 400px) {
+    label[for="weather"] {
+        margin-left: 0;      /* 横並びの隙間をリセット */
+        margin-top: 10px;    /* 上に隙間を作る */
+    }
+}
+/* --- (ここまで追加) --- */
