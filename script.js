@@ -4,17 +4,16 @@ import {
     getFirestore, collection, addDoc, getDocs, doc,
     updateDoc, deleteDoc, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-// ★ 認証モジュール (signInWithPopup)
 import {
     getAuth,
     onAuthStateChanged,
     GoogleAuthProvider,
-    signInWithPopup, // ポップアップ方式
+    signInWithPopup,
     signOut
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 
-// === Firebase 設定 (ここで置き換える) ===
+// === Firebase 設定 ===
 const firebaseConfig = {
   apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
   authDomain: "coco-healthcare-59401.firebaseapp.com",
@@ -22,12 +21,9 @@ const firebaseConfig = {
   storageBucket: "coco-healthcare-59401.firebasestorage.app",
   messagingSenderId: "986920233821",
   appId: "1:986920233821:web:96ff08e9f118d557a816b4"
-
 };
 
-// ★★★=================================================★★★
-// ★★★    アクセスを許可する人のメールアドレス          ★★★
-// ★★★=================================================★★★
+// ★★★ アクセスを許可する人のメールアドレス ★★★
 const ALLOWED_EMAIL_LIST = [
    'fine2025contact@gmail.com',
    '1103ohtm@gmail.com',
@@ -55,9 +51,7 @@ const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
 
 
-// ★★★ 認証ロジック ★★★
-
-// ログイン状態を監視する
+// ★★★ 認証ロジック (変更なし) ★★★
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
@@ -71,8 +65,6 @@ onAuthStateChanged(auth, (user) => {
         showLoginScreen();
     }
 });
-
-// ログインボタンの処理 (ポップアップ方式)
 loginButton.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
@@ -88,12 +80,9 @@ loginButton.addEventListener('click', () => {
             }
         });
 });
-
-// ログアウトボタン
 logoutButton.addEventListener('click', () => {
     signOut(auth);
 });
-
 function showLoginScreen() {
     mainContent.style.display = 'none';
     authSection.style.display = 'block';
@@ -117,77 +106,50 @@ function showApp(user) {
     initializeAppLogic();
 }
 
-// ★★★ アプリ本体のロジック ★★★
+// ★★★ アプリ本体のロジック (変更なし) ★★★
 let appInitialized = false;
 function initializeAppLogic() {
     if (appInitialized) return;
     appInitialized = true;
-
-    // フォームのイベントリスナー
     document.getElementById('healthForm').addEventListener('submit', handleFormSubmit);
     document.getElementById('date').addEventListener('change', handleDateChange);
     document.getElementById('dogPhoto').addEventListener('change', handlePhotoPreview);
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
-
-    // スタンプ機能のイベントリスナーを追加
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
-
     const todayString = getFormattedDate(new Date());
     document.getElementById('date').value = todayString;
     loadAllRecordsFromFirestore();
 }
-
 function getFormattedDate(date) {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
-
 function handleDateChange(event) {
     loadRecordForDate(event.target.value);
 }
-
-/**
- * スタンプボタンが押されたときの処理
- */
 function handleStampClick(event) {
-    // クリックされたのが .stamp-btn クラスのボタンか確認
     if (event.target.classList.contains('stamp-btn')) {
-        const stamp = event.target.textContent; // ボタンの絵文字を取得
+        const stamp = event.target.textContent;
         const memoTextArea = document.getElementById('otherNotes');
-
-        // テキストエリアの現在のカーソル位置を取得
         const cursorPos = memoTextArea.selectionStart;
         const textBefore = memoTextArea.value.substring(0, cursorPos);
         const textAfter = memoTextArea.value.substring(cursorPos);
-
-        // カーソル位置にスタンプを挿入
         memoTextArea.value = textBefore + stamp + textAfter;
-
-        // スタンプ挿入後にカーソル位置をスタンプの直後に移動
         const newPos = cursorPos + stamp.length;
         memoTextArea.selectionStart = newPos;
         memoTextArea.selectionEnd = newPos;
-
-        // テキストエリアにフォーカスを戻す
         memoTextArea.focus();
     }
 }
-
-
-/**
- * 写真プレビュー (Base64に変換)
- */
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
-
     if (file) {
         photoPreview.innerHTML = '🔄 圧縮中...';
         try {
             currentPhotoBase64 = await resizeAndEncode(file, 300, 0.4);
-
             const img = document.createElement('img');
             img.src = currentPhotoBase64;
             photoPreview.innerHTML = '';
@@ -199,19 +161,12 @@ async function handlePhotoPreview(event) {
         }
     }
 }
-
-/**
- * フォーム送信 (ビビ・プレガバリン対応)
- */
 async function handleFormSubmit(event) {
     event.preventDefault();
-    const saveButton = document.getElementById('saveButton');
     toggleLoading(true, '保存中...');
-
     try {
         const existingId = document.getElementById('recordId').value;
         const date = document.getElementById('date').value;
-
         let photoData = currentPhotoBase64;
         if (!photoData && existingId) {
             const existingRecord = allRecordsCache.find(r => r.id === existingId);
@@ -219,7 +174,6 @@ async function handleFormSubmit(event) {
                 photoData = existingRecord.dogPhotoBase64 || null;
             }
         }
-
         const recordData = {
             date: date,
             weather: document.getElementById('weather').value,
@@ -227,11 +181,11 @@ async function handleFormSubmit(event) {
             conditionCoco: document.getElementById('conditionCoco').value,
             conditionNono: document.getElementById('conditionNono').value,
             conditionMomo: document.getElementById('conditionMomo').value,
-            conditionBibi: document.getElementById('conditionBibi').value, // ★ ビビ追加
+            conditionBibi: document.getElementById('conditionBibi').value,
             medPimo: document.getElementById('medPimo').checked,
             medLactu: document.getElementById('medLactu').checked,
             medConseve: document.getElementById('medConseve').checked,
-            medPrega: document.getElementById('medPrega').checked, // ★ プレガバリン追加
+            medPrega: document.getElementById('medPrega').checked,
             poopMorning: document.getElementById('poopMorning').checked,
             poopEvening: document.getElementById('poopEvening').checked,
             poopNight: document.getElementById('poopNight').checked,
@@ -247,7 +201,6 @@ async function handleFormSubmit(event) {
             updatedAt: serverTimestamp(),
             ownerEmail: currentUser.email
         };
-
         if (existingId) {
             const docRef = doc(db, 'records', existingId);
             await updateDoc(docRef, recordData);
@@ -260,11 +213,9 @@ async function handleFormSubmit(event) {
             }
             await addDoc(recordsCollection, recordData);
         }
-
         alert("記録を保存しました。");
         await loadAllRecordsFromFirestore();
         loadRecordForDate(date);
-
     } catch (error) {
         console.error("保存中にエラーが発生しました:", error);
         alert("保存に失敗しました: " + error.message);
@@ -274,8 +225,7 @@ async function handleFormSubmit(event) {
 }
 
 /**
- * ★★★ Firestoreから読み込み (★月ごとアコーディオン対応版★) ★★★
- * (ここが前回変更された関数です)
+ * ★★★ Firestoreから読み込み (★月ごとアコーディオン・バグ修正版★) ★★★
  */
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return;
@@ -304,15 +254,14 @@ async function loadAllRecordsFromFirestore() {
 
             allRecordsCache.push({ id, ...record });
 
-            // --- ★ 月ごとのグループ化ロジック (ここから) ★ ---
-            const recordDate = new Date(record.date + 'T00:00:00'); // JSTで日付を解釈
-            const monthYear = `${recordDate.getFullYear()}年 ${recordDate.getMonth() + 1}月`; // 例: "2025年 10月"
+            // --- ★ 月ごとのグループ化ロジック (バグ修正) ★ ---
+            const recordDate = new Date(record.date + 'T00:00:00');
+            const monthYear = `${recordDate.getFullYear()}年 ${recordDate.getMonth() + 1}月`;
 
-            // もし新しい月が始まったら、新しい月ヘッダーを作る
             if (monthYear !== currentMonthYear) {
                 currentMonthYear = monthYear;
 
-                // 1. 月ヘッダー (例: 2025年 10月 ▼)
+                // 1. 月ヘッダー
                 const monthHeader = document.createElement('div');
                 monthHeader.className = 'month-header';
                 monthHeader.innerHTML = `
@@ -320,21 +269,26 @@ async function loadAllRecordsFromFirestore() {
                     <span class="toggle-icon">▼</span>
                 `;
 
-                // 2. その月の日付を入れるコンテナ
-                currentMonthBody = document.createElement('div');
-                currentMonthBody.className = 'month-body'; // (CSSで display: none になっている)
+                // 2. ★ 修正: その月の日付を入れるコンテナ (constで宣言)
+                const bodyForThisMonth = document.createElement('div');
+                bodyForThisMonth.className = 'month-body';
 
-                // 3. 月ヘッダーにクリックで開閉する機能を追加
+                // 3. ★ 修正: クリックイベントが、対応するコンテナ(bodyForThisMonth)を
+                //    正しく参照するように(クロージャ)、変数をここでキャプチャする
                 const monthToggleIcon = monthHeader.querySelector('.toggle-icon');
+                
                 monthHeader.onclick = () => {
-                    const isHidden = currentMonthBody.style.display === 'none' || currentMonthBody.style.display === '';
-                    currentMonthBody.style.display = isHidden ? 'block' : 'none';
+                    const isHidden = bodyForThisMonth.style.display === 'none' || bodyForThisMonth.style.display === '';
+                    bodyForThisMonth.style.display = isHidden ? 'block' : 'none';
                     monthToggleIcon.textContent = isHidden ? '▲' : '▼';
                 };
 
-                // 4. メインのリストに月ヘッダーとコンテナを追加
+                // 4. メインのリストに追加
                 recordListDiv.appendChild(monthHeader);
-                recordListDiv.appendChild(currentMonthBody);
+                recordListDiv.appendChild(bodyForThisMonth);
+                
+                // 5. ★ 修正: 外側の変数を更新し、日ごとのアイテムがこのコンテナに追加されるようにする
+                currentMonthBody = bodyForThisMonth;
             }
             // --- ★ 月ごとのグループ化ロジック (ここまで) ★ ---
 
@@ -342,11 +296,8 @@ async function loadAllRecordsFromFirestore() {
             // --- 日ごとのアコーディオンを作成 ---
             const recordItem = document.createElement('div');
             recordItem.className = 'record-item';
-
-            // 日付の表示を「〇日 (天気)」に変更
             const dayOnly = `${recordDate.getDate()}日`;
 
-            // (体調や薬の文字列作成ロジックは変更なし)
             let conditionStr = `ココ:${record.conditionCoco || '○'} | ノノ:${record.conditionNono || '○'} | モモ:${record.conditionMomo || '○'} | ビビ:${record.conditionBibi || '○'}`;
             let poopStr = [
                 record.poopMorning ? '朝' : '',
@@ -360,7 +311,7 @@ async function loadAllRecordsFromFirestore() {
                 record.medPrega ? 'プレガバリン' : ''
             ].filter(Boolean).join(', ') || 'なし';
 
-            // 日ごとのHTML
+            // 日ごとのHTML (変更なし)
             recordItem.innerHTML = `
                 <div class="record-header">
                     <h4>${dayOnly} ${record.weather}</h4>
@@ -377,12 +328,12 @@ async function loadAllRecordsFromFirestore() {
                     <p><strong>睡眠:</strong> ${record.sleepTime}</p>
                     <p><strong>散歩:</strong> ${record.walk}</p>
                     ${record.otherNotes ? `<p><strong>メモ:</strong> ${record.otherNotes.replace(/\n/g, '<br>')}</p>` : ''}
-                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="ぴーぴ"></div>` : ''}
+                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="ぴーぴ" loading="lazy"></div>` : ''}
                     <button class="edit-btn-small">この日を編集する</button>
                 </div>
             `;
 
-            // 日ごとの開閉ロジック (変更なし)
+            // 日ごとの開閉ロジック (これは元々正しく動作していました)
             const header = recordItem.querySelector('.record-header');
             const body = recordItem.querySelector('.record-body');
             const icon = recordItem.querySelector('.toggle-icon');
@@ -415,7 +366,7 @@ async function loadAllRecordsFromFirestore() {
     }
 }
 
-
+// (変更なし)
 function loadRecordForDate(dateString) {
     const record = allRecordsCache.find(r => r.date === dateString);
     if (record) {
@@ -428,7 +379,7 @@ function loadRecordForDate(dateString) {
         document.getElementById('deleteButton').style.display = 'none';
     }
 }
-
+// (変更なし)
 function loadRecordById(id) {
     const record = allRecordsCache.find(r => r.id === id);
     if (record) {
@@ -439,31 +390,24 @@ function loadRecordById(id) {
         window.scrollTo(0, 0);
     }
 }
-
-/**
- * フォーム入力 (ビビ・プレガバリン対応)
- */
+// (変更なし)
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
     document.getElementById('date').value = record.date;
     document.getElementById('weather').value = record.weather;
-
     document.getElementById('temperatureFeel').value = record.temperatureFeel || 'ちょうどいい';
     document.getElementById('conditionCoco').value = record.conditionCoco || '○';
     document.getElementById('conditionNono').value = record.conditionNono || '○';
     document.getElementById('conditionMomo').value = record.conditionMomo || '○';
     document.getElementById('conditionBibi').value = record.conditionBibi || '○';
-
     document.getElementById('medPimo').checked = record.medPimo === true;
     document.getElementById('medLactu').checked = record.medLactu === true;
     document.getElementById('medConseve').checked = record.medConseve === true;
     document.getElementById('medPrega').checked = record.medPrega === true;
-
     document.getElementById('poopMorning').checked = record.poopMorning === true;
     document.getElementById('poopEvening').checked = record.poopEvening === true;
     document.getElementById('poopNight').checked = record.poopNight === true;
-
     document.getElementById('peeCount').value = record.peeCount || 0;
     document.getElementById('peeColor').value = record.peeColor || '普通';
     document.getElementById('appetiteMorning').value = record.appetiteMorning || '完食';
@@ -472,7 +416,6 @@ function populateForm(record) {
     document.getElementById('sleepTime').value = record.sleepTime || 'ずっと寝てる';
     document.getElementById('walk').value = record.walk || '行ってない';
     document.getElementById('otherNotes').value = record.otherNotes || '';
-
     currentPhotoBase64 = null;
     const photoPreview = document.getElementById('photoPreview');
     photoPreview.innerHTML = '';
@@ -483,34 +426,26 @@ function populateForm(record) {
     }
     document.getElementById('dogPhoto').value = "";
 }
-
-/**
- * フォームクリア (ビビ・プレガバリン対応)
- */
+// (変更なし)
 function clearForm(dateString) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = '';
     document.getElementById('date').value = dateString;
-
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
-
     document.getElementById('temperatureFeel').value = 'ちょうどいい';
     document.getElementById('conditionCoco').value = '○';
     document.getElementById('conditionNono').value = '○';
     document.getElementById('conditionMomo').value = '○';
     document.getElementById('conditionBibi').value = '○';
     document.getElementById('sleepTime').value = 'ずっと寝てる';
-
     document.getElementById('medPimo').checked = true;
     document.getElementById('medLactu').checked = true;
     document.getElementById('medConseve').checked = true;
     document.getElementById('medPrega').checked = true;
-
     document.getElementById('poopMorning').checked = false;
     document.getElementById('poopEvening').checked = false;
     document.getElementById('poopNight').checked = false;
-
     document.getElementById('peeCount').value = 0;
     document.getElementById('peeColor').value = '普通';
     document.getElementById('appetiteMorning').value = '完食';
@@ -519,10 +454,7 @@ function clearForm(dateString) {
     document.getElementById('walk').value = '行ってない';
     document.getElementById('otherNotes').value = '';
 }
-
-/**
- * 削除 (Firestoreのみ)
- */
+// (変更なし)
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
     if (!idToDelete) {
@@ -533,18 +465,14 @@ async function deleteCurrentRecord() {
         return;
     }
     toggleLoading(true, '削除中...');
-
     try {
         const docRef = doc(db, 'records', idToDelete);
         await deleteDoc(docRef);
-
         alert("記録を削除しました。");
-
         await loadAllRecordsFromFirestore();
         const todayString = getFormattedDate(new Date());
         document.getElementById('date').value = todayString;
         loadRecordForDate(todayString);
-
     } catch (error) {
         console.error("削除中にエラー:", error);
         alert("削除に失敗しました: " + error.message);
@@ -552,10 +480,7 @@ async function deleteCurrentRecord() {
         toggleLoading(false);
     }
 }
-
-/**
- * ボタンの有効/無効を切り替え
- */
+// (変更なし)
 function toggleLoading(isLoading, buttonText = null) {
     const saveButton = document.getElementById('saveButton');
     const deleteButton = document.getElementById('deleteButton');
@@ -568,10 +493,7 @@ function toggleLoading(isLoading, buttonText = null) {
         saveButton.textContent = existingId ? '記録を更新する' : '記録する';
     }
 }
-
-/**
- * 圧縮関数 (Base64を返す)
- */
+// (変更なし)
 function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -580,7 +502,6 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
             img.onload = function() {
                 let width = img.width;
                 let height = img.height;
-
                 if (width > height) {
                     if (width > maxSize) {
                         height *= maxSize / width;
@@ -592,14 +513,11 @@ function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
                         height = maxSize;
                     }
                 }
-
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-
-                // Base64文字列を返す
                 const dataUrl = canvas.toDataURL('image/jpeg', quality);
                 resolve(dataUrl);
             };
