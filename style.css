@@ -376,29 +376,28 @@ label[for="weather"] {
     }
 }
 /* --- (ここまで追加) --- */
-
-/* --- 食欲欄のスマホ表示を修正 (ここから追加) --- */
+/* --- 食欲欄のスマホ表示を修正 (★ 優先度強化版) --- */
 @media (max-width: 480px) { /* 画面幅が480px以下の場合 */
     
-    /* 「食欲」fieldset内のラベル (朝・昼・晩) */
-    fieldset label[for^="appetite"] {
+    /* form#healthForm を先頭に追加し、
+      既存のルールより優先順位(詳細度)を高くします 
+    */
+    form#healthForm fieldset label[for^="appetite"] {
         display: block;   /* ラベルを縦積みに */
         width: 100%;
-        margin-bottom: 3px; /* すぐ下のセレクトボックスとの隙間 */
-        margin-top: 10px;   /* 各項目の上の隙間 */
-        vertical-align: middle; /* 念のため揃える */
+        margin-bottom: 3px; 
+        margin-top: 10px;   
+        margin-right: 0;  
     }
 
-    /* 「食欲」fieldset内のセレクトボックス */
-    fieldset select[id^="appetite"] {
+    form#healthForm fieldset select[id^="appetite"] {
         width: 100%;      /* セレクトボックスも幅100%に */
-        margin-right: 0;  /* 横の隙間をリセット */
+        margin-right: 0;  
         margin-bottom: 5px;
-        vertical-align: middle; /* 念のため揃える */
     }
 
     /* 最初の項目「朝」の上の隙間だけ削除 */
-    fieldset label[for="appetiteMorning"] {
+    form#healthForm fieldset label[for="appetiteMorning"] {
         margin-top: 0;
     }
 }
