@@ -72,18 +72,20 @@
 
             <fieldset class="checkbox-group">
                 <legend>服用中薬💊</legend>
-                <label><input type="checkbox" id="medPimo" checked> ピモベハート</label>
-                <label><input type="checkbox" id="medLactu" checked> ラクツロース</label>
-                <label><input type="checkbox" id="medConseve" checked> コンセーブ</label>
-                <label><input type="checkbox" id="medPrega" checked> プレガバリン</label>
+                <label><input type="checkbox" id="medPimo" checked> ピモベハート（ココ）</label>
+                <label><input type="checkbox" id="medLactu" checked> ラクツロース（ココ）</label>
+                <label><input type="checkbox" id="medConseve" checked> コンセーブ（ココ）</label>
+                <label><input type="checkbox" id="medPrega" checked> プレガバリン（モモ）</label>
+                <label><input type="checkbox" id="medPrega" checked> その他　</label>
                 
             </fieldset>
 
             <fieldset class="checkbox-group">
-                <legend>お通じ💩（回数・質はメモ欄へ）</legend>
+                <legend>ココお通じ💩（回数・質はメモ欄へ）</legend>
                 <label><input type="checkbox" id="poopMorning"> 朝</label>
                 <label><input type="checkbox" id="poopEvening"> 夕</label>
                 <label><input type="checkbox" id="poopNight"> 夜</label>
+                
             </fieldset>
 
             <fieldset>
@@ -163,9 +165,14 @@
                 <button type="button" class="stamp-btn">逆くしゃみ</button>
                 <button type="button" class="stamp-btn">咳</button>
                 <button type="button" class="stamp-btn">下痢</button>
+                <button type="button" class="stamp-btn">30日、フィラリア</button>
+                <button type="button" class="stamp-btn">10日、トルコキシル</button>
+                <button type="button" class="stamp-btn">25日、トルコキシル</button>
+                
+                
                 
             </div>
-            <textarea id="otherNotes" rows="3" placeholder="お通じの質・回数などはこちらへ"></textarea>
+            <textarea id="otherNotes" rows="3" placeholder="気になることはこちらへ"></textarea>
             
             <button type="submit" id="saveButton">記録する</button>
             <button type="button" id="deleteButton" class="delete-btn" style="display: none;">この日の記録を削除</button>
@@ -186,3 +193,4 @@
     <script src="script.js" type="module"></script>
 </body>
 </html>
+
