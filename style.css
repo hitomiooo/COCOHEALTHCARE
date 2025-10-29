@@ -58,6 +58,7 @@ button {
     /* 文字サイズを16px以上にすると、タップ時の自動ズームを防げます */
     font-size: 16px;
     padding: 10px 8px; /* 内側の余白を確保し、タップしやすくします */
+    line-height: 1.4; /* ★ 日付と天気の高さ統一のため追加 */
     margin-bottom: 15px; /* 各要素の下に余白 */
     
     /* 基本的に画面幅いっぱいに広げます */
@@ -71,7 +72,7 @@ button {
 }
 
 textarea {
-    line-height: 1.5;
+    line-height: 1.5; /* メモ欄は複数行なので少し広めに */
 }
 
 button {
