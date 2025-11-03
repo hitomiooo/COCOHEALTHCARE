@@ -39,7 +39,7 @@ const auth = getAuth(app);
 const recordsCollection = collection(db, 'records');
 
 // === グローバル変数 ===
-let currentPhotoBase64 = null; // Base64文字列を保持
+let currentPhotoBase64 = null; 
 let allRecordsCache = [];
 let currentUser = null;
 
@@ -161,6 +161,10 @@ async function handlePhotoPreview(event) {
         }
     }
 }
+
+/**
+ * ★ 変更: フォーム送信 (おしっこ削除)
+ */
 async function handleFormSubmit(event) {
     event.preventDefault();
     toggleLoading(true, '保存中...');
@@ -186,11 +190,11 @@ async function handleFormSubmit(event) {
             medLactu: document.getElementById('medLactu').checked,
             medConseve: document.getElementById('medConseve').checked,
             medPrega: document.getElementById('medPrega').checked,
+            medOther: document.getElementById('medOther').checked,
             poopMorning: document.getElementById('poopMorning').checked,
-            poopEvening: document.getElementById('poopEvening').checked,
+            poopNoon: document.getElementById('poopNoon').checked,
+            poopWalk: document.getElementById('poopWalk').checked,
             poopNight: document.getElementById('poopNight').checked,
-            peeCount: document.getElementById('peeCount').value,
-            peeColor: document.getElementById('peeColor').value,
             appetiteMorning: document.getElementById('appetiteMorning').value,
             appetiteNoon: document.getElementById('appetiteNoon').value,
             appetiteNight: document.getElementById('appetiteNight').value,
@@ -225,93 +229,59 @@ async function handleFormSubmit(event) {
 }
 
 /**
- * ★★★ Firestoreから読み込み (★月ごとアコーディオン・バグ修正版★) ★★★
+ * ★ 変更: Firestoreから読み込み (おしっこ削除)
  */
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return;
-
     const recordListDiv = document.getElementById('recordList');
     recordListDiv.innerHTML = '<p>🔄 データを読み込み中...</p>';
-
     try {
         const q = query(recordsCollection, orderBy('date', 'desc'));
         const querySnapshot = await getDocs(q);
-
         allRecordsCache = [];
         recordListDiv.innerHTML = '';
-
         if (querySnapshot.empty) {
             recordListDiv.innerHTML = '<p>まだ記録がありません。</p>';
             return;
         }
-
         let currentMonthYear = null;
-        let currentMonthBody = null; // 現在の月の日付を入れるコンテナ
-
+        let currentMonthBody = null;
         querySnapshot.forEach(doc => {
             const record = doc.data();
             const id = doc.id;
-
             allRecordsCache.push({ id, ...record });
-
-            // --- ★ 月ごとのグループ化ロジック (バグ修正) ★ ---
             const recordDate = new Date(record.date + 'T00:00:00');
             const monthYear = `${recordDate.getFullYear()}年 ${recordDate.getMonth() + 1}月`;
-
             if (monthYear !== currentMonthYear) {
                 currentMonthYear = monthYear;
-
-                // 1. 月ヘッダー
                 const monthHeader = document.createElement('div');
                 monthHeader.className = 'month-header';
-                monthHeader.innerHTML = `
-                    <h3>${monthYear}</h3>
-                    <span class="toggle-icon">▼</span>
-                `;
-
-                // 2. ★ 修正: その月の日付を入れるコンテナ (constで宣言)
+                monthHeader.innerHTML = `<h3>${monthYear}</h3><span class="toggle-icon">▼</span>`;
                 const bodyForThisMonth = document.createElement('div');
                 bodyForThisMonth.className = 'month-body';
-
-                // 3. ★ 修正: クリックイベントが、対応するコンテナ(bodyForThisMonth)を
-                //    正しく参照するように(クロージャ)、変数をここでキャプチャする
                 const monthToggleIcon = monthHeader.querySelector('.toggle-icon');
-                
                 monthHeader.onclick = () => {
                     const isHidden = bodyForThisMonth.style.display === 'none' || bodyForThisMonth.style.display === '';
                     bodyForThisMonth.style.display = isHidden ? 'block' : 'none';
                     monthToggleIcon.textContent = isHidden ? '▲' : '▼';
                 };
-
-                // 4. メインのリストに追加
                 recordListDiv.appendChild(monthHeader);
                 recordListDiv.appendChild(bodyForThisMonth);
-                
-                // 5. ★ 修正: 外側の変数を更新し、日ごとのアイテムがこのコンテナに追加されるようにする
                 currentMonthBody = bodyForThisMonth;
             }
-            // --- ★ 月ごとのグループ化ロジック (ここまで) ★ ---
-
-
-            // --- 日ごとのアコーディオンを作成 ---
             const recordItem = document.createElement('div');
             recordItem.className = 'record-item';
             const dayOnly = `${recordDate.getDate()}日`;
-
             let conditionStr = `ココ:${record.conditionCoco || '○'} | ノノ:${record.conditionNono || '○'} | モモ:${record.conditionMomo || '○'} | ビビ:${record.conditionBibi || '○'}`;
             let poopStr = [
-                record.poopMorning ? '朝' : '',
-                record.poopEvening ? '夕' : '',
-                record.poopNight ? '夜' : ''
+                record.poopMorning ? '朝' : '', record.poopNoon ? '昼' : '',
+                record.poopWalk ? '散歩時' : '', record.poopNight ? '夜' : ''
             ].filter(Boolean).join(', ') || 'なし';
             let medStr = [
-                record.medPimo ? 'ピモベハート' : '',
-                record.medLactu ? 'ラクツロース' : '',
-                record.medConseve ? 'コンセーブ' : '',
-                record.medPrega ? 'プレガバリン' : ''
+                record.medPimo ? 'ピモベハート' : '', record.medLactu ? 'ラクツロース' : '',
+                record.medConseve ? 'コンセーブ' : '', record.medPrega ? 'プレガバリン' : '',
+                record.medOther ? 'その他' : ''
             ].filter(Boolean).join(', ') || 'なし';
-
-            // 日ごとのHTML (変更なし)
             recordItem.innerHTML = `
                 <div class="record-header">
                     <h4>${dayOnly} ${record.weather}</h4>
@@ -323,7 +293,6 @@ async function loadAllRecordsFromFirestore() {
                     <p><strong>お通じ:</strong> ${poopStr}</p>
                     <p><strong>服用薬:</strong> ${medStr}</p>
                     <hr>
-                    <p><strong>おしっこ:</strong> ${record.peeCount}回 (${record.peeColor})</p>
                     <p><strong>食欲:</strong> 朝:${record.appetiteMorning} 昼:${record.appetiteNoon} 晩:${record.appetiteNight}</p>
                     <p><strong>睡眠:</strong> ${record.sleepTime}</p>
                     <p><strong>散歩:</strong> ${record.walk}</p>
@@ -332,8 +301,6 @@ async function loadAllRecordsFromFirestore() {
                     <button class="edit-btn-small">この日を編集する</button>
                 </div>
             `;
-
-            // 日ごとの開閉ロジック (これは元々正しく動作していました)
             const header = recordItem.querySelector('.record-header');
             const body = recordItem.querySelector('.record-body');
             const icon = recordItem.querySelector('.toggle-icon');
@@ -342,24 +309,17 @@ async function loadAllRecordsFromFirestore() {
                 body.style.display = isHidden ? 'block' : 'none';
                 icon.textContent = isHidden ? '▲' : '▼';
             };
-
-            // 編集ボタンのロジック (変更なし)
             const editButton = recordItem.querySelector('.edit-btn-small');
             editButton.onclick = (e) => {
                 e.stopPropagation();
                 loadRecordById(id);
             };
-
-            // ★ 日ごとのアイテムを「今月のコンテナ」に追加する
             if (currentMonthBody) {
                 currentMonthBody.appendChild(recordItem);
             }
         });
-
-        // フォームの初期化 (変更なし)
         const todayString = document.getElementById('date').value;
         loadRecordForDate(todayString);
-
     } catch (error) {
         console.error("データ読み込みエラー:", error);
         recordListDiv.innerHTML = '<p>⚠️ データの読み込みに失敗しました。</p>';
@@ -390,7 +350,10 @@ function loadRecordById(id) {
         window.scrollTo(0, 0);
     }
 }
-// (変更なし)
+
+/**
+ * ★ 変更: フォーム入力 (おしっこ削除)
+ */
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
@@ -405,11 +368,11 @@ function populateForm(record) {
     document.getElementById('medLactu').checked = record.medLactu === true;
     document.getElementById('medConseve').checked = record.medConseve === true;
     document.getElementById('medPrega').checked = record.medPrega === true;
+    document.getElementById('medOther').checked = record.medOther === true;
     document.getElementById('poopMorning').checked = record.poopMorning === true;
-    document.getElementById('poopEvening').checked = record.poopEvening === true;
+    document.getElementById('poopNoon').checked = record.poopNoon === true;
+    document.getElementById('poopWalk').checked = record.poopWalk === true;
     document.getElementById('poopNight').checked = record.poopNight === true;
-    document.getElementById('peeCount').value = record.peeCount || 0;
-    document.getElementById('peeColor').value = record.peeColor || '普通';
     document.getElementById('appetiteMorning').value = record.appetiteMorning || '完食';
     document.getElementById('appetiteNoon').value = record.appetiteNoon || '完食';
     document.getElementById('appetiteNight').value = record.appetiteNight || '完食';
@@ -426,7 +389,10 @@ function populateForm(record) {
     }
     document.getElementById('dogPhoto').value = "";
 }
-// (変更なし)
+
+/**
+ * ★ 変更: フォームクリア (おしっこ削除)
+ */
 function clearForm(dateString) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = '';
@@ -443,17 +409,18 @@ function clearForm(dateString) {
     document.getElementById('medLactu').checked = true;
     document.getElementById('medConseve').checked = true;
     document.getElementById('medPrega').checked = true;
+    document.getElementById('medOther').checked = true;
     document.getElementById('poopMorning').checked = false;
-    document.getElementById('poopEvening').checked = false;
+    document.getElementById('poopNoon').checked = false;
+    document.getElementById('poopWalk').checked = false;
     document.getElementById('poopNight').checked = false;
-    document.getElementById('peeCount').value = 0;
-    document.getElementById('peeColor').value = '普通';
     document.getElementById('appetiteMorning').value = '完食';
     document.getElementById('appetiteNoon').value = '完食';
     document.getElementById('appetiteNight').value = '完食';
     document.getElementById('walk').value = '行ってない';
     document.getElementById('otherNotes').value = '';
 }
+
 // (変更なし)
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
