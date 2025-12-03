@@ -117,7 +117,7 @@ function initializeAppLogic() {
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
     
-    // ▼▼▼ 天気ボタンのクリックイベント追加（ここが重要） ▼▼▼
+    // 天気ボタンのクリックイベント
     const weatherBtns = document.querySelectorAll('#weatherBtnGroup button');
     weatherBtns.forEach(btn => {
         btn.addEventListener('click', handleWeatherClick);
@@ -169,25 +169,21 @@ async function handlePhotoPreview(event) {
     }
 }
 
-// ▼▼▼ 天気ボタンの処理ロジック（確実に動くように改良版） ▼▼▼
+// 天気ボタンの処理ロジック
 function handleWeatherClick(event) {
-    const btn = event.currentTarget; // ボタン要素そのものを確実に取得
+    const btn = event.currentTarget;
     const val = btn.getAttribute('data-val');
     const input = document.getElementById('weather');
-
-    if (!input) return; // エラー回避
+    if (!input) return;
 
     let currentVals = input.value ? input.value.split('/') : [];
 
-    // 既に選択されていたら解除、されてなければ追加
     if (btn.classList.contains('active')) {
         btn.classList.remove('active');
         currentVals = currentVals.filter(v => v !== val);
     } else {
-        // 2個まで制限（3個目を選んだら、最初の1個を消す）
         if (currentVals.length >= 2) {
             const removed = currentVals.shift(); 
-            // デザイン上の選択解除
             const btns = document.querySelectorAll('#weatherBtnGroup button');
             btns.forEach(b => {
                 if(b.getAttribute('data-val') === removed) b.classList.remove('active');
@@ -213,10 +209,21 @@ async function handleFormSubmit(event) {
                 photoData = existingRecord.dogPhotoBase64 || null;
             }
         }
+        
+        // 重要マークの値を取得
+        const markOptions = document.getElementsByName('eventMark');
+        let selectedMark = '';
+        for (const option of markOptions) {
+            if (option.checked) {
+                selectedMark = option.value;
+                break;
+            }
+        }
+
         const recordData = {
             date: date,
-            // ここで input の値を取得
-            weather: document.getElementById('weather').value, 
+            weather: document.getElementById('weather').value,
+            eventMark: selectedMark, // ★ ここで保存
             temperatureFeel: document.getElementById('temperatureFeel').value,
             conditionCoco: document.getElementById('conditionCoco').value,
             conditionNono: document.getElementById('conditionNono').value,
@@ -317,12 +324,16 @@ async function loadAllRecordsFromFirestore() {
                 record.medOther ? 'その他' : ''
             ].filter(Boolean).join(', ') || 'なし';
             
-            // 天気表示の調整
             const weatherDisplay = record.weather || '☀️';
+            
+            // ★ マークがある場合のみバッジを表示するためのHTML
+            const markBadge = record.eventMark 
+                ? `<span class="event-mark-badge">${record.eventMark}</span>` 
+                : '';
 
             recordItem.innerHTML = `
                 <div class="record-header">
-                    <h4>${dayOnly} ${weatherDisplay}</h4>
+                    <h4>${dayOnly} ${weatherDisplay} ${markBadge}</h4>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="record-body">
@@ -397,7 +408,6 @@ function populateForm(record) {
     const savedWeather = record.weather || '';
     document.getElementById('weather').value = savedWeather;
     const weatherVals = savedWeather.split('/');
-    // ボタンの見た目も復元
     document.querySelectorAll('#weatherBtnGroup button').forEach(btn => {
         if (weatherVals.includes(btn.getAttribute('data-val'))) {
             btn.classList.add('active');
@@ -405,6 +415,16 @@ function populateForm(record) {
             btn.classList.remove('active');
         }
     });
+
+    // ★重要マークの復元
+    const savedMark = record.eventMark || '';
+    const markOptions = document.getElementsByName('eventMark');
+    for (const option of markOptions) {
+        if (option.value === savedMark) {
+            option.checked = true;
+            break;
+        }
+    }
 
     document.getElementById('temperatureFeel').value = record.temperatureFeel || 'ちょうどいい';
     document.getElementById('conditionCoco').value = record.conditionCoco || '○';
@@ -448,6 +468,10 @@ function clearForm(dateString) {
     document.querySelectorAll('#weatherBtnGroup button').forEach(btn => {
         btn.classList.remove('active');
     });
+    
+    // ★重要マークのクリア（なしを選択）
+    const markOptions = document.getElementsByName('eventMark');
+    if(markOptions.length > 0) markOptions[0].checked = true;
 
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
