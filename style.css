@@ -48,31 +48,25 @@ label, fieldset legend {
     font-weight: bold;
     color: #555;
     margin-bottom: 5px;
-    display: block; /* ラベルは基本的にブロック要素に */
+    display: block;
 }
 
 input,
 select,
 textarea,
 button {
-    /* 文字サイズを16px以上にすると、タップ時の自動ズームを防げます */
     font-size: 16px;
-    padding: 10px 8px; /* 内側の余白を確保し、タップしやすくします */
-    line-height: 1.4; /* ★ 日付と天気の高さ統一のため追加 */
-    margin-bottom: 15px; /* 各要素の下に余白 */
-    
-    /* 基本的に画面幅いっぱいに広げます */
+    padding: 10px 8px;
+    line-height: 1.4;
+    margin-bottom: 15px;
     width: 100%;
-    
-    /* paddingを含めて幅100%にするための設定 */
     box-sizing: border-box;
-    
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
 textarea {
-    line-height: 1.5; /* メモ欄は複数行なので少し広めに */
+    line-height: 1.5;
 }
 
 button {
@@ -112,7 +106,6 @@ button {
     background-color: #6c757d;
 }
 
-
 /* === フォームの個別調整 (スマホ対応) === */
 
 fieldset {
@@ -122,7 +115,7 @@ fieldset {
     padding: 10px 12px;
 }
 fieldset legend {
-    font-size: 1em; /* legendは少し大きめに */
+    font-size: 1em;
     padding: 0 5px;
 }
 
@@ -156,7 +149,7 @@ fieldset select[id^="condition"] {
     width: auto;
     margin-right: 10px;
     margin-bottom: 5px;
-    padding: 8px 5px; /* 少し小さく */
+    padding: 8px 5px;
 }
 
 /* チェックボックスグループ (薬, お通じ) */
@@ -174,26 +167,6 @@ fieldset select[id^="condition"] {
     vertical-align: middle;
 }
 
-/* おしっこ (回数と濃さ) */
-fieldset label[for="peeCount"],
-fieldset label[for="peeColor"] {
-    display: inline-block;
-    width: auto;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-input#peeCount {
-    width: 80px;
-    display: inline-block;
-    margin-right: 15px;
-    vertical-align: middle;
-}
-select#peeColor {
-     width: auto;
-     display: inline-block;
-     vertical-align: middle;
-}
-
 /* 食欲 (朝昼晩) */
 fieldset label[for^="appetite"] {
     display: inline-block;
@@ -204,7 +177,7 @@ fieldset select[id^="appetite"] {
     width: auto;
     margin-right: 10px;
     margin-bottom: 5px;
-    padding: 8px 5px; /* 少し小さく */
+    padding: 8px 5px;
 }
 
 /* スタンプボタン */
@@ -241,9 +214,9 @@ h2 {
     padding-bottom: 5px;
 }
 
-/* ★★★ 月ごとアコーディオン (ここから) ★★★ */
+/* 月ごとアコーディオン */
 .month-header {
-    background-color: #e9ecef; /* 月ヘッダーの背景色 */
+    background-color: #e9ecef;
     padding: 12px 15px;
     margin-top: 10px;
     border-radius: 5px;
@@ -263,13 +236,11 @@ h2 {
 }
 
 .month-body {
-    display: none; /* ★ 月の詳細はデフォルトで非表示 */
-    padding-left: 15px; /* 日付を少しインデント（字下げ） */
+    display: none;
+    padding-left: 15px;
     border-left: 2px solid #eee;
     margin-left: 5px;
 }
-/* ★★★ (ここまで) ★★★ */
-
 
 /* 日ごとのアコーディオン */
 .record-item {
@@ -282,14 +253,13 @@ h2 {
 .month-body .record-item {
     margin-top: 5px;
     margin-bottom: 5px;
-    box-shadow: none; /* 影をシンプルに */
-    border-width: 1px 0 0 0; /* 上線だけにする */
+    box-shadow: none;
+    border-width: 1px 0 0 0;
     border-radius: 0;
 }
 .month-body .record-item:first-child {
     border-top: none;
 }
-
 
 .record-header {
     padding: 10px 12px;
@@ -311,7 +281,7 @@ h2 {
 }
 
 .record-body {
-    display: none; /* デフォルトで非表示 */
+    display: none;
     padding: 12px;
     border-top: 1px solid #eee;
     line-height: 1.6;
@@ -345,60 +315,60 @@ h2 {
     background-color: #218838;
 }
 
-/* --- 日付と天気の幅を自動調整 (ここから追加) --- */
-
-/* 日付と天気の入力欄の幅を100%から自動に変更 */
-input#date,
-select#weather {
-    width: auto;           /* 幅を自動調整 */
-    display: inline-block; /* 横並び・折り返しを許可 */
-    vertical-align: middle;/* 上下の位置を揃える */
+/* --- 日付入力欄の調整 --- */
+input#date {
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
 }
-
-/* 日付と天気のラベルもインライン（横並び）に変更 */
-label[for="date"],
-label[for="weather"] {
+label[for="date"] {
     display: inline-block;
     width: auto;
     vertical-align: middle;
-    margin-right: 5px;     /* 入力欄との隙間 */
+    margin-right: 5px;
 }
 
-/* 天気の入力欄（ラベル）が折り返した時の調整 */
-label[for="weather"] {
-    margin-left: 10px; /* 日付と天気が横並びになった時の隙間 */
-}
-/* スマホで折り返した時、天気が日付の真下に来ないように調整 */
-@media (max-width: 400px) {
-    label[for="weather"] {
-        margin-left: 0;      /* 横並びの隙間をリセット */
-        margin-top: 10px;    /* 上に隙間を作る */
-    }
-}
-/* --- (ここまで追加) --- */
-/* --- 食欲欄のスマホ表示を修正 (★ 優先度強化版) --- */
-@media (max-width: 480px) { /* 画面幅が480px以下の場合 */
-    
-    /* form#healthForm を先頭に追加し、
-      既存のルールより優先順位(詳細度)を高くします 
-    */
+/* --- 食欲欄のスマホ表示を修正 --- */
+@media (max-width: 480px) {
     form#healthForm fieldset label[for^="appetite"] {
-        display: block;   /* ラベルを縦積みに */
+        display: block;
         width: 100%;
-        margin-bottom: 3px; 
-        margin-top: 10px;   
-        margin-right: 0;  
+        margin-bottom: 3px;
+        margin-top: 10px;
+        margin-right: 0;
     }
-
     form#healthForm fieldset select[id^="appetite"] {
-        width: 100%;      /* セレクトボックスも幅100%に */
-        margin-right: 0;  
+        width: 100%;
+        margin-right: 0;
         margin-bottom: 5px;
     }
-
-    /* 最初の項目「朝」の上の隙間だけ削除 */
     form#healthForm fieldset label[for="appetiteMorning"] {
         margin-top: 0;
     }
 }
-/* --- (ここまで追加) --- */
+
+/* ▼ 天気ボタンのデザイン（新規追加） ▼ */
+.weather-btn-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.weather-btn-group button {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 1.5em;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #333;
+    margin-bottom: 0;
+    transition: background-color 0.2s;
+}
+/* 選択された状態 */
+.weather-btn-group button.active {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    color: #2196f3;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
