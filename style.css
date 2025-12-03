@@ -37,7 +37,7 @@ main, #authSection {
     line-height: 1.5;
 }
 
-/* === フォームの基本スタイル (スマホ対応) === */
+/* === フォームの基本スタイル === */
 form {
     display: flex;
     flex-direction: column;
@@ -51,7 +51,8 @@ label, fieldset legend {
     display: block;
 }
 
-input,
+input[type="text"],
+input[type="date"],
 select,
 textarea,
 button {
@@ -106,7 +107,7 @@ button {
     background-color: #6c757d;
 }
 
-/* === フォームの個別調整 (スマホ対応) === */
+/* === フォームの個別調整 === */
 
 fieldset {
     margin-bottom: 15px;
@@ -273,7 +274,20 @@ h2 {
 .record-header h4 {
     margin: 0;
     font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 日付とマークの隙間 */
 }
+/* ★重要マークの表示★ */
+.event-mark-badge {
+    background-color: #fff3cd; /* 薄い黄色背景 */
+    color: #856404;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid #ffeeba;
+}
+
 .toggle-icon {
     font-size: 0.9em;
     color: #555;
@@ -347,7 +361,7 @@ label[for="date"] {
     }
 }
 
-/* ▼▼▼ 天気ボタンのデザイン（ここが重要です） ▼▼▼ */
+/* ▼ 天気ボタンのデザイン ▼ */
 .weather-btn-group {
     display: flex;
     gap: 10px;
@@ -364,11 +378,42 @@ label[for="date"] {
     margin-bottom: 0;
     transition: background-color 0.2s;
 }
-/* 選択された状態 */
 .weather-btn-group button.active {
     background-color: #e3f2fd;
     border-color: #2196f3;
     color: #2196f3;
     font-weight: bold;
     box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+/* ▼ 新機能: 重要マークのデザイン ▼ */
+.mark-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.mark-option {
+    cursor: pointer;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+}
+.mark-option:hover {
+    background: #e2e6ea;
+}
+.mark-option input[type="radio"] {
+    margin-bottom: 0;
+    margin-right: 5px;
+    width: auto;
+}
+/* 選ばれたラジオボタンの親ラベルを目立たせる */
+.mark-option:has(input:checked) {
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+    font-weight: bold;
 }
