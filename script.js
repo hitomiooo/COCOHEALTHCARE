@@ -51,7 +51,7 @@ const loginButton = document.getElementById('loginButton');
 const logoutButton = document.getElementById('logoutButton');
 
 
-// ★★★ 認証ロジック (変更なし) ★★★
+// ★★★ 認証ロジック ★★★
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
@@ -106,7 +106,7 @@ function showApp(user) {
     initializeAppLogic();
 }
 
-// ★★★ アプリ本体のロジック (変更なし) ★★★
+// ★★★ アプリ本体のロジック ★★★
 let appInitialized = false;
 function initializeAppLogic() {
     if (appInitialized) return;
@@ -116,6 +116,13 @@ function initializeAppLogic() {
     document.getElementById('dogPhoto').addEventListener('change', handlePhotoPreview);
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
+    
+    // ▼▼▼ 天気ボタンのクリックイベント追加（ここが重要） ▼▼▼
+    const weatherBtns = document.querySelectorAll('#weatherBtnGroup button');
+    weatherBtns.forEach(btn => {
+        btn.addEventListener('click', handleWeatherClick);
+    });
+
     const todayString = getFormattedDate(new Date());
     document.getElementById('date').value = todayString;
     loadAllRecordsFromFirestore();
@@ -162,9 +169,37 @@ async function handlePhotoPreview(event) {
     }
 }
 
-/**
- * ★ 変更: フォーム送信 (おしっこ削除)
- */
+// ▼▼▼ 天気ボタンの処理ロジック（確実に動くように改良版） ▼▼▼
+function handleWeatherClick(event) {
+    const btn = event.currentTarget; // ボタン要素そのものを確実に取得
+    const val = btn.getAttribute('data-val');
+    const input = document.getElementById('weather');
+
+    if (!input) return; // エラー回避
+
+    let currentVals = input.value ? input.value.split('/') : [];
+
+    // 既に選択されていたら解除、されてなければ追加
+    if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        currentVals = currentVals.filter(v => v !== val);
+    } else {
+        // 2個まで制限（3個目を選んだら、最初の1個を消す）
+        if (currentVals.length >= 2) {
+            const removed = currentVals.shift(); 
+            // デザイン上の選択解除
+            const btns = document.querySelectorAll('#weatherBtnGroup button');
+            btns.forEach(b => {
+                if(b.getAttribute('data-val') === removed) b.classList.remove('active');
+            });
+        }
+        btn.classList.add('active');
+        currentVals.push(val);
+    }
+    input.value = currentVals.join('/');
+}
+
+// フォーム送信
 async function handleFormSubmit(event) {
     event.preventDefault();
     toggleLoading(true, '保存中...');
@@ -180,7 +215,8 @@ async function handleFormSubmit(event) {
         }
         const recordData = {
             date: date,
-            weather: document.getElementById('weather').value,
+            // ここで input の値を取得
+            weather: document.getElementById('weather').value, 
             temperatureFeel: document.getElementById('temperatureFeel').value,
             conditionCoco: document.getElementById('conditionCoco').value,
             conditionNono: document.getElementById('conditionNono').value,
@@ -228,9 +264,7 @@ async function handleFormSubmit(event) {
     }
 }
 
-/**
- * ★ 変更: Firestoreから読み込み (おしっこ削除)
- */
+// Firestoreから読み込み
 async function loadAllRecordsFromFirestore() {
     if (!currentUser) return;
     const recordListDiv = document.getElementById('recordList');
@@ -282,9 +316,13 @@ async function loadAllRecordsFromFirestore() {
                 record.medConseve ? 'コンセーブ' : '', record.medPrega ? 'プレガバリン' : '',
                 record.medOther ? 'その他' : ''
             ].filter(Boolean).join(', ') || 'なし';
+            
+            // 天気表示の調整
+            const weatherDisplay = record.weather || '☀️';
+
             recordItem.innerHTML = `
                 <div class="record-header">
-                    <h4>${dayOnly} ${record.weather}</h4>
+                    <h4>${dayOnly} ${weatherDisplay}</h4>
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="record-body">
@@ -326,7 +364,6 @@ async function loadAllRecordsFromFirestore() {
     }
 }
 
-// (変更なし)
 function loadRecordForDate(dateString) {
     const record = allRecordsCache.find(r => r.date === dateString);
     if (record) {
@@ -339,7 +376,6 @@ function loadRecordForDate(dateString) {
         document.getElementById('deleteButton').style.display = 'none';
     }
 }
-// (変更なし)
 function loadRecordById(id) {
     const record = allRecordsCache.find(r => r.id === id);
     if (record) {
@@ -351,14 +387,25 @@ function loadRecordById(id) {
     }
 }
 
-/**
- * ★ 変更: フォーム入力 (おしっこ削除)
- */
+// フォーム入力
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
     document.getElementById('date').value = record.date;
-    document.getElementById('weather').value = record.weather;
+    
+    // 天気の復元
+    const savedWeather = record.weather || '';
+    document.getElementById('weather').value = savedWeather;
+    const weatherVals = savedWeather.split('/');
+    // ボタンの見た目も復元
+    document.querySelectorAll('#weatherBtnGroup button').forEach(btn => {
+        if (weatherVals.includes(btn.getAttribute('data-val'))) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
     document.getElementById('temperatureFeel').value = record.temperatureFeel || 'ちょうどいい';
     document.getElementById('conditionCoco').value = record.conditionCoco || '○';
     document.getElementById('conditionNono').value = record.conditionNono || '○';
@@ -390,13 +437,18 @@ function populateForm(record) {
     document.getElementById('dogPhoto').value = "";
 }
 
-/**
- * ★ 変更: フォームクリア (おしっこ削除)
- */
+// フォームクリア
 function clearForm(dateString) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = '';
     document.getElementById('date').value = dateString;
+    
+    // 天気のクリア
+    document.getElementById('weather').value = '';
+    document.querySelectorAll('#weatherBtnGroup button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
     document.getElementById('temperatureFeel').value = 'ちょうどいい';
@@ -421,7 +473,6 @@ function clearForm(dateString) {
     document.getElementById('otherNotes').value = '';
 }
 
-// (変更なし)
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
     if (!idToDelete) {
@@ -447,7 +498,6 @@ async function deleteCurrentRecord() {
         toggleLoading(false);
     }
 }
-// (変更なし)
 function toggleLoading(isLoading, buttonText = null) {
     const saveButton = document.getElementById('saveButton');
     const deleteButton = document.getElementById('deleteButton');
@@ -460,7 +510,6 @@ function toggleLoading(isLoading, buttonText = null) {
         saveButton.textContent = existingId ? '記録を更新する' : '記録する';
     }
 }
-// (変更なし)
 function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
