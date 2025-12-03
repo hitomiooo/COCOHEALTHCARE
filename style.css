@@ -347,7 +347,7 @@ label[for="date"] {
     }
 }
 
-/* ▼ 天気ボタンのデザイン（新規追加） ▼ */
+/* ▼▼▼ 天気ボタンのデザイン（ここが重要です） ▼▼▼ */
 .weather-btn-group {
     display: flex;
     gap: 10px;
