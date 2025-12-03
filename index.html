@@ -27,14 +27,14 @@
             <label for="date">日付:</label>
             <input type="date" id="date" required>
 
-            <label for="weather">天気:</label>
-            <select id="weather">
-                <option value="☀️">☀️ 晴れ</option>
-                <option value="☁️">☁️ 曇り</option>
-                <option value="☂️">☂️ 雨</option>
-                <option value="☃️">☃️ 雪</option>
-            </select>
-            
+            <label>天気（2つまで選択可）:</label>
+            <div class="weather-btn-group" id="weatherBtnGroup">
+                <button type="button" data-val="☀️">☀️</button>
+                <button type="button" data-val="☁️">☁️</button>
+                <button type="button" data-val="☂️">☂️</button>
+                <button type="button" data-val="☃️">☃️</button>
+            </div>
+            <input type="text" id="weather" readonly placeholder="ボタンを押して選択" style="background-color: #f9f9f9; cursor: default;">
             <label for="temperatureFeel">体感気温👫:</label>
             <select id="temperatureFeel">
                 <option value="暑い">暑い</option>
@@ -92,23 +92,25 @@
                 <label for="appetiteMorning">朝:</label>
                 <select id="appetiteMorning">
                     <option value="完食">完食</option>
+                    <option value="少し残す">少し残す</option>
                     <option value="半分">半分</option>
                     <option value="ほぼ食べず">ほぼ食べず</option>
                 </select>
                 <label for="appetiteNoon">昼:</label>
                 <select id="appetiteNoon">
                     <option value="完食">完食</option>
+                    <option value="少し残す">少し残す</option>
                     <option value="半分">半分</option>
                     <option value="ほぼ食べず">ほぼ食べず</option>
                 </select>
                 <label for="appetiteNight">晩:</label>
                 <select id="appetiteNight">
                     <option value="完食">完食</option>
+                    <option value="少し残す">少し残す</option>
                     <option value="半分">半分</option>
                     <option value="ほぼ食べず">ほぼ食べず</option>
                 </select>
             </fieldset>
-
             <label for="sleepTime">睡眠の様子:</label>
             <select id="sleepTime">
                 <option value="ずっと寝てる">ずっと寝てる</option>
@@ -178,4 +180,3 @@
     <script src="script.js" type="module"></script>
 </body>
 </html>
-
