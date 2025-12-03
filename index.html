@@ -27,6 +27,29 @@
             <label for="date">日付:</label>
             <input type="date" id="date" required>
 
+            <label>一覧用マーク（重要な日）:</label>
+            <div class="mark-group">
+                <label class="mark-option">
+                    <input type="radio" name="eventMark" value="" checked>
+                    <span>なし</span>
+                </label>
+                <label class="mark-option">
+                    <input type="radio" name="eventMark" value="🏥">
+                    <span>🏥 病院</span>
+                </label>
+                <label class="mark-option">
+                    <input type="radio" name="eventMark" value="⚠️">
+                    <span>⚠️ 注意</span>
+                </label>
+                <label class="mark-option">
+                    <input type="radio" name="eventMark" value="✨">
+                    <span>✨ 特別</span>
+                </label>
+                <label class="mark-option">
+                    <input type="radio" name="eventMark" value="💉">
+                    <span>💉 注射</span>
+                </label>
+            </div>
             <label>天気（2つまで選択可）:</label>
             <div class="weather-btn-group" id="weatherBtnGroup">
                 <button type="button" data-val="☀️">☀️</button>
@@ -35,6 +58,7 @@
                 <button type="button" data-val="☃️">☃️</button>
             </div>
             <input type="text" id="weather" readonly placeholder="ボタンを押して選択" style="background-color: #f9f9f9; cursor: default;">
+            
             <label for="temperatureFeel">体感気温👫:</label>
             <select id="temperatureFeel">
                 <option value="暑い">暑い</option>
@@ -111,6 +135,7 @@
                     <option value="ほぼ食べず">ほぼ食べず</option>
                 </select>
             </fieldset>
+
             <label for="sleepTime">睡眠の様子:</label>
             <select id="sleepTime">
                 <option value="ずっと寝てる">ずっと寝てる</option>
