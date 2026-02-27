@@ -20,6 +20,19 @@
     <main id="mainContent" style="display: none;">
         
         <form id="healthForm">
+            <div id="iidaWeatherSection" style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #90caf9;">
+                <h3 style="margin-top:0; font-size: 1.1em;">📍 飯田市の気象情報</h3>
+                
+                <div id="todayWeatherDetail" style="margin-bottom: 10px; font-weight: bold; display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span id="todayTempRange">🌡️ 気温: 取得中...</span>
+                    <span id="pressureAlertContainer">🌤️ 気圧: 取得中...</span>
+                </div>
+
+                <div id="weeklyForecastContainer" style="display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px;">
+                    <p>🔄 週間予報を読み込み中...</p>
+                </div>
+            </div>
+
             <input type="hidden" id="recordId">
             
             <h3>記録フォーム</h3>
@@ -189,6 +202,15 @@
             <button type="submit" id="saveButton">記録する</button>
             <button type="button" id="deleteButton" class="delete-btn" style="display: none;">この日の記録を削除</button>
         </form>
+
+        <section id="chartSection" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <h3>過去30日の食欲推移 (ココ)</h3>
+            <div id="appetiteChartContainer"></div>
+
+            <div id="aiAdviceContainer" style="margin-top: 10px; padding: 10px; border-left: 4px solid #ff6b6b; background: #fff5f5; font-size: 0.9em; min-height: 40px;">
+                <p>🔄 データを解析中...</p>
+            </div>
+        </section>
 
         <hr>
 

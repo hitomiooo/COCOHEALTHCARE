@@ -65,6 +65,7 @@ onAuthStateChanged(auth, (user) => {
         showLoginScreen();
     }
 });
+
 loginButton.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
@@ -80,9 +81,11 @@ loginButton.addEventListener('click', () => {
             }
         });
 });
+
 logoutButton.addEventListener('click', () => {
     signOut(auth);
 });
+
 function showLoginScreen() {
     mainContent.style.display = 'none';
     authSection.style.display = 'block';
@@ -90,6 +93,7 @@ function showLoginScreen() {
     loginButton.style.display = 'block';
     logoutButton.style.display = 'none';
 }
+
 function showAccessDenied(user) {
     mainContent.style.display = 'none';
     authSection.style.display = 'block';
@@ -97,6 +101,7 @@ function showAccessDenied(user) {
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
 }
+
 function showApp(user) {
     mainContent.style.display = 'block';
     authSection.style.display = 'block';
@@ -117,7 +122,6 @@ function initializeAppLogic() {
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
     
-    // 天気ボタンのクリックイベント
     const weatherBtns = document.querySelectorAll('#weatherBtnGroup button');
     weatherBtns.forEach(btn => {
         btn.addEventListener('click', handleWeatherClick);
@@ -126,16 +130,85 @@ function initializeAppLogic() {
     const todayString = getFormattedDate(new Date());
     document.getElementById('date').value = todayString;
     loadAllRecordsFromFirestore();
+
+    // ★追加: 飯田市の気象情報の更新
+    updateIidaWeather();
 }
+
+// ★追加: 飯田市の気象情報を取得して表示
+async function updateIidaWeather() {
+    const tempContainer = document.getElementById('todayTempRange');
+    const forecastContainer = document.getElementById('weeklyForecastContainer');
+    const pressureContainer = document.getElementById('pressureAlertContainer');
+
+    try {
+        // Open-Meteo API (飯田市: 35.51, 137.82)
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=35.5147&longitude=137.8222&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=surface_pressure&timezone=Asia%2FTokyo";
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // 今日の最高・最低気温
+        const todayMax = data.daily.temperature_2m_max[0];
+        const todayMin = data.daily.temperature_2m_min[0];
+        if(tempContainer) tempContainer.innerHTML = `🌡️ 気温: <span style="color:#d32f2f;">最高 ${todayMax}℃</span> / <span style="color:#1976d2;">最低 ${todayMin}℃</span>`;
+
+        // 今日の気圧とアラート判定
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentPressure = data.hourly.surface_pressure[currentHour];
+        const futurePressure = data.hourly.surface_pressure[currentHour + 6]; 
+        const drop = currentPressure - futurePressure;
+
+        if (pressureContainer) {
+            if (drop >= 5) {
+                pressureContainer.innerHTML = `⚠️ <span style="background:#fff3cd; padding:2px 5px; border-radius:3px; border:1px solid #ffeeba;">気圧低下注意 (-${drop.toFixed(1)}hPa)</span>`;
+            } else {
+                pressureContainer.innerHTML = `🌤️ 気圧: ${currentPressure.toFixed(1)}hPa (安定)`;
+            }
+        }
+
+        // 1週間の天気予報の描画
+        if (forecastContainer) {
+            forecastContainer.innerHTML = '';
+            const weatherMap = {
+                0: "☀️", 1: "🌤️", 2: "⛅", 3: "☁️", 45: "🌫️", 48: "🌫️",
+                51: "🌦️", 61: "☔", 71: "❄️", 80: "🌧️", 95: "⚡"
+            };
+
+            data.daily.time.forEach((time, i) => {
+                const dateObj = new Date(time);
+                const dayLabel = i === 0 ? "今日" : `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
+                const icon = weatherMap[data.daily.weathercode[i]] || "❓";
+                
+                const dayEl = document.createElement('div');
+                dayEl.style.cssText = "min-width:65px; text-align:center; background:#fff; padding:8px; border-radius:8px; border:1px solid #e0e0e0; flex-shrink:0;";
+                dayEl.innerHTML = `
+                    <div style="font-size:0.75em; color:#666;">${dayLabel}</div>
+                    <div style="font-size:1.4em; margin:4px 0;">${icon}</div>
+                    <div style="font-size:0.7em; font-weight:bold;">
+                        <span style="color:#f44336;">${Math.round(data.daily.temperature_2m_max[i])}</span>/<span style="color:#2196f3;">${Math.round(data.daily.temperature_2m_min[i])}</span>
+                    </div>
+                `;
+                forecastContainer.appendChild(dayEl);
+            });
+        }
+    } catch (error) {
+        console.error("気象情報の取得エラー:", error);
+        if(forecastContainer) forecastContainer.innerHTML = "<p style='font-size:0.8em;'>⚠️ 気象情報を取得できませんでした</p>";
+    }
+}
+
 function getFormattedDate(date) {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
+
 function handleDateChange(event) {
     loadRecordForDate(event.target.value);
 }
+
 function handleStampClick(event) {
     if (event.target.classList.contains('stamp-btn')) {
         const stamp = event.target.textContent;
@@ -150,6 +223,7 @@ function handleStampClick(event) {
         memoTextArea.focus();
     }
 }
+
 async function handlePhotoPreview(event) {
     const file = event.target.files[0];
     const photoPreview = document.getElementById('photoPreview');
@@ -169,15 +243,12 @@ async function handlePhotoPreview(event) {
     }
 }
 
-// 天気ボタンの処理ロジック
 function handleWeatherClick(event) {
     const btn = event.currentTarget;
     const val = btn.getAttribute('data-val');
     const input = document.getElementById('weather');
     if (!input) return;
-
     let currentVals = input.value ? input.value.split('/') : [];
-
     if (btn.classList.contains('active')) {
         btn.classList.remove('active');
         currentVals = currentVals.filter(v => v !== val);
@@ -210,7 +281,6 @@ async function handleFormSubmit(event) {
             }
         }
         
-        // 重要マークの値を取得
         const markOptions = document.getElementsByName('eventMark');
         let selectedMark = '';
         for (const option of markOptions) {
@@ -223,7 +293,7 @@ async function handleFormSubmit(event) {
         const recordData = {
             date: date,
             weather: document.getElementById('weather').value,
-            eventMark: selectedMark, // ★ ここで保存
+            eventMark: selectedMark, 
             temperatureFeel: document.getElementById('temperatureFeel').value,
             conditionCoco: document.getElementById('conditionCoco').value,
             conditionNono: document.getElementById('conditionNono').value,
@@ -254,8 +324,7 @@ async function handleFormSubmit(event) {
         } else {
             const existingRecord = allRecordsCache.find(r => r.date === date);
             if (existingRecord) {
-                alert("エラー: その日付の記録は既に存在します。フォームを更新します。");
-                loadRecordForDate(date);
+                alert("エラー: その日付の記録は既に存在します。");
                 return;
             }
             await addDoc(recordsCollection, recordData);
@@ -264,7 +333,7 @@ async function handleFormSubmit(event) {
         await loadAllRecordsFromFirestore();
         loadRecordForDate(date);
     } catch (error) {
-        console.error("保存中にエラーが発生しました:", error);
+        console.error("保存エラー:", error);
         alert("保存に失敗しました: " + error.message);
     } finally {
         toggleLoading(false);
@@ -325,8 +394,6 @@ async function loadAllRecordsFromFirestore() {
             ].filter(Boolean).join(', ') || 'なし';
             
             const weatherDisplay = record.weather || '☀️';
-            
-            // ★ マークがある場合のみバッジを表示するためのHTML
             const markBadge = record.eventMark 
                 ? `<span class="event-mark-badge">${record.eventMark}</span>` 
                 : '';
@@ -336,7 +403,7 @@ async function loadAllRecordsFromFirestore() {
                     <h4>${dayOnly} ${weatherDisplay} ${markBadge}</h4>
                     <span class="toggle-icon">▼</span>
                 </div>
-                <div class="record-body">
+                <div class="record-body" style="display:none;">
                     <p><strong>体感:</strong> ${record.temperatureFeel || '?'}</p>
                     <p><strong>体調:</strong> ${conditionStr}</p>
                     <p><strong>お通じ:</strong> ${poopStr}</p>
@@ -346,15 +413,15 @@ async function loadAllRecordsFromFirestore() {
                     <p><strong>睡眠:</strong> ${record.sleepTime}</p>
                     <p><strong>散歩:</strong> ${record.walk}</p>
                     ${record.otherNotes ? `<p><strong>メモ:</strong> ${record.otherNotes.replace(/\n/g, '<br>')}</p>` : ''}
-                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="ぴーぴ" loading="lazy"></div>` : ''}
-                    <button class="edit-btn-small">この日を編集する</button>
+                    ${record.dogPhotoBase64 ? `<div class="record-photo"><img src="${record.dogPhotoBase64}" alt="ぴーぴ" loading="lazy" style="max-width:100%; border-radius:8px; margin-top:10px;"></div>` : ''}
+                    <button class="edit-btn-small" style="margin-top:10px;">この日を編集する</button>
                 </div>
             `;
             const header = recordItem.querySelector('.record-header');
             const body = recordItem.querySelector('.record-body');
             const icon = recordItem.querySelector('.toggle-icon');
             header.onclick = () => {
-                const isHidden = body.style.display === 'none' || body.style.display === '';
+                const isHidden = body.style.display === 'none';
                 body.style.display = isHidden ? 'block' : 'none';
                 icon.textContent = isHidden ? '▲' : '▼';
             };
@@ -369,10 +436,90 @@ async function loadAllRecordsFromFirestore() {
         });
         const todayString = document.getElementById('date').value;
         loadRecordForDate(todayString);
+
+        const chartContainer = document.getElementById('appetiteChartContainer');
+        if (chartContainer) {
+            chartContainer.innerHTML = generateAppetiteChart('Coco');
+        }
+
     } catch (error) {
-        console.error("データ読み込みエラー:", error);
+        console.error("読み込みエラー:", error);
         recordListDiv.innerHTML = '<p>⚠️ データの読み込みに失敗しました。</p>';
     }
+}
+
+// ★追加: 食欲グラフ生成関数
+function generateAppetiteChart(targetDog = 'Coco') {
+    const last30Days = allRecordsCache
+        .filter(r => r.date)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(-30);
+
+    updateAIAdvice(last30Days);
+
+    if (last30Days.length === 0) return '<p style="font-size:0.8em; color:#999;">データが不足しています</p>';
+
+    const scoreMap = { "完食": 3, "少し残す": 2, "半分": 1, "ほぼ食べず": 0 };
+    const points = last30Days.map((r, index) => {
+        const morning = scoreMap[r.appetiteMorning] || 0;
+        const noon = scoreMap[r.appetiteNoon] || 0;
+        const night = scoreMap[r.appetiteNight] || 0;
+        const totalScore = morning + noon + night;
+        const x = (index / 29) * 300 + 20; 
+        const y = 100 - (totalScore / 9) * 80; 
+        return `${x},${y}`;
+    }).join(' ');
+
+    return `
+        <svg viewBox="0 0 340 120" style="width:100%; height:auto; background:#fdfdfd; border-radius:5px;">
+            <line x1="20" y1="20" x2="320" y2="20" stroke="#eee" />
+            <line x1="20" y1="100" x2="320" y2="100" stroke="#ccc" />
+            <polyline fill="none" stroke="#ff6b6b" stroke-width="3" points="${points}" stroke-linejoin="round" />
+            ${points.split(' ').map(p => `<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3" fill="#ff6b6b" />`).join('')}
+            <text x="20" y="115" font-size="8" fill="#999">30日前</text>
+            <text x="280" y="115" font-size="8" fill="#999">今日</text>
+        </svg>
+    `;
+}
+
+// ★追加: AI健康アドバイス生成関数
+function updateAIAdvice(last30Days) {
+    const adviceDiv = document.getElementById('aiAdviceContainer');
+    if (!adviceDiv) return;
+
+    if (last30Days.length < 3) {
+        adviceDiv.innerHTML = "🐾 3日分以上のデータが貯まると、AIが健康トレンドを解析します。";
+        return;
+    }
+
+    const scoreMap = { "完食": 3, "少し残す": 2, "半分": 1, "ほぼ食べず": 0 };
+    const dailyScores = last30Days.map(r => {
+        return (scoreMap[r.appetiteMorning] || 0) + (scoreMap[r.appetiteNoon] || 0) + (scoreMap[r.appetiteNight] || 0);
+    });
+
+    const recent3 = dailyScores.slice(-3); 
+    const todayScore = recent3[2];
+    const prevScore = recent3[1];
+    const diff = todayScore - prevScore;
+
+    let message = "";
+    let icon = "💡";
+
+    if (todayScore <= 3) {
+        icon = "⚠️";
+        message = "ココちゃんの食欲がかなり低下しています。スタンプにある「嘔吐」や「咳」が出ていないか確認し、続く場合は早めに先生に相談しましょう。";
+    } else if (diff <= -3) {
+        icon = "📉";
+        message = "昨日より食欲が急に落ちています。気圧や気温の変化による疲れかもしれません。ゆっくり休ませてあげてください。";
+    } else if (todayScore >= 8) {
+        icon = "✨";
+        message = "バッチリ完食が続いていますね！体調はとても良さそうです。この調子で投薬も忘れずに進めましょう。";
+    } else {
+        icon = "🐾";
+        message = "食欲は安定しています。日々の記録を続けることで、小さな変化にも気づきやすくなります。";
+    }
+
+    adviceDiv.innerHTML = `<strong>${icon} AIアドバイス:</strong><br>${message}`;
 }
 
 function loadRecordForDate(dateString) {
@@ -387,6 +534,7 @@ function loadRecordForDate(dateString) {
         document.getElementById('deleteButton').style.display = 'none';
     }
 }
+
 function loadRecordById(id) {
     const record = allRecordsCache.find(r => r.id === id);
     if (record) {
@@ -398,13 +546,11 @@ function loadRecordById(id) {
     }
 }
 
-// フォーム入力
 function populateForm(record) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = record.id;
     document.getElementById('date').value = record.date;
     
-    // 天気の復元
     const savedWeather = record.weather || '';
     document.getElementById('weather').value = savedWeather;
     const weatherVals = savedWeather.split('/');
@@ -416,7 +562,6 @@ function populateForm(record) {
         }
     });
 
-    // ★重要マークの復元
     const savedMark = record.eventMark || '';
     const markOptions = document.getElementsByName('eventMark');
     for (const option of markOptions) {
@@ -454,117 +599,56 @@ function populateForm(record) {
         img.src = record.dogPhotoBase64;
         photoPreview.appendChild(img);
     }
-    document.getElementById('dogPhoto').value = "";
 }
 
-// フォームクリア
 function clearForm(dateString) {
     document.getElementById('healthForm').reset();
     document.getElementById('recordId').value = '';
     document.getElementById('date').value = dateString;
-    
-    // 天気のクリア
     document.getElementById('weather').value = '';
     document.querySelectorAll('#weatherBtnGroup button').forEach(btn => {
         btn.classList.remove('active');
     });
-    
-    // ★重要マークのクリア（なしを選択）
     const markOptions = document.getElementsByName('eventMark');
     if(markOptions.length > 0) markOptions[0].checked = true;
-
     currentPhotoBase64 = null;
     document.getElementById('photoPreview').innerHTML = '';
-    document.getElementById('temperatureFeel').value = 'ちょうどいい';
-    document.getElementById('conditionCoco').value = '○';
-    document.getElementById('conditionNono').value = '○';
-    document.getElementById('conditionMomo').value = '○';
-    document.getElementById('conditionBibi').value = '○';
-    document.getElementById('sleepTime').value = 'ずっと寝てる';
-    document.getElementById('medPimo').checked = true;
-    document.getElementById('medLactu').checked = true;
-    document.getElementById('medConseve').checked = true;
-    document.getElementById('medPrega').checked = true;
-    document.getElementById('medOther').checked = true;
-    document.getElementById('poopMorning').checked = false;
-    document.getElementById('poopNoon').checked = false;
-    document.getElementById('poopWalk').checked = false;
-    document.getElementById('poopNight').checked = false;
-    document.getElementById('appetiteMorning').value = '完食';
-    document.getElementById('appetiteNoon').value = '完食';
-    document.getElementById('appetiteNight').value = '完食';
-    document.getElementById('walk').value = '行ってない';
-    document.getElementById('otherNotes').value = '';
 }
 
 async function deleteCurrentRecord() {
     const idToDelete = document.getElementById('recordId').value;
-    if (!idToDelete) {
-        alert("削除する記録がありません。");
-        return;
-    }
-    if (!confirm('本当にこの日の記録を削除しますか？')) {
-        return;
-    }
+    if (!idToDelete || !confirm('本当にこの日の記録を削除しますか？')) return;
     toggleLoading(true, '削除中...');
     try {
-        const docRef = doc(db, 'records', idToDelete);
-        await deleteDoc(docRef);
-        alert("記録を削除しました。");
+        await deleteDoc(doc(db, 'records', idToDelete));
+        alert("削除しました。");
         await loadAllRecordsFromFirestore();
-        const todayString = getFormattedDate(new Date());
-        document.getElementById('date').value = todayString;
-        loadRecordForDate(todayString);
-    } catch (error) {
-        console.error("削除中にエラー:", error);
-        alert("削除に失敗しました: " + error.message);
-    } finally {
-        toggleLoading(false);
-    }
+    } catch (error) { alert("削除失敗: " + error.message); }
+    finally { toggleLoading(false); }
 }
-function toggleLoading(isLoading, buttonText = null) {
-    const saveButton = document.getElementById('saveButton');
-    const deleteButton = document.getElementById('deleteButton');
-    saveButton.disabled = isLoading;
-    deleteButton.disabled = isLoading;
-    if (buttonText) {
-        saveButton.textContent = buttonText;
-    } else {
-        const existingId = document.getElementById('recordId').value;
-        saveButton.textContent = existingId ? '記録を更新する' : '記録する';
-    }
+
+function toggleLoading(isLoading, text) {
+    const btn = document.getElementById('saveButton');
+    btn.disabled = isLoading;
+    if (text && isLoading) btn.textContent = text;
 }
+
 function resizeAndEncode(file, maxSize = 300, quality = 0.4) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = (e) => {
             const img = new Image();
-            img.onload = function() {
-                let width = img.width;
-                let height = img.height;
-                if (width > height) {
-                    if (width > maxSize) {
-                        height *= maxSize / width;
-                        width = maxSize;
-                    }
-                } else {
-                    if (height > maxSize) {
-                        width *= maxSize / height;
-                        height = maxSize;
-                    }
-                }
+            img.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                resolve(dataUrl);
+                let w = img.width, h = img.height;
+                if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+                else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
             };
-            img.onerror = reject;
-            img.src = event.target.result;
+            img.src = e.target.result;
         };
-        reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
