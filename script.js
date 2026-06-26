@@ -9,9 +9,9 @@ import {
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup,
-    signOut,
-    browserLocalPersistence,
-    setPersistence
+    signInWithRedirect,
+    getRedirectResult,
+    signOut
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 
@@ -38,8 +38,12 @@ const ALLOWED_EMAIL_LIST = [
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-setPersistence(auth, browserLocalPersistence);
 const recordsCollection = collection(db, 'records');
+
+// iOSのPWAではリダイレクト結果を処理
+getRedirectResult(auth).catch(error => {
+    console.error("リダイレクトログインエラー:", error);
+});
 
 // === グローバル変数 ===
 let currentPhotoBase64 = null; 
@@ -71,18 +75,23 @@ onAuthStateChanged(auth, (user) => {
 
 loginButton.addEventListener('click', () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            console.log("ポップアップログイン成功:", result.user.email);
-        })
-        .catch((error) => {
-            console.error("ポップアップログイン失敗:", error);
-            if (error.code === 'auth/popup-closed-by-user') {
-                alert("ログインがキャンセルされました。");
-            } else {
-                alert("ログインに失敗しました: " + error.message);
-            }
-        });
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isIOS) {
+        signInWithRedirect(auth, provider);
+    } else {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log("ポップアップログイン成功:", result.user.email);
+            })
+            .catch((error) => {
+                console.error("ポップアップログイン失敗:", error);
+                if (error.code === 'auth/popup-closed-by-user') {
+                    alert("ログインがキャンセルされました。");
+                } else {
+                    alert("ログインに失敗しました: " + error.message);
+                }
+            });
+    }
 });
 
 logoutButton.addEventListener('click', () => {
