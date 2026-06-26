@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ぴーぴのごはん管理 | 分量表</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8f8f6;--surface:#fff;--surface2:#f3f3f0;
+  --border:#e0e0db;--border-strong:#c8c8c2;
+  --text:#1a1a18;--text2:#5a5a55;--text3:#9a9a94;
+  --accent:#2563eb;--accent-bg:#eff6ff;--accent-border:#bfdbfe;--accent-text:#1d4ed8;
+  --radius:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a18;--surface:#242422;--surface2:#2c2c2a;
+    --border:#3a3a38;--border-strong:#505050;
+    --text:#f0f0ec;--text2:#a0a09a;--text3:#606060;
+    --accent:#3b82f6;--accent-bg:#1e3a5f;--accent-border:#2d5a9e;--accent-text:#93c5fd;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+
+/* header */
+.site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.site-header h1{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px}
+.back-link{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:3px;padding:5px 9px;border:1px solid var(--border);border-radius:var(--radius)}
+.back-link:hover{background:var(--surface2)}
+
+.app{max-width:500px;margin:0 auto;padding:12px}
+.sub-title{font-size:11px;color:var(--text3);margin-bottom:14px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:5px}
+
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{flex:1;padding:8px 4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;font-size:12px;text-align:center;color:var(--text2);-webkit-tap-highlight-color:transparent}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.section{display:none}.section.active{display:block}
+
+/* print btn */
+.print-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:500}
+
+/* pet card */
+.pet-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.pet-header{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.photo-wrap{position:relative;width:46px;height:46px;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.photo-wrap img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+.fallback{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:1.5px dashed var(--border-strong)}
+.photo-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;opacity:0}
+.photo-wrap:active .photo-ov,.photo-wrap:hover .photo-ov{opacity:1}
+.photo-ov i{color:#fff;font-size:16px}
+.photo-input{display:none}
+.pet-name-input{font-size:14px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;width:100%;padding:2px 0}
+.pet-type{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* meal */
+.meal-block{padding:10px 13px;border-bottom:1px solid var(--border)}
+.meal-block:last-child{border-bottom:none}
+.meal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.meal-title{font-size:11px;font-weight:600;color:var(--text2)}
+.edit-toggle{font-size:10px;color:var(--accent-text);cursor:pointer;padding:2px 7px;border:1px solid var(--accent-border);border-radius:10px;background:var(--accent-bg);-webkit-tap-highlight-color:transparent}
+.food-checks{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.food-check{padding:4px 9px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;color:var(--text2);background:var(--surface2);user-select:none;min-height:28px;display:flex;align-items:center;-webkit-tap-highlight-color:transparent}
+.food-check.on{background:var(--accent-bg);color:var(--accent-text);border-color:var(--accent-border);font-weight:600}
+.food-edit-area{margin-bottom:7px}
+.food-edit-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.food-edit-row input{flex:1;font-size:12px;padding:6px 9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
+.food-edit-row input:focus{border-color:var(--accent)}
+.food-del{padding:5px 7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:14px}
+.food-add-btn{display:flex;align-items:center;gap:3px;padding:6px 10px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-bottom:8px;-webkit-tap-highlight-color:transparent}
+
+/* gram */
+.gram-rows{display:flex;flex-direction:column;gap:5px}
+.gram-row{display:flex;align-items:center;gap:6px}
+.gram-label-input{width:86px;flex-shrink:0;font-size:11px;padding:4px 6px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text2);outline:none;text-align:center}
+.gram-label-input:focus{border-color:var(--accent);color:var(--text)}
+.gram-val-input{width:58px;font-size:12px;padding:4px 7px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);text-align:right;outline:none}
+.gram-val-input:focus{border-color:var(--accent)}
+.gram-unit{font-size:10px;color:var(--text3)}
+.gram-del{padding:3px 5px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:13px}
+.gram-add-btn{display:flex;align-items:center;gap:3px;padding:4px 9px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-top:2px;-webkit-tap-highlight-color:transparent}
+
+/* sub tabs (per-pet) */
+.sub-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.sub-tab{padding:6px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;color:var(--text2);background:var(--surface);display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent}
+.sub-tab.active{background:var(--accent-bg);color:var(--accent-text);border-color:var(--accent-border);font-weight:600}
+.pet-section{display:none}.pet-section.active{display:block}
+
+/* section card */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:10px}
+.section-title{font-size:13px;font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.med-group{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.med-group:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.med-row{display:flex;gap:5px;margin-bottom:5px;align-items:center}
+.med-row input{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
+.med-row input:focus{border-color:var(--accent)}
+.add-btn{display:flex;align-items:center;gap:4px;padding:8px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);width:100%;justify-content:center;margin-top:5px;-webkit-tap-highlight-color:transparent}
+.del-btn{padding:3px 6px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:14px;flex-shrink:0}
+textarea{width:100%;font-size:12px;padding:9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);resize:vertical;min-height:90px;font-family:inherit;outline:none}
+textarea:focus{border-color:var(--accent)}
+.date-box{font-size:13px;color:var(--text2);padding:3px 0}
+
+/* ===== PRINT ===== */
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+  body{background:#fff!important;color:#111!important}
+  .site-header,.app{display:none!important}
+  .print-sheet{display:block!important}
+}
+.print-sheet{display:none}
+.ps{width:277mm;font-family:'Hiragino Sans','Yu Gothic',sans-serif;font-size:8.5pt;color:#111}
+.ps-title{font-size:11pt;font-weight:700;margin-bottom:3mm;display:flex;justify-content:space-between;align-items:baseline}
+.ps-date{font-size:7.5pt;font-weight:400;color:#555}
+.ps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:3mm}
+.ps-pet{border:1.5px solid #bbb;border-radius:4px;overflow:hidden}
+.ps-head{padding:2mm 2.5mm;background:#f0f0f0;border-bottom:1px solid #bbb;display:flex;align-items:center;gap:2mm}
+.ps-photo{width:11mm;height:11mm;border-radius:50%;object-fit:cover;border:1px solid #ccc;flex-shrink:0}
+.ps-fallback{width:11mm;height:11mm;border-radius:50%;background:#e8e8e8;display:flex;align-items:center;justify-content:center;font-size:13pt;flex-shrink:0}
+.ps-pname{font-size:9.5pt;font-weight:700}
+.ps-ptype{font-size:6.5pt;color:#666}
+.ps-meals{padding:1.5mm 2.5mm}
+.ps-meal{margin-bottom:1.5mm;padding-bottom:1.5mm;border-bottom:0.5px solid #e8e8e8}
+.ps-meal:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.ps-mlabel{font-size:7pt;font-weight:700;color:#444;margin-bottom:0.8mm}
+.ps-foods{display:flex;flex-wrap:wrap;gap:0.8mm;margin-bottom:0.8mm}
+.ps-food{padding:0.3mm 1.5mm;border:1px solid #ccc;border-radius:8px;font-size:6.5pt;color:#555}
+.ps-food.on{background:#dbeafe;border-color:#93c5fd;color:#1e40af;font-weight:600}
+.ps-grams{display:flex;flex-wrap:wrap;gap:2.5mm;font-size:6.5pt;color:#555;margin-top:0.5mm}
+.ps-bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
+.ps-box{border:1.5px solid #bbb;border-radius:4px;padding:2mm 2.5mm;overflow:hidden}
+.ps-box-head{padding:1.5mm 2.5mm;background:#f0f0f0;border-bottom:1px solid #bbb;margin:-2mm -2.5mm 2mm;font-size:8pt;font-weight:700;display:flex;align-items:center;gap:1.5mm}
+.ps-med-item{font-size:6.5pt;margin-bottom:1mm;padding-bottom:1mm;border-bottom:0.5px solid #eee}
+.ps-med-item:last-child{border-bottom:none}
+.ps-memo-text{font-size:7pt;color:#333;white-space:pre-wrap;min-height:10mm}
+.ps-empty{font-size:6.5pt;color:#aaa}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="back-link" href="index.html"><i class="ti ti-arrow-left" aria-hidden="true"></i> 健康手帳へ</a>
+  <h1>🐾 ぴーぴのごはん管理</h1>
+  <button class="print-btn" onclick="doPrint()"><i class="ti ti-printer" aria-hidden="true"></i> A4印刷</button>
+</header>
+
+<div class="app">
+  <div class="sub-title"><i class="ti ti-info-circle" aria-hidden="true"></i> データはこのブラウザに保存されます。写真をタップで変更、✏️でメニュー編集できます。</div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showSection('food',this)">🍚 ごはん</div>
+    <div class="tab" onclick="showSection('med',this)">💊 薬</div>
+    <div class="tab" onclick="showSection('memo',this)">📝 メモ</div>
+  </div>
+
+  <div id="section-food" class="section active"><div id="pet-list"></div></div>
+  <div id="section-med" class="section">
+    <div id="med-sub-tabs"></div>
+    <div id="med-sections"></div>
+  </div>
+  <div id="section-memo" class="section">
+    <div id="memo-sub-tabs"></div>
+    <div id="memo-sections"></div>
+  </div>
+</div>
+
+<div class="print-sheet" id="print-sheet"></div>
+
+<script>
+// =============================================
+// ペット定義（名前は実際の子に合わせて変更済み）
+// =============================================
+const DEF_DOG_AM  =['ドライフード','缶詰','ささみ','胸肉','野菜ペースト','おやつ'];
+const DEF_DOG_NOON=['基本','焼き芋','スイカ','チュール'];
+const DEF_DOG_PM  =['ドライフード','缶詰','ささみ','胸肉','野菜ペースト','おやつ'];
+const DEF_CAT     =['チュール','シーバ','ポンチュール','鰹節','おやつ'];
+const DEF_GRAMS   =()=>[{label:'ドライフード',val:''},{label:'缶詰',val:''}];
+
+const PETS=[
+  {id:'coco', name:'ココ', type:'犬', color:'#E6F1FB', icon:'🐕', isDog:true},
+  {id:'nono', name:'ノノ', type:'犬', color:'#EAF3DE', icon:'🐕', isDog:true},
+  {id:'momo', name:'モモ', type:'犬', color:'#FAEEDA', icon:'🐕', isDog:true},
+  {id:'bibi', name:'ビビ', type:'猫', color:'#FBEAF0', icon:'🐈', isDog:false},
+];
+const MEALS=[
+  {id:'am',   label:'朝', icon:'🌅'},
+  {id:'noon', label:'昼', icon:'☀️'},
+  {id:'pm',   label:'晩', icon:'🌙'},
+];
+const KEY='pippy_gohan_v1';
+
+function defMenus(p,mid){
+  if(!p.isDog)return[...DEF_CAT];
+  if(mid==='noon')return[...DEF_DOG_NOON];
+  if(mid==='am')return[...DEF_DOG_AM];
+  return[...DEF_DOG_PM];
+}
+
+// =============================================
+// データ管理（localStorage）
+// =============================================
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
+function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+
+let data=load();
+let editMode={};
+let activeMedPet=PETS[0].id;
+let activeMemoPet=PETS[0].id;
+
+PETS.forEach(p=>{
+  if(!data[p.id])data[p.id]={};
+  if(!data[p.id].name)data[p.id].name=p.name;
+  if(!data[p.id].photo)data[p.id].photo='';
+  if(!data[p.id].meds)data[p.id].meds=[];
+  if(!data[p.id].memo)data[p.id].memo='';
+  MEALS.forEach(m=>{
+    if(!data[p.id][m.id])data[p.id][m.id]={foods:[],menus:defMenus(p,m.id),grams:DEF_GRAMS()};
+    const md=data[p.id][m.id];
+    if(!md.foods)md.foods=[];
+    if(!md.menus)md.menus=defMenus(p,m.id);
+    if(!md.grams){
+      md.grams=[];
+      if(md.karikari!==undefined||md.can!==undefined){
+        md.grams=[{label:'ドライフード',val:md.karikari||''},{label:'缶詰',val:md.can||''}];
+        delete md.karikari;delete md.can;
+      }else md.grams=DEF_GRAMS();
+    }
+  });
+});
+
+// =============================================
+// 写真
+// =============================================
+function openPhoto(pid){document.getElementById('pi_'+pid).click()}
+function handlePhoto(pid,inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    data[pid].photo=e.target.result;save(data);
+    renderFood();renderMedTabs();renderMemoTabs();
+  };
+  r.readAsDataURL(f);
+}
+function photoHtml(p,size=46){
+  if(data[p.id].photo)
+    return`<img src="${data[p.id].photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:1px solid var(--border)" alt="${esc(data[p.id].name)}">`;
+  return`<div class="fallback" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.45)}px;background:${p.color}">${p.icon}</div>`;
+}
+function subTabPhoto(p){
+  if(data[p.id].photo)
+    return`<img src="${data[p.id].photo}" style="width:20px;height:20px;border-radius:50%;object-fit:cover">`;
+  return`<div style="width:20px;height:20px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:11px">${p.icon}</div>`;
+}
+
+// =============================================
+// ごはんタブ
+// =============================================
+function toggleFood(pid,mid,idx){
+  const md=data[pid][mid];const f=md.menus[idx];
+  const i=md.foods.indexOf(f);
+  if(i>=0)md.foods.splice(i,1);else md.foods.push(f);
+  save(data);renderFood();
+}
+function toggleEdit(pid,mid){editMode[pid+'_'+mid]=!editMode[pid+'_'+mid];renderFood()}
+function updateMenu(pid,mid,idx,val){
+  const md=data[pid][mid];const old=md.menus[idx];
+  md.menus[idx]=val;
+  const si=md.foods.indexOf(old);if(si>=0)md.foods[si]=val;
+  save(data);
+}
+function addMenu(pid,mid){data[pid][mid].menus.push('新しいメニュー');save(data);renderFood()}
+function delMenu(pid,mid,idx){
+  const md=data[pid][mid];const name=md.menus[idx];
+  md.menus.splice(idx,1);
+  const si=md.foods.indexOf(name);if(si>=0)md.foods.splice(si,1);
+  save(data);renderFood();
+}
+function updateGLabel(pid,mid,gi,val){data[pid][mid].grams[gi].label=val;save(data)}
+function updateGVal(pid,mid,gi,val){data[pid][mid].grams[gi].val=val;save(data)}
+function addGram(pid,mid){data[pid][mid].grams.push({label:'項目名',val:''});save(data);renderFood()}
+function delGram(pid,mid,gi){data[pid][mid].grams.splice(gi,1);save(data);renderFood()}
+
+function renderFood(){
+  document.getElementById('pet-list').innerHTML=PETS.map(p=>`
+    <div class="pet-card">
+      <div class="pet-header">
+        <div class="photo-wrap" onclick="openPhoto('${p.id}')">
+          ${photoHtml(p)}
+          <div class="photo-ov"><i class="ti ti-camera" aria-hidden="true"></i></div>
+        </div>
+        <input type="file" accept="image/*" class="photo-input" id="pi_${p.id}" onchange="handlePhoto('${p.id}',this)">
+        <div style="flex:1;min-width:0">
+          <input class="pet-name-input" value="${esc(data[p.id].name)}"
+            oninput="data['${p.id}'].name=this.value;save(data)">
+          <div class="pet-type">🐾 ${p.type}</div>
+        </div>
+      </div>
+      ${MEALS.map(m=>{
+        const md=data[p.id][m.id];const k=p.id+'_'+m.id;const isE=!!editMode[k];
+        let inner='';
+        if(isE){
+          inner+=`<div class="food-edit-area">`;
+          md.menus.forEach((f,i)=>{inner+=`<div class="food-edit-row">
+            <input value="${esc(f)}" placeholder="メニュー名" oninput="updateMenu('${p.id}','${m.id}',${i},this.value)">
+            <button class="food-del" onclick="delMenu('${p.id}','${m.id}',${i})">×</button>
+          </div>`});
+          inner+=`</div><button class="food-add-btn" onclick="addMenu('${p.id}','${m.id}')">
+            <i class="ti ti-plus" aria-hidden="true"></i> メニューを追加
+          </button>`;
+        }else{
+          inner+=`<div class="food-checks">`;
+          md.menus.forEach((f,i)=>{inner+=`<div class="food-check${md.foods.includes(f)?' on':''}" onclick="toggleFood('${p.id}','${m.id}',${i})">${esc(f)}</div>`});
+          inner+=`</div>`;
+        }
+        // グラム行
+        inner+=`<div class="gram-rows">`;
+        md.grams.forEach((g,gi)=>{inner+=`<div class="gram-row">
+          <input class="gram-label-input" value="${esc(g.label)}" placeholder="項目名"
+            oninput="updateGLabel('${p.id}','${m.id}',${gi},this.value)">
+          <input class="gram-val-input" type="number" min="0" step="1" placeholder="0" value="${esc(g.val)}"
+            oninput="updateGVal('${p.id}','${m.id}',${gi},this.value)">
+          <span class="gram-unit">g</span>
+          <button class="gram-del" onclick="delGram('${p.id}','${m.id}',${gi})">×</button>
+        </div>`});
+        inner+=`<button class="gram-add-btn" onclick="addGram('${p.id}','${m.id}')">
+          <i class="ti ti-plus" aria-hidden="true"></i> 行を追加
+        </button></div>`;
+        return`<div class="meal-block">
+          <div class="meal-header">
+            <div class="meal-title">${m.icon} ${m.label}ごはん</div>
+            <span class="edit-toggle" onclick="toggleEdit('${p.id}','${m.id}')">${isE?'✓ 完了':'✏️ 編集'}</span>
+          </div>${inner}</div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+// =============================================
+// 薬タブ（ペット別）
+// =============================================
+function renderMedTabs(){
+  document.getElementById('med-sub-tabs').innerHTML=`<div class="sub-tabs">${PETS.map(p=>`
+    <div class="sub-tab${activeMedPet===p.id?' active':''}"
+      onclick="activeMedPet='${p.id}';renderMedTabs();renderMedSections()">
+      ${subTabPhoto(p)} ${esc(data[p.id].name)}
+    </div>`).join('')}</div>`;
+}
+function renderMedSections(){
+  document.getElementById('med-sections').innerHTML=PETS.map(p=>`
+    <div class="pet-section${activeMedPet===p.id?' active':''}">
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-pill" aria-hidden="true"></i> ${esc(data[p.id].name)}の薬
+        </div>
+        ${data[p.id].meds.length===0
+          ?`<div style="font-size:12px;color:var(--text3);padding:4px 0">記録なし</div>`:''}
+        ${data[p.id].meds.map((m,i)=>`
+          <div class="med-group">
+            <div class="med-row">
+              <input style="flex:1" placeholder="薬の名前" value="${esc(m.name)}"
+                oninput="data['${p.id}'].meds[${i}].name=this.value;save(data)">
+              <input style="width:68px;flex:0 0 68px" placeholder="時間" value="${esc(m.time)}"
+                oninput="data['${p.id}'].meds[${i}].time=this.value;save(data)">
+              <button class="del-btn"
+                onclick="data['${p.id}'].meds.splice(${i},1);save(data);renderMedSections()">×</button>
+            </div>
+            <input placeholder="備考（量・注意点など）" value="${esc(m.note)}"
+              style="width:100%;font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none"
+              oninput="data['${p.id}'].meds[${i}].note=this.value;save(data)">
+          </div>`).join('')}
+        <button class="add-btn"
+          onclick="data['${p.id}'].meds.push({name:'',time:'',note:''});save(data);renderMedSections()">
+          <i class="ti ti-plus" aria-hidden="true"></i> 薬を追加
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+// =============================================
+// メモタブ（ペット別）
+// =============================================
+function renderMemoTabs(){
+  document.getElementById('memo-sub-tabs').innerHTML=`<div class="sub-tabs">${PETS.map(p=>`
+    <div class="sub-tab${activeMemoPet===p.id?' active':''}"
+      onclick="activeMemoPet='${p.id}';renderMemoTabs();renderMemoSections()">
+      ${subTabPhoto(p)} ${esc(data[p.id].name)}
+    </div>`).join('')}</div>`;
+}
+function renderMemoSections(){
+  document.getElementById('memo-sections').innerHTML=PETS.map(p=>`
+    <div class="pet-section${activeMemoPet===p.id?' active':''}">
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-note" aria-hidden="true"></i> ${esc(data[p.id].name)}のメモ
+        </div>
+        <textarea placeholder="体調の変化、獣医さんへの連絡事項など..."
+          oninput="data['${p.id}'].memo=this.value;save(data)">${esc(data[p.id].memo)}</textarea>
+      </div>
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-calendar" aria-hidden="true"></i> 今日の日付
+        </div>
+        <div class="date-box">${new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}</div>
+      </div>
+    </div>`).join('');
+}
+
+// =============================================
+// 印刷
+// =============================================
+function buildPrint(){
+  const dateStr=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  const petsHtml=PETS.map(p=>{
+    const photoEl=data[p.id].photo
+      ?`<img class="ps-photo" src="${data[p.id].photo}" alt="${esc(data[p.id].name)}" style="width:11mm;height:11mm;border-radius:50%;object-fit:cover;border:1px solid #ccc;flex-shrink:0">`
+      :`<div class="ps-fallback" style="width:11mm;height:11mm;border-radius:50%;background:#e8e8e8;display:flex;align-items:center;justify-content:center;font-size:13pt;flex-shrink:0">${p.icon}</div>`;
+    const mealsHtml=MEALS.map(m=>{
+      const md=data[p.id][m.id];
+      const gr=md.grams.filter(g=>g.val).map(g=>`<span>${esc(g.label)} <b>${g.val}g</b></span>`).join('');
+      return`<div class="ps-meal">
+        <div class="ps-mlabel">${m.label}ごはん</div>
+        <div class="ps-foods">${md.menus.map(f=>`<span class="ps-food${md.foods.includes(f)?' on':''}">${esc(f)}</span>`).join('')}</div>
+        ${gr?`<div class="ps-grams">${gr}</div>`:''}
+      </div>`;
+    }).join('');
+    return`<div class="ps-pet">
+      <div class="ps-head">${photoEl}
+        <div><div class="ps-pname">${esc(data[p.id].name)}</div><div class="ps-ptype">${p.type}</div></div>
+      </div>
+      <div class="ps-meals">${mealsHtml}</div>
+    </div>`;
+  }).join('');
+
+  const bottomHtml=PETS.map(p=>{
+    const medsHtml=data[p.id].meds.filter(m=>m.name).map(m=>`
+      <div class="ps-med-item">
+        <b>${esc(m.name)}</b>${m.time?`　${esc(m.time)}`:''}
+        ${m.note?`<br><span style="color:#555">${esc(m.note)}</span>`:''}
+      </div>`).join('')||`<div class="ps-empty">記録なし</div>`;
+    const memoHtml=data[p.id].memo
+      ?`<div class="ps-memo-text">${esc(data[p.id].memo)}</div>`
+      :`<div class="ps-empty">なし</div>`;
+    const ph=data[p.id].photo
+      ?`<img src="${data[p.id].photo}" style="width:8mm;height:8mm;border-radius:50%;object-fit:cover">`
+      :`<span>${p.icon}</span>`;
+    return`<div class="ps-box">
+      <div class="ps-box-head">${ph} ${esc(data[p.id].name)}</div>
+      <div style="font-size:6.5pt;font-weight:700;color:#444;margin-bottom:1mm">💊 薬</div>
+      ${medsHtml}
+      <div style="font-size:6.5pt;font-weight:700;color:#444;margin:2mm 0 1mm">📝 メモ</div>
+      ${memoHtml}
+    </div>`;
+  }).join('');
+
+  document.getElementById('print-sheet').innerHTML=`
+    <div class="ps">
+      <div class="ps-title">🐾 ぴーぴのごはん管理　分量表　<span class="ps-date">${dateStr}</span></div>
+      <div class="ps-grid">${petsHtml}</div>
+      <div class="ps-bottom-grid">${bottomHtml}</div>
+    </div>`;
+}
+
+// =============================================
+// ユーティリティ
+// =============================================
+function doPrint(){buildPrint();setTimeout(()=>window.print(),100)}
+function showSection(name,tabEl){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tabEl.classList.add('active');
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+
+// 初期描画
+renderFood();
+renderMedTabs();renderMedSections();
+renderMemoTabs();renderMemoSections();
+</script>
+</body>
+</html>
