@@ -13,7 +13,7 @@
   --border:#e0e0db;--border-strong:#c8c8c2;
   --text:#1a1a18;--text2:#5a5a55;--text3:#9a9a94;
   --accent:#2563eb;--accent-bg:#eff6ff;--accent-border:#bfdbfe;--accent-text:#1d4ed8;
-  --radius:8px;
+  --danger:#dc2626;--radius:8px;
 }
 @media(prefers-color-scheme:dark){
   :root{
@@ -26,11 +26,21 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 a{color:var(--accent);text-decoration:none}
 
+/* auth */
+#authSection{max-width:400px;margin:60px auto;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-align:center}
+#authSection h2{font-size:16px;margin-bottom:12px}
+#authStatus{font-size:13px;color:var(--text2);margin-bottom:16px}
+#loginButton{padding:10px 20px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;font-size:14px;font-weight:500}
+#logoutButton{padding:7px 16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);cursor:pointer;font-size:13px;color:var(--text2)}
+
 /* header */
 .site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.site-header h1{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px}
+.site-header h1{font-size:15px;font-weight:600}
 .back-link{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:3px;padding:5px 9px;border:1px solid var(--border);border-radius:var(--radius)}
 .back-link:hover{background:var(--surface2)}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.print-btn{display:flex;align-items:center;gap:5px;padding:7px 11px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:500}
+.save-status{font-size:11px;color:var(--text3)}
 
 .app{max-width:500px;margin:0 auto;padding:12px}
 .sub-title{font-size:11px;color:var(--text3);margin-bottom:14px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:5px}
@@ -40,9 +50,6 @@ a{color:var(--accent);text-decoration:none}
 .tab{flex:1;padding:8px 4px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;font-size:12px;text-align:center;color:var(--text2);-webkit-tap-highlight-color:transparent}
 .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .section{display:none}.section.active{display:block}
-
-/* print btn */
-.print-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;cursor:pointer;font-size:12px;font-weight:500}
 
 /* pet card */
 .pet-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
@@ -54,7 +61,7 @@ a{color:var(--accent);text-decoration:none}
 .photo-wrap:active .photo-ov,.photo-wrap:hover .photo-ov{opacity:1}
 .photo-ov i{color:#fff;font-size:16px}
 .photo-input{display:none}
-.pet-name-input{font-size:14px;font-weight:600;color:var(--text);border:none;background:transparent;outline:none;width:100%;padding:2px 0}
+.pet-name{font-size:14px;font-weight:600;color:var(--text)}
 .pet-type{font-size:10px;color:var(--text3);margin-top:1px}
 
 /* meal */
@@ -71,7 +78,7 @@ a{color:var(--accent);text-decoration:none}
 .food-edit-row input{flex:1;font-size:12px;padding:6px 9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
 .food-edit-row input:focus{border-color:var(--accent)}
 .food-del{padding:5px 7px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:14px}
-.food-add-btn{display:flex;align-items:center;gap:3px;padding:6px 10px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-bottom:8px;-webkit-tap-highlight-color:transparent}
+.food-add-btn{display:flex;align-items:center;gap:3px;padding:6px 10px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-bottom:8px}
 
 /* gram */
 .gram-rows{display:flex;flex-direction:column;gap:5px}
@@ -82,9 +89,9 @@ a{color:var(--accent);text-decoration:none}
 .gram-val-input:focus{border-color:var(--accent)}
 .gram-unit{font-size:10px;color:var(--text3)}
 .gram-del{padding:3px 5px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:13px}
-.gram-add-btn{display:flex;align-items:center;gap:3px;padding:4px 9px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-top:2px;-webkit-tap-highlight-color:transparent}
+.gram-add-btn{display:flex;align-items:center;gap:3px;padding:4px 9px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);margin-top:2px}
 
-/* sub tabs (per-pet) */
+/* sub tabs */
 .sub-tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
 .sub-tab{padding:6px 10px;border:1px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;color:var(--text2);background:var(--surface);display:flex;align-items:center;gap:5px;-webkit-tap-highlight-color:transparent}
 .sub-tab.active{background:var(--accent-bg);color:var(--accent-text);border-color:var(--accent-border);font-weight:600}
@@ -96,15 +103,16 @@ a{color:var(--accent);text-decoration:none}
 .med-group{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid var(--border)}
 .med-group:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .med-row{display:flex;gap:5px;margin-bottom:5px;align-items:center}
-.med-row input{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
-.med-row input:focus{border-color:var(--accent)}
-.add-btn{display:flex;align-items:center;gap:4px;padding:8px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);width:100%;justify-content:center;margin-top:5px;-webkit-tap-highlight-color:transparent}
+.med-row input,.note-input{font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none}
+.med-row input:focus,.note-input:focus{border-color:var(--accent)}
+.note-input{width:100%}
+.add-btn{display:flex;align-items:center;gap:4px;padding:8px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:11px;color:var(--text2);width:100%;justify-content:center;margin-top:5px}
 .del-btn{padding:3px 6px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-size:14px;flex-shrink:0}
 textarea{width:100%;font-size:12px;padding:9px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);resize:vertical;min-height:90px;font-family:inherit;outline:none}
 textarea:focus{border-color:var(--accent)}
 .date-box{font-size:13px;color:var(--text2);padding:3px 0}
 
-/* ===== PRINT ===== */
+/* print */
 @media print{
   @page{size:A4 landscape;margin:8mm}
   body{background:#fff!important;color:#111!important}
@@ -118,8 +126,6 @@ textarea:focus{border-color:var(--accent)}
 .ps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:3mm}
 .ps-pet{border:1.5px solid #bbb;border-radius:4px;overflow:hidden}
 .ps-head{padding:2mm 2.5mm;background:#f0f0f0;border-bottom:1px solid #bbb;display:flex;align-items:center;gap:2mm}
-.ps-photo{width:11mm;height:11mm;border-radius:50%;object-fit:cover;border:1px solid #ccc;flex-shrink:0}
-.ps-fallback{width:11mm;height:11mm;border-radius:50%;background:#e8e8e8;display:flex;align-items:center;justify-content:center;font-size:13pt;flex-shrink:0}
 .ps-pname{font-size:9.5pt;font-weight:700}
 .ps-ptype{font-size:6.5pt;color:#666}
 .ps-meals{padding:1.5mm 2.5mm}
@@ -141,343 +147,448 @@ textarea:focus{border-color:var(--accent)}
 </head>
 <body>
 
-<header class="site-header">
-  <a class="back-link" href="index.html"><i class="ti ti-arrow-left" aria-hidden="true"></i> 健康手帳へ</a>
-  <h1>🐾 ぴーぴのごはん管理</h1>
-  <button class="print-btn" onclick="doPrint()"><i class="ti ti-printer" aria-hidden="true"></i> A4印刷</button>
-</header>
+<!-- 認証前 -->
+<div id="authSection">
+  <h2>🐾 ぴーぴのごはん管理</h2>
+  <p id="authStatus">🔄 認証状態を確認中...</p>
+  <button id="loginButton" style="display:none">Googleアカウントでログイン</button>
+  <button id="logoutButton" style="display:none">ログアウト</button>
+  <div style="margin-top:12px"><a href="index.html" style="font-size:12px;color:#999">← 健康手帳へ戻る</a></div>
+</div>
 
-<div class="app">
-  <div class="sub-title"><i class="ti ti-info-circle" aria-hidden="true"></i> データはこのブラウザに保存されます。写真をタップで変更、✏️でメニュー編集できます。</div>
+<!-- ログイン後 -->
+<div id="mainApp" style="display:none">
+  <header class="site-header">
+    <a class="back-link" href="index.html"><i class="ti ti-arrow-left" aria-hidden="true"></i> 健康手帳へ</a>
+    <h1>🐾 ごはん管理</h1>
+    <div class="hdr-right">
+      <span class="save-status" id="saveStatus"></span>
+      <button class="print-btn" onclick="doPrint()"><i class="ti ti-printer" aria-hidden="true"></i> 印刷</button>
+    </div>
+  </header>
 
-  <div class="tabs">
-    <div class="tab active" onclick="showSection('food',this)">🍚 ごはん</div>
-    <div class="tab" onclick="showSection('med',this)">💊 薬</div>
-    <div class="tab" onclick="showSection('memo',this)">📝 メモ</div>
-  </div>
-
-  <div id="section-food" class="section active"><div id="pet-list"></div></div>
-  <div id="section-med" class="section">
-    <div id="med-sub-tabs"></div>
-    <div id="med-sections"></div>
-  </div>
-  <div id="section-memo" class="section">
-    <div id="memo-sub-tabs"></div>
-    <div id="memo-sections"></div>
+  <div class="app">
+    <div class="sub-title"><i class="ti ti-info-circle" aria-hidden="true"></i> データはFirestoreに自動保存されます。写真タップで変更 / ✏️でメニュー編集</div>
+    <div class="tabs">
+      <div class="tab active" onclick="showSection('food',this)">🍚 ごはん</div>
+      <div class="tab" onclick="showSection('med',this)">💊 薬</div>
+      <div class="tab" onclick="showSection('memo',this)">📝 メモ</div>
+    </div>
+    <div id="section-food" class="section active"><div id="pet-list"></div></div>
+    <div id="section-med" class="section"><div id="med-sub-tabs"></div><div id="med-sections"></div></div>
+    <div id="section-memo" class="section"><div id="memo-sub-tabs"></div><div id="memo-sections"></div></div>
   </div>
 </div>
 
 <div class="print-sheet" id="print-sheet"></div>
 
-<script>
-// =============================================
-// ペット定義（名前は実際の子に合わせて変更済み）
-// =============================================
-const DEF_DOG_AM  =['ドライフード','缶詰','ささみ','胸肉','野菜ペースト','おやつ'];
-const DEF_DOG_NOON=['基本','焼き芋','スイカ','チュール'];
-const DEF_DOG_PM  =['ドライフード','缶詰','ささみ','胸肉','野菜ペースト','おやつ'];
-const DEF_CAT     =['チュール','シーバ','ポンチュール','鰹節','おやつ'];
-const DEF_GRAMS   =()=>[{label:'ドライフード',val:''},{label:'缶詰',val:''}];
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-const PETS=[
+// =============================================
+// Firebase 設定
+// =============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDCwPw3WxwYHvaudHqYJ64RzhS4hWhKvO0",
+  authDomain: "coco-healthcare-59401.firebaseapp.com",
+  projectId: "coco-healthcare-59401",
+  storageBucket: "coco-healthcare-59401.firebasestorage.app",
+  messagingSenderId: "986920233821",
+  appId: "1:986920233821:web:96ff08e9f118d557a816b4"
+};
+const ALLOWED_EMAILS = ['fine2025contact@gmail.com','1103ohtm@gmail.com','tatsuya51801736@gmail.com'];
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+const auth = getAuth(app);
+
+// =============================================
+// ペット・食事定義
+// =============================================
+const DEF_DOG_AM   = ['ドライフード','缶詰','ささみ','胸肉','野菜ペースト'];
+const DEF_DOG_NOON = ['焼き芋','スイカ','チュール','テリーヌ'];
+const DEF_DOG_PM   = ['ドライフード','缶詰','ささみ','胸肉','野菜ペースト'];
+const DEF_CAT      = ['チュール','シーバ','ポンチュール','鰹節'];
+const DEF_GRAMS    = () => [{label:'ドライフード',val:''},{label:'缶詰',val:''}];
+
+const PETS = [
   {id:'coco', name:'ココ', type:'犬', color:'#E6F1FB', icon:'🐕', isDog:true},
   {id:'nono', name:'ノノ', type:'犬', color:'#EAF3DE', icon:'🐕', isDog:true},
   {id:'momo', name:'モモ', type:'犬', color:'#FAEEDA', icon:'🐕', isDog:true},
   {id:'bibi', name:'ビビ', type:'猫', color:'#FBEAF0', icon:'🐈', isDog:false},
 ];
-const MEALS=[
+const MEALS = [
   {id:'am',   label:'朝', icon:'🌅'},
   {id:'noon', label:'昼', icon:'☀️'},
   {id:'pm',   label:'晩', icon:'🌙'},
 ];
-const KEY='pippy_gohan_v1';
+const FS_DOC = 'gohan/main'; // Firestoreのパス
 
-function defMenus(p,mid){
-  if(!p.isDog)return[...DEF_CAT];
-  if(mid==='noon')return[...DEF_DOG_NOON];
-  if(mid==='am')return[...DEF_DOG_AM];
-  return[...DEF_DOG_PM];
+function defMenus(p, mid) {
+  if (!p.isDog) return [...DEF_CAT];
+  if (mid === 'noon') return [...DEF_DOG_NOON];
+  if (mid === 'am')   return [...DEF_DOG_AM];
+  return [...DEF_DOG_PM];
 }
 
 // =============================================
-// データ管理（localStorage）
+// データ
 // =============================================
-function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return{}}}
-function save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}
+let data = {};
+let editMode = {};
+let activeMedPet  = PETS[0].id;
+let activeMemoPet = PETS[0].id;
+let saveTimer = null;
 
-let data=load();
-let editMode={};
-let activeMedPet=PETS[0].id;
-let activeMemoPet=PETS[0].id;
-
-PETS.forEach(p=>{
-  if(!data[p.id])data[p.id]={};
-  if(!data[p.id].name)data[p.id].name=p.name;
-  if(!data[p.id].photo)data[p.id].photo='';
-  if(!data[p.id].meds)data[p.id].meds=[];
-  if(!data[p.id].memo)data[p.id].memo='';
-  MEALS.forEach(m=>{
-    if(!data[p.id][m.id])data[p.id][m.id]={foods:[],menus:defMenus(p,m.id),grams:DEF_GRAMS()};
-    const md=data[p.id][m.id];
-    if(!md.foods)md.foods=[];
-    if(!md.menus)md.menus=defMenus(p,m.id);
-    if(!md.grams){
-      md.grams=[];
-      if(md.karikari!==undefined||md.can!==undefined){
-        md.grams=[{label:'ドライフード',val:md.karikari||''},{label:'缶詰',val:md.can||''}];
-        delete md.karikari;delete md.can;
-      }else md.grams=DEF_GRAMS();
-    }
+function initData() {
+  PETS.forEach(p => {
+    if (!data[p.id]) data[p.id] = {};
+    if (!data[p.id].name)  data[p.id].name  = p.name;
+    if (!data[p.id].photo) data[p.id].photo = '';
+    if (!data[p.id].meds)  data[p.id].meds  = [];
+    if (!data[p.id].memo)  data[p.id].memo  = '';
+    MEALS.forEach(m => {
+      if (!data[p.id][m.id]) data[p.id][m.id] = {foods:[], menus:defMenus(p,m.id), grams:DEF_GRAMS()};
+      const md = data[p.id][m.id];
+      if (!md.foods)  md.foods  = [];
+      if (!md.menus)  md.menus  = defMenus(p, m.id);
+      if (!md.grams)  md.grams  = DEF_GRAMS();
+    });
   });
+}
+
+// Firestoreから読み込み
+async function loadFromFirestore() {
+  try {
+    const ref = doc(db, 'gohan', 'main');
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      data = snap.data();
+    }
+    initData(); // 不足フィールドを補完
+    renderAll();
+  } catch(e) {
+    console.error('load error:', e);
+    initData();
+    renderAll();
+  }
+}
+
+// Firestoreへ保存（デバウンス: 1秒後）
+function save() {
+  clearTimeout(saveTimer);
+  setStatus('保存中...');
+  saveTimer = setTimeout(async () => {
+    try {
+      const ref = doc(db, 'gohan', 'main');
+      await setDoc(ref, data);
+      setStatus('✓ 保存済み');
+      setTimeout(() => setStatus(''), 2000);
+    } catch(e) {
+      console.error('save error:', e);
+      setStatus('⚠️ 保存失敗');
+    }
+  }, 1000);
+}
+
+function setStatus(msg) {
+  const el = document.getElementById('saveStatus');
+  if (el) el.textContent = msg;
+}
+
+// =============================================
+// 認証
+// =============================================
+const authSection = document.getElementById('authSection');
+const mainApp     = document.getElementById('mainApp');
+const authStatus  = document.getElementById('authStatus');
+const loginBtn    = document.getElementById('loginButton');
+const logoutBtn   = document.getElementById('logoutButton');
+
+onAuthStateChanged(auth, user => {
+  if (user && ALLOWED_EMAILS.includes(user.email)) {
+    authSection.style.display = 'none';
+    mainApp.style.display = 'block';
+    loadFromFirestore();
+  } else if (user) {
+    authStatus.textContent = 'このアカウントはアクセス許可されていません。';
+    loginBtn.style.display  = 'none';
+    logoutBtn.style.display = 'block';
+  } else {
+    authSection.style.display = 'block';
+    mainApp.style.display = 'none';
+    authStatus.textContent = 'ログインしてください。';
+    loginBtn.style.display  = 'block';
+    logoutBtn.style.display = 'none';
+  }
 });
+
+loginBtn.addEventListener('click', () => {
+  signInWithPopup(auth, new GoogleAuthProvider()).catch(e => alert('ログイン失敗: ' + e.message));
+});
+logoutBtn.addEventListener('click', () => signOut(auth));
 
 // =============================================
 // 写真
 // =============================================
-function openPhoto(pid){document.getElementById('pi_'+pid).click()}
-function handlePhoto(pid,inp){
-  const f=inp.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    data[pid].photo=e.target.result;save(data);
-    renderFood();renderMedTabs();renderMemoTabs();
+function openPhoto(pid) { document.getElementById('pi_'+pid).click(); }
+function handlePhoto(pid, inp) {
+  const f = inp.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    // 写真をリサイズして保存
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const max = 200;
+      if (w > h) { if (w > max) { h = h*max/w; w = max; } }
+      else       { if (h > max) { w = w*max/h; h = max; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      data[pid].photo = canvas.toDataURL('image/jpeg', 0.6);
+      save();
+      renderAll();
+    };
+    img.src = e.target.result;
   };
-  r.readAsDataURL(f);
+  reader.readAsDataURL(f);
 }
-function photoHtml(p,size=46){
-  if(data[p.id].photo)
-    return`<img src="${data[p.id].photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:1px solid var(--border)" alt="${esc(data[p.id].name)}">`;
-  return`<div class="fallback" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.45)}px;background:${p.color}">${p.icon}</div>`;
+window.openPhoto  = openPhoto;
+window.handlePhoto = handlePhoto;
+
+function photoHtml(p, size) {
+  size = size || 46;
+  if (data[p.id] && data[p.id].photo)
+    return '<img src="'+data[p.id].photo+'" style="width:'+size+'px;height:'+size+'px;border-radius:50%;object-fit:cover;border:1px solid var(--border)" alt="'+esc(data[p.id].name)+'">';
+  return '<div class="fallback" style="width:'+size+'px;height:'+size+'px;font-size:'+Math.round(size*0.45)+'px;background:'+p.color+'">'+p.icon+'</div>';
 }
-function subTabPhoto(p){
-  if(data[p.id].photo)
-    return`<img src="${data[p.id].photo}" style="width:20px;height:20px;border-radius:50%;object-fit:cover">`;
-  return`<div style="width:20px;height:20px;border-radius:50%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:11px">${p.icon}</div>`;
+function subTabPhoto(p) {
+  if (data[p.id] && data[p.id].photo)
+    return '<img src="'+data[p.id].photo+'" style="width:20px;height:20px;border-radius:50%;object-fit:cover">';
+  return '<div style="width:20px;height:20px;border-radius:50%;background:'+p.color+';display:flex;align-items:center;justify-content:center;font-size:11px">'+p.icon+'</div>';
 }
 
 // =============================================
 // ごはんタブ
 // =============================================
-function toggleFood(pid,mid,idx){
-  const md=data[pid][mid];const f=md.menus[idx];
-  const i=md.foods.indexOf(f);
-  if(i>=0)md.foods.splice(i,1);else md.foods.push(f);
-  save(data);renderFood();
-}
-function toggleEdit(pid,mid){editMode[pid+'_'+mid]=!editMode[pid+'_'+mid];renderFood()}
-function updateMenu(pid,mid,idx,val){
-  const md=data[pid][mid];const old=md.menus[idx];
-  md.menus[idx]=val;
-  const si=md.foods.indexOf(old);if(si>=0)md.foods[si]=val;
-  save(data);
-}
-function addMenu(pid,mid){data[pid][mid].menus.push('新しいメニュー');save(data);renderFood()}
-function delMenu(pid,mid,idx){
-  const md=data[pid][mid];const name=md.menus[idx];
-  md.menus.splice(idx,1);
-  const si=md.foods.indexOf(name);if(si>=0)md.foods.splice(si,1);
-  save(data);renderFood();
-}
-function updateGLabel(pid,mid,gi,val){data[pid][mid].grams[gi].label=val;save(data)}
-function updateGVal(pid,mid,gi,val){data[pid][mid].grams[gi].val=val;save(data)}
-function addGram(pid,mid){data[pid][mid].grams.push({label:'項目名',val:''});save(data);renderFood()}
-function delGram(pid,mid,gi){data[pid][mid].grams.splice(gi,1);save(data);renderFood()}
+window.toggleFood = function(pid, mid, idx) {
+  const md = data[pid][mid];
+  const f  = md.menus[idx];
+  const i  = md.foods.indexOf(f);
+  if (i >= 0) md.foods.splice(i,1); else md.foods.push(f);
+  save(); renderFood();
+};
+window.toggleEdit = function(pid, mid) {
+  editMode[pid+'_'+mid] = !editMode[pid+'_'+mid];
+  renderFood();
+};
+window.updateMenu = function(pid, mid, idx, val) {
+  const md = data[pid][mid];
+  const old = md.menus[idx];
+  md.menus[idx] = val;
+  const si = md.foods.indexOf(old);
+  if (si >= 0) md.foods[si] = val;
+  save();
+};
+window.addMenu = function(pid, mid) {
+  data[pid][mid].menus.push('新しいメニュー');
+  save(); renderFood();
+};
+window.delMenu = function(pid, mid, idx) {
+  const md = data[pid][mid];
+  const name = md.menus[idx];
+  md.menus.splice(idx, 1);
+  const si = md.foods.indexOf(name);
+  if (si >= 0) md.foods.splice(si, 1);
+  save(); renderFood();
+};
+window.updateGLabel = function(pid, mid, gi, val) {
+  data[pid][mid].grams[gi].label = val; save();
+};
+window.updateGVal = function(pid, mid, gi, val) {
+  data[pid][mid].grams[gi].val = val; save();
+};
+window.addGram = function(pid, mid) {
+  data[pid][mid].grams.push({label:'項目名', val:''}); save(); renderFood();
+};
+window.delGram = function(pid, mid, gi) {
+  data[pid][mid].grams.splice(gi, 1); save(); renderFood();
+};
 
-function renderFood(){
-  document.getElementById('pet-list').innerHTML=PETS.map(p=>`
-    <div class="pet-card">
-      <div class="pet-header">
-        <div class="photo-wrap" onclick="openPhoto('${p.id}')">
-          ${photoHtml(p)}
-          <div class="photo-ov"><i class="ti ti-camera" aria-hidden="true"></i></div>
-        </div>
-        <input type="file" accept="image/*" class="photo-input" id="pi_${p.id}" onchange="handlePhoto('${p.id}',this)">
-        <div style="flex:1;min-width:0">
-          <input class="pet-name-input" value="${esc(data[p.id].name)}"
-            oninput="data['${p.id}'].name=this.value;save(data)">
-          <div class="pet-type">🐾 ${p.type}</div>
-        </div>
-      </div>
-      ${MEALS.map(m=>{
-        const md=data[p.id][m.id];const k=p.id+'_'+m.id;const isE=!!editMode[k];
-        let inner='';
-        if(isE){
-          inner+=`<div class="food-edit-area">`;
-          md.menus.forEach((f,i)=>{inner+=`<div class="food-edit-row">
-            <input value="${esc(f)}" placeholder="メニュー名" oninput="updateMenu('${p.id}','${m.id}',${i},this.value)">
-            <button class="food-del" onclick="delMenu('${p.id}','${m.id}',${i})">×</button>
-          </div>`});
-          inner+=`</div><button class="food-add-btn" onclick="addMenu('${p.id}','${m.id}')">
-            <i class="ti ti-plus" aria-hidden="true"></i> メニューを追加
-          </button>`;
-        }else{
-          inner+=`<div class="food-checks">`;
-          md.menus.forEach((f,i)=>{inner+=`<div class="food-check${md.foods.includes(f)?' on':''}" onclick="toggleFood('${p.id}','${m.id}',${i})">${esc(f)}</div>`});
-          inner+=`</div>`;
-        }
-        // グラム行
-        inner+=`<div class="gram-rows">`;
-        md.grams.forEach((g,gi)=>{inner+=`<div class="gram-row">
-          <input class="gram-label-input" value="${esc(g.label)}" placeholder="項目名"
-            oninput="updateGLabel('${p.id}','${m.id}',${gi},this.value)">
-          <input class="gram-val-input" type="number" min="0" step="1" placeholder="0" value="${esc(g.val)}"
-            oninput="updateGVal('${p.id}','${m.id}',${gi},this.value)">
-          <span class="gram-unit">g</span>
-          <button class="gram-del" onclick="delGram('${p.id}','${m.id}',${gi})">×</button>
-        </div>`});
-        inner+=`<button class="gram-add-btn" onclick="addGram('${p.id}','${m.id}')">
-          <i class="ti ti-plus" aria-hidden="true"></i> 行を追加
-        </button></div>`;
-        return`<div class="meal-block">
-          <div class="meal-header">
-            <div class="meal-title">${m.icon} ${m.label}ごはん</div>
-            <span class="edit-toggle" onclick="toggleEdit('${p.id}','${m.id}')">${isE?'✓ 完了':'✏️ 編集'}</span>
-          </div>${inner}</div>`;
-      }).join('')}
-    </div>`).join('');
-}
-
-// =============================================
-// 薬タブ（ペット別）
-// =============================================
-function renderMedTabs(){
-  document.getElementById('med-sub-tabs').innerHTML=`<div class="sub-tabs">${PETS.map(p=>`
-    <div class="sub-tab${activeMedPet===p.id?' active':''}"
-      onclick="activeMedPet='${p.id}';renderMedTabs();renderMedSections()">
-      ${subTabPhoto(p)} ${esc(data[p.id].name)}
-    </div>`).join('')}</div>`;
-}
-function renderMedSections(){
-  document.getElementById('med-sections').innerHTML=PETS.map(p=>`
-    <div class="pet-section${activeMedPet===p.id?' active':''}">
-      <div class="section-card">
-        <div class="section-title">
-          <i class="ti ti-pill" aria-hidden="true"></i> ${esc(data[p.id].name)}の薬
-        </div>
-        ${data[p.id].meds.length===0
-          ?`<div style="font-size:12px;color:var(--text3);padding:4px 0">記録なし</div>`:''}
-        ${data[p.id].meds.map((m,i)=>`
-          <div class="med-group">
-            <div class="med-row">
-              <input style="flex:1" placeholder="薬の名前" value="${esc(m.name)}"
-                oninput="data['${p.id}'].meds[${i}].name=this.value;save(data)">
-              <input style="width:68px;flex:0 0 68px" placeholder="時間" value="${esc(m.time)}"
-                oninput="data['${p.id}'].meds[${i}].time=this.value;save(data)">
-              <button class="del-btn"
-                onclick="data['${p.id}'].meds.splice(${i},1);save(data);renderMedSections()">×</button>
-            </div>
-            <input placeholder="備考（量・注意点など）" value="${esc(m.note)}"
-              style="width:100%;font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none"
-              oninput="data['${p.id}'].meds[${i}].note=this.value;save(data)">
-          </div>`).join('')}
-        <button class="add-btn"
-          onclick="data['${p.id}'].meds.push({name:'',time:'',note:''});save(data);renderMedSections()">
-          <i class="ti ti-plus" aria-hidden="true"></i> 薬を追加
-        </button>
-      </div>
-    </div>`).join('');
+function renderFood() {
+  var html = '';
+  PETS.forEach(function(p) {
+    html += '<div class="pet-card">';
+    html += '<div class="pet-header">';
+    html += '<div class="photo-wrap" onclick="openPhoto(\''+p.id+'\')">'+photoHtml(p)+'<div class="photo-ov"><i class="ti ti-camera" aria-hidden="true"></i></div></div>';
+    html += '<input type="file" accept="image/*" class="photo-input" id="pi_'+p.id+'" onchange="handlePhoto(\''+p.id+'\',this)">';
+    html += '<div style="flex:1;min-width:0"><div class="pet-name">'+esc(data[p.id].name)+'</div><div class="pet-type">🐾 '+p.type+'</div></div>';
+    html += '</div>';
+    MEALS.forEach(function(m) {
+      var md  = data[p.id][m.id];
+      var k   = p.id+'_'+m.id;
+      var isE = !!editMode[k];
+      html += '<div class="meal-block">';
+      html += '<div class="meal-header"><div class="meal-title">'+m.icon+' '+m.label+'ごはん</div>';
+      html += '<span class="edit-toggle" onclick="toggleEdit(\''+p.id+'\',\''+m.id+'\')">'+( isE?'✓ 完了':'✏️ 編集')+'</span></div>';
+      if (isE) {
+        html += '<div class="food-edit-area">';
+        md.menus.forEach(function(f,i) {
+          html += '<div class="food-edit-row">';
+          html += '<input value="'+esc(f)+'" placeholder="メニュー名" onchange="updateMenu(\''+p.id+'\',\''+m.id+'\','+i+',this.value)" oninput="updateMenu(\''+p.id+'\',\''+m.id+'\','+i+',this.value)">';
+          html += '<button class="food-del" onclick="delMenu(\''+p.id+'\',\''+m.id+'\','+i+')">×</button></div>';
+        });
+        html += '</div><button class="food-add-btn" onclick="addMenu(\''+p.id+'\',\''+m.id+'\')">';
+        html += '<i class="ti ti-plus" aria-hidden="true"></i> メニューを追加</button>';
+      } else {
+        html += '<div class="food-checks">';
+        md.menus.forEach(function(f,i) {
+          html += '<div class="food-check'+(md.foods.includes(f)?' on':'')+'" onclick="toggleFood(\''+p.id+'\',\''+m.id+'\','+i+')">'+esc(f)+'</div>';
+        });
+        html += '</div>';
+      }
+      html += '<div class="gram-rows">';
+      md.grams.forEach(function(g, gi) {
+        html += '<div class="gram-row">';
+        html += '<input class="gram-label-input" value="'+esc(g.label)+'" placeholder="項目名" onchange="updateGLabel(\''+p.id+'\',\''+m.id+'\','+gi+',this.value)" oninput="updateGLabel(\''+p.id+'\',\''+m.id+'\','+gi+',this.value)">';
+        html += '<input class="gram-val-input" type="number" min="0" step="1" placeholder="0" value="'+esc(g.val)+'" onchange="updateGVal(\''+p.id+'\',\''+m.id+'\','+gi+',this.value)" oninput="updateGVal(\''+p.id+'\',\''+m.id+'\','+gi+',this.value)">';
+        html += '<span class="gram-unit">g</span>';
+        html += '<button class="gram-del" onclick="delGram(\''+p.id+'\',\''+m.id+'\','+gi+')">×</button></div>';
+      });
+      html += '<button class="gram-add-btn" onclick="addGram(\''+p.id+'\',\''+m.id+'\')">';
+      html += '<i class="ti ti-plus" aria-hidden="true"></i> 行を追加</button></div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('pet-list').innerHTML = html;
 }
 
 // =============================================
-// メモタブ（ペット別）
+// 薬タブ
 // =============================================
-function renderMemoTabs(){
-  document.getElementById('memo-sub-tabs').innerHTML=`<div class="sub-tabs">${PETS.map(p=>`
-    <div class="sub-tab${activeMemoPet===p.id?' active':''}"
-      onclick="activeMemoPet='${p.id}';renderMemoTabs();renderMemoSections()">
-      ${subTabPhoto(p)} ${esc(data[p.id].name)}
-    </div>`).join('')}</div>`;
+window.setActiveMedPet = function(pid) { activeMedPet = pid; renderMedTabs(); renderMedSections(); };
+window.saveMedName = function(pid,i,v){ data[pid].meds[i].name=v; save(); };
+window.saveMedTime = function(pid,i,v){ data[pid].meds[i].time=v; save(); };
+window.saveMedNote = function(pid,i,v){ data[pid].meds[i].note=v; save(); };
+window.addMed = function(pid){ data[pid].meds.push({name:'',time:'',note:''}); save(); renderMedSections(); };
+window.delMed = function(pid,i){ data[pid].meds.splice(i,1); save(); renderMedSections(); };
+
+function renderMedTabs() {
+  var html = '<div class="sub-tabs">';
+  PETS.forEach(function(p) {
+    html += '<div class="sub-tab'+(activeMedPet===p.id?' active':'')+'" onclick="setActiveMedPet(\''+p.id+'\')">';
+    html += subTabPhoto(p)+' '+esc(data[p.id].name)+'</div>';
+  });
+  html += '</div>';
+  document.getElementById('med-sub-tabs').innerHTML = html;
 }
-function renderMemoSections(){
-  document.getElementById('memo-sections').innerHTML=PETS.map(p=>`
-    <div class="pet-section${activeMemoPet===p.id?' active':''}">
-      <div class="section-card">
-        <div class="section-title">
-          <i class="ti ti-note" aria-hidden="true"></i> ${esc(data[p.id].name)}のメモ
-        </div>
-        <textarea placeholder="体調の変化、獣医さんへの連絡事項など..."
-          oninput="data['${p.id}'].memo=this.value;save(data)">${esc(data[p.id].memo)}</textarea>
-      </div>
-      <div class="section-card">
-        <div class="section-title">
-          <i class="ti ti-calendar" aria-hidden="true"></i> 今日の日付
-        </div>
-        <div class="date-box">${new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}</div>
-      </div>
-    </div>`).join('');
+function renderMedSections() {
+  var html = '';
+  PETS.forEach(function(p) {
+    html += '<div class="pet-section'+(activeMedPet===p.id?' active':'')+'"><div class="section-card">';
+    html += '<div class="section-title"><i class="ti ti-pill" aria-hidden="true"></i> '+esc(data[p.id].name)+'の薬</div>';
+    if (data[p.id].meds.length === 0) html += '<div style="font-size:12px;color:var(--text3);padding:4px 0">記録なし</div>';
+    data[p.id].meds.forEach(function(m,i) {
+      html += '<div class="med-group"><div class="med-row">';
+      html += '<input style="flex:1" placeholder="薬の名前" value="'+esc(m.name)+'" onchange="saveMedName(\''+p.id+'\','+i+',this.value)" oninput="saveMedName(\''+p.id+'\','+i+',this.value)">';
+      html += '<input style="width:68px;flex:0 0 68px" placeholder="時間" value="'+esc(m.time)+'" onchange="saveMedTime(\''+p.id+'\','+i+',this.value)" oninput="saveMedTime(\''+p.id+'\','+i+',this.value)">';
+      html += '<button class="del-btn" onclick="delMed(\''+p.id+'\','+i+')">×</button></div>';
+      html += '<input class="note-input" placeholder="備考（量・注意点など）" value="'+esc(m.note)+'" onchange="saveMedNote(\''+p.id+'\','+i+',this.value)" oninput="saveMedNote(\''+p.id+'\','+i+',this.value)">';
+      html += '</div>';
+    });
+    html += '<button class="add-btn" onclick="addMed(\''+p.id+'\')">';
+    html += '<i class="ti ti-plus" aria-hidden="true"></i> 薬を追加</button></div></div>';
+  });
+  document.getElementById('med-sections').innerHTML = html;
+}
+
+// =============================================
+// メモタブ
+// =============================================
+window.setActiveMemoPet = function(pid) { activeMemoPet = pid; renderMemoTabs(); renderMemoSections(); };
+window.saveMemo = function(pid,v){ data[pid].memo=v; save(); };
+
+function renderMemoTabs() {
+  var html = '<div class="sub-tabs">';
+  PETS.forEach(function(p) {
+    html += '<div class="sub-tab'+(activeMemoPet===p.id?' active':'')+'" onclick="setActiveMemoPet(\''+p.id+'\')">';
+    html += subTabPhoto(p)+' '+esc(data[p.id].name)+'</div>';
+  });
+  html += '</div>';
+  document.getElementById('memo-sub-tabs').innerHTML = html;
+}
+function renderMemoSections() {
+  var html = '';
+  PETS.forEach(function(p) {
+    html += '<div class="pet-section'+(activeMemoPet===p.id?' active':'')+'"><div class="section-card">';
+    html += '<div class="section-title"><i class="ti ti-note" aria-hidden="true"></i> '+esc(data[p.id].name)+'のメモ</div>';
+    html += '<textarea placeholder="体調の変化、獣医さんへの連絡事項など..." onchange="saveMemo(\''+p.id+'\',this.value)" oninput="saveMemo(\''+p.id+'\',this.value)">'+esc(data[p.id].memo)+'</textarea>';
+    html += '</div><div class="section-card"><div class="section-title"><i class="ti ti-calendar" aria-hidden="true"></i> 今日の日付</div>';
+    html += '<div class="date-box">'+new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'})+'</div></div></div>';
+  });
+  document.getElementById('memo-sections').innerHTML = html;
 }
 
 // =============================================
 // 印刷
 // =============================================
-function buildPrint(){
-  const dateStr=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  const petsHtml=PETS.map(p=>{
-    const photoEl=data[p.id].photo
-      ?`<img class="ps-photo" src="${data[p.id].photo}" alt="${esc(data[p.id].name)}" style="width:11mm;height:11mm;border-radius:50%;object-fit:cover;border:1px solid #ccc;flex-shrink:0">`
-      :`<div class="ps-fallback" style="width:11mm;height:11mm;border-radius:50%;background:#e8e8e8;display:flex;align-items:center;justify-content:center;font-size:13pt;flex-shrink:0">${p.icon}</div>`;
-    const mealsHtml=MEALS.map(m=>{
-      const md=data[p.id][m.id];
-      const gr=md.grams.filter(g=>g.val).map(g=>`<span>${esc(g.label)} <b>${g.val}g</b></span>`).join('');
-      return`<div class="ps-meal">
-        <div class="ps-mlabel">${m.label}ごはん</div>
-        <div class="ps-foods">${md.menus.map(f=>`<span class="ps-food${md.foods.includes(f)?' on':''}">${esc(f)}</span>`).join('')}</div>
-        ${gr?`<div class="ps-grams">${gr}</div>`:''}
-      </div>`;
-    }).join('');
-    return`<div class="ps-pet">
-      <div class="ps-head">${photoEl}
-        <div><div class="ps-pname">${esc(data[p.id].name)}</div><div class="ps-ptype">${p.type}</div></div>
-      </div>
-      <div class="ps-meals">${mealsHtml}</div>
-    </div>`;
-  }).join('');
-
-  const bottomHtml=PETS.map(p=>{
-    const medsHtml=data[p.id].meds.filter(m=>m.name).map(m=>`
-      <div class="ps-med-item">
-        <b>${esc(m.name)}</b>${m.time?`　${esc(m.time)}`:''}
-        ${m.note?`<br><span style="color:#555">${esc(m.note)}</span>`:''}
-      </div>`).join('')||`<div class="ps-empty">記録なし</div>`;
-    const memoHtml=data[p.id].memo
-      ?`<div class="ps-memo-text">${esc(data[p.id].memo)}</div>`
-      :`<div class="ps-empty">なし</div>`;
-    const ph=data[p.id].photo
-      ?`<img src="${data[p.id].photo}" style="width:8mm;height:8mm;border-radius:50%;object-fit:cover">`
-      :`<span>${p.icon}</span>`;
-    return`<div class="ps-box">
-      <div class="ps-box-head">${ph} ${esc(data[p.id].name)}</div>
-      <div style="font-size:6.5pt;font-weight:700;color:#444;margin-bottom:1mm">💊 薬</div>
-      ${medsHtml}
-      <div style="font-size:6.5pt;font-weight:700;color:#444;margin:2mm 0 1mm">📝 メモ</div>
-      ${memoHtml}
-    </div>`;
-  }).join('');
-
-  document.getElementById('print-sheet').innerHTML=`
-    <div class="ps">
-      <div class="ps-title">🐾 ぴーぴのごはん管理　分量表　<span class="ps-date">${dateStr}</span></div>
-      <div class="ps-grid">${petsHtml}</div>
-      <div class="ps-bottom-grid">${bottomHtml}</div>
-    </div>`;
+function buildPrint() {
+  var dateStr = new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  var petsHtml = '';
+  PETS.forEach(function(p) {
+    var photoEl = data[p.id].photo
+      ? '<img src="'+data[p.id].photo+'" style="width:11mm;height:11mm;border-radius:50%;object-fit:cover;border:1px solid #ccc;flex-shrink:0" alt="'+esc(data[p.id].name)+'">'
+      : '<div style="width:11mm;height:11mm;border-radius:50%;background:#e8e8e8;display:flex;align-items:center;justify-content:center;font-size:13pt;flex-shrink:0">'+p.icon+'</div>';
+    var mealsHtml = '';
+    MEALS.forEach(function(m) {
+      var md = data[p.id][m.id];
+      var gr = md.grams.filter(function(g){return g.val;}).map(function(g){return '<span>'+esc(g.label)+' <b>'+g.val+'g</b></span>';}).join('');
+      mealsHtml += '<div class="ps-meal"><div class="ps-mlabel">'+m.label+'ごはん</div>';
+      var selectedFoods = md.menus.filter(function(f){return md.foods.includes(f);});
+      mealsHtml += '<div class="ps-foods">'+(selectedFoods.length ? selectedFoods.map(function(f){return '<span class="ps-food on">'+esc(f)+'</span>';}).join('') : '<span style="font-size:6.5pt;color:#aaa">なし</span>')+'</div>';
+      if (gr) mealsHtml += '<div class="ps-grams">'+gr+'</div>';
+      mealsHtml += '</div>';
+    });
+    petsHtml += '<div class="ps-pet"><div class="ps-head">'+photoEl+'<div><div class="ps-pname">'+esc(data[p.id].name)+'</div><div class="ps-ptype">'+p.type+'</div></div></div><div class="ps-meals">'+mealsHtml+'</div></div>';
+  });
+  var bottomHtml = '';
+  PETS.forEach(function(p) {
+    var medsHtml = data[p.id].meds.filter(function(m){return m.name;}).map(function(m){
+      return '<div class="ps-med-item"><b>'+esc(m.name)+'</b>'+(m.time?'　'+esc(m.time):'')+(m.note?'<br><span style="color:#555">'+esc(m.note)+'</span>':'')+'</div>';
+    }).join('') || '<div class="ps-empty">記録なし</div>';
+    var memoHtml = data[p.id].memo ? '<div class="ps-memo-text">'+esc(data[p.id].memo)+'</div>' : '<div class="ps-empty">なし</div>';
+    var ph = data[p.id].photo ? '<img src="'+data[p.id].photo+'" style="width:8mm;height:8mm;border-radius:50%;object-fit:cover">' : '<span>'+p.icon+'</span>';
+    bottomHtml += '<div class="ps-box"><div class="ps-box-head">'+ph+' '+esc(data[p.id].name)+'</div>';
+    bottomHtml += '<div style="font-size:6.5pt;font-weight:700;color:#444;margin-bottom:1mm">💊 薬</div>'+medsHtml;
+    bottomHtml += '<div style="font-size:6.5pt;font-weight:700;color:#444;margin:2mm 0 1mm">📝 メモ</div>'+memoHtml+'</div>';
+  });
+  document.getElementById('print-sheet').innerHTML =
+    '<div class="ps"><div class="ps-title">🐾 ぴーぴのごはん管理　分量表　<span class="ps-date">'+dateStr+'</span></div>'+
+    '<div class="ps-grid">'+petsHtml+'</div><div class="ps-bottom-grid">'+bottomHtml+'</div></div>';
 }
 
-// =============================================
-// ユーティリティ
-// =============================================
-function doPrint(){buildPrint();setTimeout(()=>window.print(),100)}
-function showSection(name,tabEl){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+window.doPrint = function(){ buildPrint(); setTimeout(function(){window.print();},100); };
+
+function showSection(name, tabEl) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
   document.getElementById('section-'+name).classList.add('active');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
   tabEl.classList.add('active');
 }
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
+window.showSection = showSection;
 
-// 初期描画
-renderFood();
-renderMedTabs();renderMedSections();
-renderMemoTabs();renderMemoSections();
+function renderAll() {
+  renderFood();
+  renderMedTabs(); renderMedSections();
+  renderMemoTabs(); renderMemoSections();
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 </script>
 </body>
 </html>
