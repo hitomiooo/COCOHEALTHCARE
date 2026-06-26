@@ -9,7 +9,9 @@ import {
     onAuthStateChanged,
     GoogleAuthProvider,
     signInWithPopup,
-    signOut
+    signOut,
+    browserLocalPersistence,
+    setPersistence
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 
@@ -36,6 +38,7 @@ const ALLOWED_EMAIL_LIST = [
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence);
 const recordsCollection = collection(db, 'records');
 
 // === グローバル変数 ===
