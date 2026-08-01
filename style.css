@@ -120,6 +120,26 @@ fieldset legend {
     padding: 0 5px;
 }
 
+.condition-highlight {
+    margin: 4px 0 20px;
+    padding: 14px 16px 4px;
+    border: 3px solid #f2c94c;
+    border-radius: 10px;
+    background: #fff9d9;
+    box-shadow: 0 2px 6px rgba(191, 145, 0, 0.14);
+}
+.condition-highlight legend {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #f2c94c;
+    color: #4f3b00;
+    font-size: 1.05em;
+}
+.condition-highlight select {
+    background: #fff;
+    border-color: #d9b438;
+}
+
 /* ファイル選択欄 */
 input[type="file"] {
     border: none;
