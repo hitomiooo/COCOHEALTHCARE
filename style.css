@@ -417,3 +417,102 @@ label[for="date"] {
     border-color: #ffecb5;
     font-weight: bold;
 }
+
+.line-notification-card {
+    margin: 22px 0;
+    padding: 16px;
+    border: 2px solid #06c755;
+    border-radius: 12px;
+    background: #f4fff7;
+}
+.line-notification-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.line-notification-heading h3 { margin: 0 0 4px; }
+.line-notification-heading p,
+.line-notification-note {
+    margin: 0;
+    color: #52615a;
+    font-size: 0.9em;
+}
+.line-notification-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: #06c755;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+.line-notification-toggle input { width: auto; margin: 0; }
+.line-notification-editor {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #b8e8c8;
+}
+.line-notification-editor[hidden] { display: none; }
+.line-notification-editor textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+.line-notification-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 8px 0;
+}
+.line-notification-actions .secondary-btn {
+    width: auto;
+    margin: 0;
+    padding: 8px 12px;
+    background: #fff;
+    color: #087c35;
+    border: 1px solid #06c755;
+}
+#lineNotificationCount { color: #637168; font-size: 0.85em; }
+
+.hospital-status-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border: 1px solid #9ec5a8;
+    border-radius: 10px;
+    background: #f5fff7;
+}
+.hospital-status-card.needs-review {
+    border-color: #e6b84b;
+    background: #fff9e9;
+}
+.hospital-status-card h3,
+.hospital-status-card p { margin: 0 0 4px; }
+.hospital-status-card a {
+    padding: 8px 12px;
+    border-radius: 7px;
+    background: #fff;
+    border: 1px solid #408a54;
+    color: #286b3a;
+    text-decoration: none;
+    font-weight: bold;
+}
+.hospital-health-alert {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 2px solid #dc3545;
+    border-radius: 10px;
+    background: #fff1f2;
+    color: #8b1723;
+    font-weight: bold;
+    line-height: 1.6;
+}

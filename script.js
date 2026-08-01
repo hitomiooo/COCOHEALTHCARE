@@ -37,11 +37,13 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const recordsCollection = collection(db, 'records');
+const HOSPITAL_STATUS_API_URL = 'https://script.google.com/macros/s/AKfycbwyfanevEbwLaYsjaTsCmAVe9N8HihcNJioSpGEC_K6IejD6f-xfnFJACp9m7Wilw4kHw/exec';
 
 // === グローバル変数 ===
 let currentPhotoBase64 = null; 
 let allRecordsCache = [];
 let currentUser = null;
+let hospitalStatus = null;
 
 // === HTML要素 ===
 const mainContent = document.getElementById('mainContent');
@@ -121,6 +123,8 @@ function initializeAppLogic() {
     document.getElementById('dogPhoto').addEventListener('change', handlePhotoPreview);
     document.getElementById('deleteButton').addEventListener('click', deleteCurrentRecord);
     document.getElementById('stampPad').addEventListener('click', handleStampClick);
+    setupLineNotificationForm();
+    setupHospitalAlertListeners();
     
     const weatherBtns = document.querySelectorAll('#weatherBtnGroup button');
     weatherBtns.forEach(btn => {
@@ -133,6 +137,182 @@ function initializeAppLogic() {
 
     // ★追加: 飯田市の気象情報の更新
     updateIidaWeather();
+    updateToroccoHospitalStatus();
+}
+
+function setupHospitalAlertListeners() {
+    ['date', 'conditionCoco', 'conditionNono', 'conditionMomo', 'conditionBibi'].forEach(id => {
+        document.getElementById(id).addEventListener('change', renderHospitalHealthAlert);
+    });
+}
+
+async function updateToroccoHospitalStatus() {
+    const message = document.getElementById('hospitalStatusMessage');
+    try {
+        hospitalStatus = await loadJsonp(HOSPITAL_STATUS_API_URL);
+    } catch (error) {
+        console.error('病院情報の取得エラー:', error);
+        hospitalStatus = null;
+    }
+
+    if (!hospitalStatus) {
+        message.textContent = '診療情報を取得できませんでした。公式サイトまたは電話でご確認ください。';
+        document.getElementById('hospitalStatusCard').classList.add('needs-review');
+        renderHospitalHealthAlert();
+        return;
+    }
+
+    const checkedAt = hospitalStatus.checkedAt;
+    const checkedDate = checkedAt?.toDate ? checkedAt.toDate() : (checkedAt ? new Date(checkedAt) : null);
+    document.getElementById('hospitalStatusCheckedAt').textContent = checkedDate
+        ? `最終確認：${checkedDate.toLocaleString('ja-JP')}`
+        : '';
+
+    if (hospitalStatus.status === 'verified') {
+        message.textContent = `${hospitalStatus.calendarLabel}の公式カレンダーを確認済みです。`;
+        document.getElementById('hospitalStatusCard').classList.remove('needs-review');
+    } else {
+        message.textContent = 'カレンダーが更新されています。最新情報を公式サイトでご確認ください。';
+        document.getElementById('hospitalStatusCard').classList.add('needs-review');
+    }
+    renderHospitalHealthAlert();
+}
+
+function loadJsonp(url) {
+    return new Promise((resolve, reject) => {
+        const callbackName = `hospitalStatusCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script = document.createElement('script');
+        const timeout = window.setTimeout(() => {
+            cleanup();
+            reject(new Error('病院情報の取得がタイムアウトしました'));
+        }, 20000);
+
+        function cleanup() {
+            window.clearTimeout(timeout);
+            delete window[callbackName];
+            script.remove();
+        }
+
+        window[callbackName] = data => {
+            cleanup();
+            resolve(data);
+        };
+        script.onerror = () => {
+            cleanup();
+            reject(new Error('病院情報を読み込めませんでした'));
+        };
+        script.src = `${url}?callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
+        document.head.appendChild(script);
+    });
+}
+
+function renderHospitalHealthAlert() {
+    const alertBox = document.getElementById('hospitalHealthAlert');
+    const poorPets = [
+        ['ココ', document.getElementById('conditionCoco').value],
+        ['ノノ', document.getElementById('conditionNono').value],
+        ['モモ', document.getElementById('conditionMomo').value],
+        ['ビビ', document.getElementById('conditionBibi').value]
+    ].filter(([, condition]) => condition === '×').map(([name]) => name);
+
+    if (!poorPets.length) {
+        alertBox.hidden = true;
+        alertBox.textContent = '';
+        return;
+    }
+
+    const selectedDate = document.getElementById('date').value;
+    const datesToCheck = [selectedDate, addDays(selectedDate, 1)].filter(Boolean);
+    const outsideVerifiedPeriod = datesToCheck.some(date =>
+        !hospitalStatus?.coverageStart || !hospitalStatus?.coverageEnd ||
+        date < hospitalStatus.coverageStart || date > hospitalStatus.coverageEnd
+    );
+    if (!hospitalStatus || hospitalStatus.status !== 'verified' || outsideVerifiedPeriod) {
+        alertBox.hidden = false;
+        alertBox.textContent = `⚠️ ${poorPets.join('・')}の体調が×です。病院の診療情報を確認できないため、公式サイトまたは電話（0265-24-1065）でご確認ください。`;
+        return;
+    }
+
+    const closedDates = datesToCheck.filter(date => hospitalStatus.closedDates?.includes(date));
+    if (closedDates.length) {
+        const labels = closedDates.map(formatShortDate).join('・');
+        alertBox.hidden = false;
+        alertBox.textContent = `⚠️ ${poorPets.join('・')}の体調が×です。トロッコ動物病院は${labels}が休診です。緊急の場合は待たずに病院へ電話し、受診先をご確認ください。`;
+    } else {
+        alertBox.hidden = true;
+        alertBox.textContent = '';
+    }
+}
+
+function addDays(dateString, days) {
+    if (!dateString) return '';
+    const date = new Date(`${dateString}T00:00:00`);
+    date.setDate(date.getDate() + days);
+    return getFormattedDate(date);
+}
+
+function formatShortDate(dateString) {
+    const date = new Date(`${dateString}T00:00:00`);
+    return `${date.getMonth() + 1}月${date.getDate()}日`;
+}
+
+function setupLineNotificationForm() {
+    const enabled = document.getElementById('lineNotificationEnabled');
+    const editor = document.getElementById('lineNotificationEditor');
+    const message = document.getElementById('lineNotificationMessage');
+    const count = document.getElementById('lineNotificationCount');
+
+    const updateCount = () => {
+        count.textContent = `${message.value.length} / 1000`;
+    };
+    enabled.addEventListener('change', () => {
+        editor.hidden = !enabled.checked;
+        if (enabled.checked && !message.value.trim()) message.value = createNotificationDraft();
+        updateCount();
+    });
+    document.getElementById('createNotificationDraft').addEventListener('click', () => {
+        message.value = createNotificationDraft();
+        updateCount();
+        message.focus();
+    });
+    message.addEventListener('input', updateCount);
+}
+
+function createNotificationDraft() {
+    const dateValue = document.getElementById('date').value;
+    const dateLabel = dateValue
+        ? new Date(`${dateValue}T00:00:00`).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })
+        : '今日';
+    const conditions = [
+        ['ココ', document.getElementById('conditionCoco').value],
+        ['ノノ', document.getElementById('conditionNono').value],
+        ['モモ', document.getElementById('conditionMomo').value],
+        ['ビビ', document.getElementById('conditionBibi').value]
+    ];
+    const needsAttention = conditions.filter(([, condition]) => condition !== '○');
+    const conditionText = needsAttention.length
+        ? needsAttention.map(([name, condition]) => `${name}：${condition}`).join('、')
+        : 'みんな○です';
+    const note = document.getElementById('otherNotes').value.trim();
+
+    const hospitalAlert = document.getElementById('hospitalHealthAlert');
+    return [
+        '🐾 ぴーぴ健康管理手帳',
+        '',
+        `${dateLabel}の健康記録を保存しました。`,
+        `体調：${conditionText}`,
+        note ? `メモ：${note}` : '',
+        !hospitalAlert.hidden ? hospitalAlert.textContent : '',
+        '',
+        '詳しい内容は健康管理手帳で確認してください。'
+    ].filter((line, index, lines) => line || (index > 0 && lines[index - 1])).join('\n');
+}
+
+function resetLineNotificationForm() {
+    document.getElementById('lineNotificationEnabled').checked = false;
+    document.getElementById('lineNotificationEditor').hidden = true;
+    document.getElementById('lineNotificationMessage').value = '';
+    document.getElementById('lineNotificationCount').textContent = '0 / 1000';
 }
 
 // ★追加: 飯田市の気象情報を取得して表示
@@ -269,6 +449,13 @@ function handleWeatherClick(event) {
 // フォーム送信
 async function handleFormSubmit(event) {
     event.preventDefault();
+    const shouldNotify = document.getElementById('lineNotificationEnabled').checked;
+    const notificationMessage = document.getElementById('lineNotificationMessage').value.trim();
+    if (shouldNotify && !notificationMessage) {
+        alert('LINE通知の内容を入力してください。');
+        document.getElementById('lineNotificationMessage').focus();
+        return;
+    }
     toggleLoading(true, '保存中...');
     try {
         const existingId = document.getElementById('recordId').value;
@@ -329,9 +516,17 @@ async function handleFormSubmit(event) {
             }
             await addDoc(recordsCollection, recordData);
         }
-        alert("記録を保存しました。");
         await loadAllRecordsFromFirestore();
         loadRecordForDate(date);
+        if (shouldNotify) {
+            const lineShareUrl = `https://line.me/R/share?text=${encodeURIComponent(notificationMessage)}`;
+            resetLineNotificationForm();
+            alert("記録を保存しました。続いてLINEで共有相手を選んで送信してください。");
+            window.location.href = lineShareUrl;
+        } else {
+            alert("記録を保存しました。");
+            resetLineNotificationForm();
+        }
     } catch (error) {
         console.error("保存エラー:", error);
         alert("保存に失敗しました: " + error.message);

@@ -34,6 +34,17 @@
                 </div>
             </div>
 
+            <section id="hospitalStatusCard" class="hospital-status-card" aria-live="polite">
+                <div>
+                    <h3>🏥 トロッコ動物病院</h3>
+                    <p id="hospitalStatusMessage">診療カレンダーを確認中...</p>
+                    <small id="hospitalStatusCheckedAt"></small>
+                </div>
+                <a href="http://torocco-vet.com/schedule/" target="_blank" rel="noopener noreferrer">公式カレンダーを開く</a>
+            </section>
+
+            <div id="hospitalHealthAlert" class="hospital-health-alert" hidden></div>
+
             <input type="hidden" id="recordId">
             
             <h3>記録フォーム</h3>
@@ -199,7 +210,29 @@
                 <button type="button" class="stamp-btn">マロピタット</button>
             </div>
             <textarea id="otherNotes" rows="3" placeholder="メモ・気になることはこちらへ"></textarea>
-            
+
+            <section class="line-notification-card" aria-labelledby="lineNotificationTitle">
+                <div class="line-notification-heading">
+                    <div>
+                        <h3 id="lineNotificationTitle">共有相手へのLINE通知</h3>
+                        <p>共有相手1人に、今回の内容を送るか選べます。</p>
+                    </div>
+                    <label class="line-notification-toggle">
+                        <input type="checkbox" id="lineNotificationEnabled">
+                        <span>LINEで通知する</span>
+                    </label>
+                </div>
+                <div id="lineNotificationEditor" class="line-notification-editor" hidden>
+                    <label for="lineNotificationMessage">通知内容</label>
+                    <textarea id="lineNotificationMessage" rows="6" maxlength="1000" placeholder="共有相手に伝える内容を入力してください"></textarea>
+                    <div class="line-notification-actions">
+                        <button type="button" id="createNotificationDraft" class="secondary-btn">記録から文案を作る</button>
+                        <span id="lineNotificationCount">0 / 1000</span>
+                    </div>
+                    <p class="line-notification-note">保存後にLINEが開きます。共有相手を選んで送信してください。初期状態では通知しません。</p>
+                </div>
+            </section>
+
             <button type="submit" id="saveButton">記録する</button>
             <button type="button" id="deleteButton" class="delete-btn" style="display: none;">この日の記録を削除</button>
         </form>
