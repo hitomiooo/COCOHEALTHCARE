@@ -199,8 +199,6 @@ const firebaseConfig = {
   messagingSenderId: "986920233821",
   appId: "1:986920233821:web:96ff08e9f118d557a816b4"
 };
-const ALLOWED_EMAILS = ['fine2025contact@gmail.com','1103ohtm@gmail.com','tatsuya51801736@gmail.com'];
-
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 const auth = getAuth(app);
@@ -309,14 +307,10 @@ const loginBtn    = document.getElementById('loginButton');
 const logoutBtn   = document.getElementById('logoutButton');
 
 onAuthStateChanged(auth, user => {
-  if (user && ALLOWED_EMAILS.includes(user.email)) {
+  if (user) {
     authSection.style.display = 'none';
     mainApp.style.display = 'block';
     loadFromFirestore();
-  } else if (user) {
-    authStatus.textContent = 'このアカウントはアクセス許可されていません。';
-    loginBtn.style.display  = 'none';
-    logoutBtn.style.display = 'block';
   } else {
     authSection.style.display = 'block';
     mainApp.style.display = 'none';
