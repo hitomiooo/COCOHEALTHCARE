@@ -23,15 +23,6 @@ const firebaseConfig = {
   appId: "1:986920233821:web:96ff08e9f118d557a816b4"
 };
 
-// ★★★ アクセスを許可する人のメールアドレス ★★★
-const ALLOWED_EMAIL_LIST = [
-   'fine2025contact@gmail.com',
-   '1103ohtm@gmail.com',
-   'tatsuya51801736@gmail.com'
-];
-// ★★★=================================================★★★
-
-
 // === Firebase の初期化 ===
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -57,11 +48,7 @@ const logoutButton = document.getElementById('logoutButton');
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUser = user;
-        if (ALLOWED_EMAIL_LIST.includes(user.email)) {
-            showApp(user);
-        } else {
-            showAccessDenied(user);
-        }
+        showApp(user);
     } else {
         currentUser = null;
         showLoginScreen();
