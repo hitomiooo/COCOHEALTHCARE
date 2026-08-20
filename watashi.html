@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7569b6">
+  <title>ヒトミの健康アプリ | ぴーぴ健康管理手帳</title>
+  <style>
+    *{box-sizing:border-box} :root{--ink:#35313f;--muted:#777180;--line:#e8e2eb;--paper:#fff;--lav:#7569b6;--lav-soft:#f0edf9;--rose:#d65f78;--rose-soft:#fff0f3;--green:#4d8b78;--bg:#f8f5f8}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI",sans-serif;line-height:1.5}
+    button,input,textarea{font:inherit}.topbar{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+    .topbar a{color:var(--muted);text-decoration:none;font-size:13px}.topbar strong{font-size:15px}.avatar{border:0;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--lav-soft);cursor:pointer}.auth-gate{width:min(92%,420px);margin:70px auto;padding:28px;text-align:center;background:#fff;border:1px solid var(--line);border-radius:18px}.auth-gate button{border:0;border-radius:12px;padding:11px 18px;background:var(--lav);color:#fff;font-weight:700;cursor:pointer}.auth-gate p{color:var(--muted);font-size:13px}.date{padding:7px 9px;border:1px solid var(--line);border-radius:9px;color:var(--lav);background:#fff;font-weight:700}.status{text-align:center;color:var(--green);font-size:12px;min-height:18px;margin:4px 0 0}.delete{display:none;width:min(100%,690px);margin:8px auto 0;border:0;background:transparent;color:var(--rose);font-size:12px;cursor:pointer}
+    main{width:min(100%,720px);margin:auto;padding:20px 14px 90px}.hello{display:flex;justify-content:space-between;align-items:end;margin:6px 4px 18px}.hello h1{margin:0;font-size:25px;letter-spacing:.02em}.hello p{margin:4px 0 0;color:var(--muted);font-size:13px}.date{font-size:12px;color:var(--lav);font-weight:700}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(65,51,70,.04)}.card-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.card-title h2{margin:0;font-size:16px}.badge{padding:4px 9px;border-radius:20px;background:var(--rose-soft);color:var(--rose);font-size:11px;font-weight:700}
+    .pain-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.pain-number{color:var(--rose);font-size:30px;font-weight:750}.pain-number small{font-size:12px;color:var(--muted);font-weight:500}.scale{display:flex;gap:5px}.pain-btn{flex:1;height:42px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);cursor:pointer}.pain-btn.selected{color:#fff;background:var(--rose);border-color:var(--rose);font-weight:700;transform:translateY(-2px)}.scale-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:6px}
+    .chart-wrap{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}.chart-tabs{display:flex;gap:5px;padding:4px;margin-bottom:12px;border-radius:12px;background:var(--bg)}.chart-tab{flex:1;border:0;border-radius:9px;padding:7px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer}.chart-tab.active{background:#fff;color:var(--lav);font-weight:700;box-shadow:0 2px 7px rgba(65,51,70,.08)}.chart-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.chart-meta strong{font-size:13px}.chart-meta span{font-size:11px;color:var(--green)}.chart-legend{display:none;flex-wrap:wrap;gap:10px;margin:0 0 5px;font-size:11px;color:var(--muted)}.chart-legend.show{display:flex}.legend-dot{display:inline-block;width:9px;height:9px;margin-right:4px;border-radius:50%}svg{display:block;width:100%;height:auto}.grid{stroke:#eee9f0;stroke-width:1}.area{fill:url(#painFill)}.line{fill:none;stroke:var(--rose);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.dot{fill:#fff;stroke:var(--rose);stroke-width:2}
+    .field-label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid var(--line);background:#fff;border-radius:22px;padding:8px 12px;color:var(--muted);cursor:pointer;font-size:13px}.chip.on{border-color:var(--lav);background:var(--lav-soft);color:var(--lav);font-weight:700}.comment{width:100%;min-height:68px;margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fcfbfc;resize:vertical;color:var(--ink)}.comment:focus{outline:2px solid #ddd6f4;border-color:var(--lav)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mini{padding:16px}.mini .comment{min-height:82px}.savebar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(248,245,248,.94);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.save{display:block;width:min(100%,690px);margin:auto;border:0;border-radius:13px;padding:13px;background:var(--lav);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 5px 14px rgba(117,105,182,.25)}.preview-note{text-align:center;color:var(--muted);font-size:11px;margin-top:10px}
+    @media(max-width:540px){.two-col{grid-template-columns:1fr}.hello h1{font-size:22px}.card{border-radius:15px;padding:15px}.scale{gap:3px}.pain-btn{height:40px;font-size:13px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><a href="index.html">← ぴーぴ健康アプリ</a><strong>ヒトミの健康アプリ</strong><button class="avatar" id="logoutButton" title="ログアウト">🌿</button></header>
+  <section class="auth-gate" id="authGate"><h2>わたしの健康記録</h2><p id="authMessage">安全に記録するため、Googleアカウントでログインしてください。</p><button type="button" id="loginButton">Googleでログイン</button></section>
+  <main id="appContent" hidden>
+    <section class="hello"><div><h1>今日の体調を記録</h1><p>無理なく、気づいたことだけで大丈夫です</p></div><input class="date" id="recordDate" type="date" aria-label="記録日"></section>
+
+    <section class="card">
+      <div class="card-title"><h2>三叉神経痛の痛み</h2><span class="badge">0〜10で記録</span></div>
+      <div class="pain-head"><span>今日いちばん強い痛み</span><div class="pain-number"><span id="painValue">6</span><small> / 10</small></div></div>
+      <div class="scale" id="painScale" aria-label="痛みの強さ">
+        <button class="pain-btn" type="button">0</button><button class="pain-btn" type="button">1</button><button class="pain-btn" type="button">2</button><button class="pain-btn" type="button">3</button><button class="pain-btn" type="button">4</button><button class="pain-btn" type="button">5</button><button class="pain-btn selected" type="button">6</button><button class="pain-btn" type="button">7</button><button class="pain-btn" type="button">8</button><button class="pain-btn" type="button">9</button><button class="pain-btn" type="button">10</button>
+      </div>
+      <div class="scale-labels"><span>痛みなし</span><span>耐えられない</span></div>
+      <textarea class="comment" id="painComment" aria-label="三叉神経痛のコメント" placeholder="痛んだ場所、時間、きっかけ、薬の効き方など"></textarea>
+      <div class="chart-wrap">
+        <div class="chart-tabs" aria-label="グラフの表示期間">
+          <button class="chart-tab active" type="button" data-period="week">週間</button><button class="chart-tab" type="button" data-period="month">月間</button><button class="chart-tab" type="button" data-period="year">年間</button>
+        </div>
+        <div class="chart-meta"><strong id="chartTitle">最近7日間の痛みの推移</strong><span id="chartCompare">前週より −1.2</span></div>
+        <div class="chart-legend" id="chartLegend"><span><i class="legend-dot" style="background:#d65f78"></i>2025年</span><span><i class="legend-dot" style="background:#7569b6"></i>2026年</span><span>2027年・2028年：データなし</span></div>
+        <svg viewBox="0 0 600 180" role="img" aria-label="三叉神経痛の痛み推移グラフ">
+          <defs><linearGradient id="painFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d65f78" stop-opacity=".22"/><stop offset="1" stop-color="#d65f78" stop-opacity="0"/></linearGradient></defs>
+          <line class="grid" x1="35" y1="25" x2="580" y2="25"/><line class="grid" x1="35" y1="80" x2="580" y2="80"/><line class="grid" x1="35" y1="135" x2="580" y2="135"/>
+          <path class="area" id="chartArea" d="M35 135 L35 69 L126 91 L217 47 L308 80 L399 102 L490 58 L580 69 L580 135 Z"/><polyline class="line" id="chartLine" points="35,69 126,91 217,47 308,80 399,102 490,58 580,69"/>
+          <polyline id="compareLine" fill="none" stroke="#7569b6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points=""/>
+          <g id="chartDots"><circle class="dot" cx="35" cy="69" r="4"/><circle class="dot" cx="126" cy="91" r="4"/><circle class="dot" cx="217" cy="47" r="4"/><circle class="dot" cx="308" cy="80" r="4"/><circle class="dot" cx="399" cy="102" r="4"/><circle class="dot" cx="490" cy="58" r="4"/><circle class="dot" cx="580" cy="69" r="5"/></g>
+          <g id="chartLabels" fill="#8a8490" font-size="11" text-anchor="middle"><text x="35" y="158">14</text><text x="126" y="158">15</text><text x="217" y="158">16</text><text x="308" y="158">17</text><text x="399" y="158">18</text><text x="490" y="158">19</text><text x="580" y="158">今日</text></g>
+        </svg>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="card mini"><label class="field-label">生理</label><div class="chips single" id="periodStatus"><button class="chip on" type="button" data-value="なし">なし</button><button class="chip" type="button" data-value="開始">開始</button><button class="chip" type="button" data-value="期間中">期間中</button><button class="chip" type="button" data-value="終了">終了</button></div><textarea class="comment" id="periodComment" placeholder="量、痛み、気分などをコメント"></textarea></section>
+      <section class="card mini"><label class="field-label">頭痛</label><div class="chips single" id="headacheStatus"><button class="chip on" type="button" data-value="なし">なし</button><button class="chip" type="button" data-value="軽い">軽い</button><button class="chip" type="button" data-value="中程度">中程度</button><button class="chip" type="button" data-value="強い">強い</button></div><textarea class="comment" id="headacheComment" placeholder="場所、痛み方、薬などをコメント"></textarea></section>
+    </div>
+    <section class="card"><label class="field-label">その他の症状</label><div class="chips" id="otherSymptoms"><button class="chip" type="button" data-value="めまい">めまい</button><button class="chip" type="button" data-value="だるさ">だるさ</button><button class="chip" type="button" data-value="吐き気">吐き気</button><button class="chip" type="button" data-value="肩こり">肩こり</button><button class="chip" type="button" data-value="眠気">眠気</button></div><textarea class="comment" id="symptomComment" placeholder="症状が出た時間や、気になったことをコメント"></textarea></section>
+    <section class="card"><label class="field-label" for="dailyMemo">今日のメモ</label><textarea id="dailyMemo" class="comment" placeholder="受診したこと、薬、睡眠、食事など自由に記録"></textarea><p class="status" id="saveStatus"></p></section>
+  </main>
+  <div class="savebar" id="savebar" hidden><button class="save" type="button" id="saveButton">今日の記録を保存</button><button class="delete" type="button" id="deleteButton">この日の記録を削除</button></div>
+  <script type="module" src="watashi.js"></script>
+</body>
+</html>
