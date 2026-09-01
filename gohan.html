@@ -136,6 +136,8 @@ textarea:focus{border-color:var(--accent)}
 .ps-food{padding:0.3mm 1.5mm;border:1px solid #ccc;border-radius:8px;font-size:6.5pt;color:#555}
 .ps-food.on{background:#dbeafe;border-color:#93c5fd;color:#1e40af;font-weight:600}
 .ps-grams{display:flex;flex-wrap:wrap;gap:2.5mm;font-size:6.5pt;color:#555;margin-top:0.5mm}
+.ps-gram-big{flex:0 0 100%;width:100%;font-size:15pt;line-height:1.2;font-weight:700;color:#111;margin:0.6mm 0}
+.ps-gram-big b{font-weight:700}
 .ps-bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
 .ps-box{border:1.5px solid #bbb;border-radius:4px;padding:2mm 2.5mm;overflow:hidden}
 .ps-box-head{padding:1.5mm 2.5mm;background:#f0f0f0;border-bottom:1px solid #bbb;margin:-2mm -2.5mm 2mm;font-size:8pt;font-weight:700;display:flex;align-items:center;gap:1.5mm}
@@ -541,7 +543,13 @@ function buildPrint() {
     var mealsHtml = '';
     MEALS.forEach(function(m) {
       var md = data[p.id][m.id];
-      var gr = md.grams.filter(function(g){return g.val;}).map(function(g){return '<span>'+esc(g.label)+' <b>'+g.val+'g</b></span>';}).join('');
+      var gr = md.grams.filter(function(g){return g.val;}).map(function(g){
+        var lb = String(g.label || '');
+        var isDry = lb.indexOf('ドライ') >= 0;
+        var isCan = lb.indexOf('缶詰') >= 0 || lb.indexOf('缶') >= 0;
+        var big = (p.id !== 'bibi') && (isDry || (p.id === 'momo' && isCan));
+        return '<span'+(big?' class="ps-gram-big"':'')+'>'+esc(g.label)+' <b>'+g.val+'g</b></span>';
+      }).join('');
       mealsHtml += '<div class="ps-meal"><div class="ps-mlabel">'+m.label+'ごはん</div>';
       var selectedFoods = md.menus.filter(function(f){return md.foods.includes(f);});
       mealsHtml += '<div class="ps-foods">'+(selectedFoods.length ? selectedFoods.map(function(f){return '<span class="ps-food on">'+esc(f)+'</span>';}).join('') : '<span style="font-size:6.5pt;color:#aaa">なし</span>')+'</div>';
