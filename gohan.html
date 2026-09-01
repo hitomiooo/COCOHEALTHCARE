@@ -120,7 +120,7 @@ textarea:focus{border-color:var(--accent)}
   .print-sheet{display:block!important}
 }
 .print-sheet{display:none}
-.ps{width:277mm;font-family:'Hiragino Sans','Yu Gothic',sans-serif;font-size:8.5pt;color:#111}
+.ps{width:100%;max-width:277mm;font-family:'Hiragino Sans','Yu Gothic',sans-serif;font-size:8.5pt;color:#111}
 .ps-title{font-size:11pt;font-weight:700;margin-bottom:3mm;display:flex;justify-content:space-between;align-items:baseline}
 .ps-date{font-size:7.5pt;font-weight:400;color:#555}
 .ps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin-bottom:3mm}
@@ -139,11 +139,11 @@ textarea:focus{border-color:var(--accent)}
 .ps-gram-big{flex:0 0 100%;width:100%;font-size:15pt;line-height:1.2;font-weight:700;color:#111;margin:0.6mm 0}
 .ps-gram-big b{font-weight:700}
 .ps-bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}
-.ps-box{border:1.5px solid #bbb;border-radius:4px;padding:2mm 2.5mm;overflow:hidden}
+.ps-box{border:1.5px solid #bbb;border-radius:4px;padding:1.5mm 2.5mm;overflow:hidden}
 .ps-box-head{padding:1.5mm 2.5mm;background:#f0f0f0;border-bottom:1px solid #bbb;margin:-2mm -2.5mm 2mm;font-size:8pt;font-weight:700;display:flex;align-items:center;gap:1.5mm}
-.ps-med-item{font-size:6.5pt;margin-bottom:1mm;padding-bottom:1mm;border-bottom:0.5px solid #eee}
+.ps-med-item{font-size:6.5pt;margin-bottom:0.6mm;padding-bottom:0.6mm;border-bottom:0.5px solid #eee}
 .ps-med-item:last-child{border-bottom:none}
-.ps-memo-text{font-size:7pt;color:#333;white-space:pre-wrap;min-height:10mm}
+.ps-memo-text{font-size:7pt;color:#333;white-space:pre-wrap;min-height:4mm}
 .ps-empty{font-size:6.5pt;color:#aaa}
 </style>
 </head>
@@ -587,12 +587,17 @@ function fitPrintSheet() {
   var mm = probe.getBoundingClientRect().width / 100;
   document.body.removeChild(probe);
   if (!mm) return;
+  var maxH = 186 * mm; // A4横210mm - 上下余白 - プリンタ差の予備
   var prev = sheet.getAttribute('style') || '';
   sheet.setAttribute('style', 'display:block;position:fixed;left:-10000px;top:0;width:277mm;z-index:-1');
-  var h = ps.getBoundingClientRect().height;
+  var z = 1;
+  for (var i = 0; i < 14; i++) {
+    var h = ps.getBoundingClientRect().height;
+    if (h <= maxH || z <= 0.35) break;
+    z = Math.max(0.35, z * Math.min(0.97, (maxH / h) * 0.99));
+    ps.style.zoom = z;
+  }
   sheet.setAttribute('style', prev);
-  var maxH = 194 * mm; // A4横 210mm - 上下余白8mm×2 - 予備
-  if (h > maxH) ps.style.zoom = Math.max(0.4, (maxH / h) * 0.98);
 }
 
 window.doPrint = function(){ buildPrint(); setTimeout(function(){window.print();},100); };
