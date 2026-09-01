@@ -572,6 +572,27 @@ function buildPrint() {
   document.getElementById('print-sheet').innerHTML =
     '<div class="ps"><div class="ps-title">🐾 ぴーぴのごはん管理　分量表　<span class="ps-date">'+dateStr+'</span></div>'+
     '<div class="ps-grid">'+petsHtml+'</div><div class="ps-bottom-grid">'+bottomHtml+'</div></div>';
+  fitPrintSheet();
+}
+
+// 印刷が2ページ目にはみ出す場合、A4横1ページに収まるよう自動で縮小する
+function fitPrintSheet() {
+  var sheet = document.getElementById('print-sheet');
+  var ps = sheet ? sheet.querySelector('.ps') : null;
+  if (!ps) return;
+  ps.style.zoom = '';
+  var probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;left:-10000px;top:0;width:100mm;height:0;visibility:hidden';
+  document.body.appendChild(probe);
+  var mm = probe.getBoundingClientRect().width / 100;
+  document.body.removeChild(probe);
+  if (!mm) return;
+  var prev = sheet.getAttribute('style') || '';
+  sheet.setAttribute('style', 'display:block;position:fixed;left:-10000px;top:0;width:277mm;z-index:-1');
+  var h = ps.getBoundingClientRect().height;
+  sheet.setAttribute('style', prev);
+  var maxH = 194 * mm; // A4横 210mm - 上下余白8mm×2 - 予備
+  if (h > maxH) ps.style.zoom = Math.max(0.4, (maxH / h) * 0.98);
 }
 
 window.doPrint = function(){ buildPrint(); setTimeout(function(){window.print();},100); };
