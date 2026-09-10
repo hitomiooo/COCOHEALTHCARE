@@ -119,8 +119,16 @@ function initializeAppLogic() {
     });
 
     const todayString = getFormattedDate(new Date());
-    document.getElementById('date').value = todayString;
-    loadAllRecordsFromFirestore();
+    // 解析ページ（bunseki.html）から ?date=YYYY-MM-DD で開かれた場合はその日を表示する
+    const requestedDate = new URLSearchParams(window.location.search).get('date');
+    const isValidDate = typeof requestedDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(requestedDate);
+    document.getElementById('date').value = isValidDate ? requestedDate : todayString;
+    loadAllRecordsFromFirestore().then(() => {
+        if (isValidDate) {
+            const form = document.getElementById('healthForm');
+            if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
 
     // ★追加: 飯田市の気象情報の更新
     updateIidaWeather();

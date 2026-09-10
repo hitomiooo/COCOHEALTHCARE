@@ -81,6 +81,8 @@ let view = [];         // 期間で絞り込んだ記録
 let activeTab = 'summary';
 let memoKeyword = '';  // メモ解析で選択中のキーワード
 let extraKeywords = loadExtraKeywords();
+let summaryMark = '🏥'; // 概要タブで一覧表示するマーク
+let modalDate = '';     // 日別カルテで表示中の日付
 
 const $ = id => document.getElementById(id);
 
@@ -387,10 +389,117 @@ function renderSummary() {
     <div class="stats">${stats.map(s => `<div class="stat"><div class="k">${esc(s.k)}</div><div class="v">${esc(s.v)}</div><div class="s">${esc(s.s)}</div></div>`).join('')}</div>
     <p class="muted" style="margin-top:10px">体調スコアは ○=100点 / △=50点 / ×=0点 として平均した値です（このページ独自の計算です）。</p>
   </div>
+  ${markListCard()}
   <div class="card">
     <h2>月別の体調スコア</h2>
     ${months.length ? lineChartSvg({ labels, series, yMin: 0, yMax: 100, yFormat: v => v.toFixed(0) }) + legendHtml(series) : '<p class="muted">データがありません。</p>'}
   </div>`;
+
+  el.querySelectorAll('button[data-mark]').forEach(b => b.onclick = () => {
+    summaryMark = b.dataset.mark;
+    renderSummary();
+  });
+}
+
+/* マークを付けた日の一覧（日付を押すとその日の記録を表示） */
+function markListCard() {
+  const counts = MARKS.map(m => ({ v: m.v, name: m.n, c: view.filter(r => r.eventMark === m.v).length }));
+  const hits = view.filter(r => r.eventMark === summaryMark);
+  const current = MARKS.find(m => m.v === summaryMark) || MARKS[0];
+
+  let body;
+  if (!hits.length) {
+    body = `<p class="muted">この期間に「${esc(current.n)}」の日はありません。</p>`;
+  } else {
+    body = groupByMonth(hits).map(m => `
+      <div class="monthhead">${esc(m.key)}（${m.records.length}日）</div>
+      <div class="daygrid">${m.records.map(r => dayButton(r)).join('')}</div>`).join('');
+  }
+
+  return `
+  <div class="card">
+    <h2>マークを付けた日</h2>
+    <div class="row" style="margin-bottom:6px">
+      ${counts.map(m => `<button class="kw${m.v === summaryMark ? ' on' : ''}" data-mark="${esc(m.v)}">${esc(m.name)} <span class="muted">${m.c}</span></button>`).join('')}
+    </div>
+    <p class="muted">「${esc(current.n)}」の日：${hits.length}日 ／ 日付を押すと、その日の記録をまとめて表示します。</p>
+    ${body}
+  </div>`;
+}
+
+function dayButton(r) {
+  const wd = WEEKDAYS[parseDate(r.date).getDay()];
+  const memo = memoText(r);
+  const tip = memo ? memo.replace(/\s+/g, ' ').slice(0, 40) : '';
+  return `<button class="daylink" data-day="${esc(r.date)}"${tip ? ` title="${esc(tip)}"` : ''}>${esc(r.date)}（${wd}）</button>`;
+}
+
+/* ============================================================
+   日別カルテ（モーダル）
+   ============================================================ */
+function recordByDate(d) { return allRecords.find(r => r.date === d) || null; }
+
+function openDay(dateStr) {
+  modalDate = dateStr;
+  renderDayModal();
+  $('dayModal').classList.remove('hidden');
+}
+function closeDay() { $('dayModal').classList.add('hidden'); modalDate = ''; }
+
+$('dayClose').onclick = closeDay;
+$('dayModal').onclick = e => { if (e.target === $('dayModal')) closeDay(); };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('dayModal').classList.contains('hidden')) closeDay();
+});
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-day]');
+  if (!btn) return;
+  e.preventDefault();
+  openDay(btn.dataset.day);
+});
+
+function renderDayModal() {
+  const r = recordByDate(modalDate);
+  const wd = modalDate ? WEEKDAYS[parseDate(modalDate).getDay()] : '';
+  $('dayTitle').textContent = `${modalDate}（${wd}）の記録`;
+  if (!r) {
+    $('dayBody').innerHTML = '<p class="muted">この日の記録は見つかりませんでした。</p>';
+    return;
+  }
+
+  const poopOn = POOPS.filter(p => r[p.key] === true).map(p => p.name);
+  const medOn = MEDS.filter(m => r[m.key] === true).map(m => m.name);
+  const weatherTxt = (r.weather || '').trim()
+    ? WEATHERS.filter(w => (r.weather || '').includes(w)).map(w => `${w} ${WEATHER_NAMES[w]}`).join(' ・ ') || r.weather
+    : '未記録';
+
+  const rows = [
+    ['マーク', markName(r.eventMark)],
+    ['体調', DOGS.map(d => `${d.name}：${r[d.key] || '—'}`).join('　')],
+    ['天気', weatherTxt],
+    ['体感気温', r.temperatureFeel || '未記録'],
+    ['食欲', MEALS.map(m => `${m.name}：${r[m.key] || '—'}`).join('　') + `（スコア ${fmt(appetiteScore(r), 2)}）`],
+    ['ココの排便', poopOn.length ? `${poopOn.join('・')}（${poopOn.length}回）` : 'チェックなし'],
+    ['睡眠の様子', r.sleepTime || '未記録'],
+    ['散歩', r.walk || '未記録'],
+    ['服用チェック', medOn.length ? medOn.join('、') : 'なし'],
+    ['写真', r.hasPhoto ? 'あり（記録手帳で見られます）' : 'なし'],
+    ['メモ', memoText(r) || '（記入なし）']
+  ];
+
+  const idx = allRecords.findIndex(x => x.date === modalDate);
+  const prev = idx > 0 ? allRecords[idx - 1] : null;
+  const next = idx >= 0 && idx < allRecords.length - 1 ? allRecords[idx + 1] : null;
+
+  $('dayBody').innerHTML = `
+    <table class="kv"><tbody>
+      ${rows.map(([k, v]) => `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="modal-nav">
+      <span>${prev ? `<button class="daylink" data-day="${esc(prev.date)}">← ${esc(prev.date)}</button>` : ''}</span>
+      <a href="index.html?date=${encodeURIComponent(modalDate)}" class="daylink" style="text-decoration:none">📖 記録手帳でこの日を開く</a>
+      <span>${next ? `<button class="daylink" data-day="${esc(next.date)}">${esc(next.date)} →</button>` : ''}</span>
+    </div>`;
 }
 
 function emptyCard() { return `<div class="card"><p class="muted">この期間には記録がありません。上の期間設定を変えてみてください。</p></div>`; }
@@ -658,7 +767,7 @@ function renderMemo() {
     const condOnHit = avg(hits.map(r => condScore(r, 'conditionCoco')));
     const condAll = avg(view.map(r => condScore(r, 'conditionCoco')));
     const list = hits.slice().reverse().map(r => `<div class="memoitem">
-        <div class="d">${esc(r.date)}（${WEEKDAYS[parseDate(r.date).getDay()]}）
+        <div class="d"><button class="daylink" data-day="${esc(r.date)}">${esc(r.date)}（${WEEKDAYS[parseDate(r.date).getDay()]}）</button>
           ${DOGS.map(d => `${d.name}:${esc(r[d.key] || '—')}`).join(' / ')}
           ${r.eventMark ? ' ' + esc(r.eventMark) : ''}</div>
         <div class="t">${highlight(memoText(r), memoKeyword)}</div>

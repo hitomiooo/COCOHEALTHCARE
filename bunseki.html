@@ -60,6 +60,24 @@ svg{width:100%;height:auto;display:block}
 .memoitem .d{font-size:.8em;color:var(--muted)}
 .memoitem .t{white-space:pre-wrap;word-break:break-word}
 mark{background:#ffe680}
+/* 日付リンク */
+.daylink{background:#fff;border:1px solid #cfd8e2;color:#1b4f8a;border-radius:6px;
+  padding:3px 9px;font-size:.85em;cursor:pointer;font-family:inherit}
+.daylink:hover{background:#eaf2fb;border-color:#8fb4dd}
+.daygrid{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.monthhead{font-size:.82em;color:var(--muted);font-weight:bold;margin-top:10px}
+/* 日別カルテのモーダル */
+.modal{position:fixed;inset:0;background:rgba(20,28,38,.45);display:flex;
+  align-items:flex-start;justify-content:center;padding:16px;overflow:auto;z-index:50}
+.modal-inner{background:#fff;border-radius:12px;max-width:640px;width:100%;
+  padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);margin:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.modal-head h2{margin:0;font-size:1.05em}
+.modal-close{border:none;background:#eef2f6;border-radius:50%;width:32px;height:32px;font-size:18px;line-height:1;padding:0}
+.kv{border-collapse:collapse;width:100%;font-size:.9em}
+.kv th{width:34%;background:#f6f8fa;font-weight:bold;white-space:nowrap}
+.kv td{white-space:pre-wrap;word-break:break-word}
+.modal-nav{display:flex;justify-content:space-between;gap:8px;margin-top:12px;flex-wrap:wrap}
 #authSection{text-align:center}
 #status{font-size:.85em;color:var(--muted);margin-top:6px}
 .hidden{display:none!important}
@@ -122,6 +140,16 @@ mark{background:#ffe680}
     <section id="panel-memo" class="panel hidden"></section>
 
   </main>
+</div>
+
+<div id="dayModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="dayTitle">
+  <div class="modal-inner">
+    <div class="modal-head">
+      <h2 id="dayTitle">この日の記録</h2>
+      <button class="modal-close" id="dayClose" aria-label="閉じる">×</button>
+    </div>
+    <div id="dayBody"></div>
+  </div>
 </div>
 
 <script src="bunseki.js" type="module"></script>
