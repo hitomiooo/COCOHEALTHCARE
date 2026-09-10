@@ -115,9 +115,10 @@ textarea:focus{border-color:var(--accent)}
 /* print */
 @media print{
   @page{size:A4 landscape;margin:8mm}
-  body{background:#fff!important;color:#111!important}
-  .site-header,.app{display:none!important}
-  .print-sheet{display:block!important}
+  html,body{min-height:0!important;height:auto!important;overflow:visible!important;background:#fff!important;color:#111!important}
+  #authSection,#mainApp,.site-header,.app{display:none!important}
+  .print-sheet{display:block!important;max-height:186mm;overflow:hidden;page-break-after:avoid;break-after:avoid;page-break-inside:avoid;break-inside:avoid}
+  .ps{page-break-inside:avoid;break-inside:avoid}
 }
 .print-sheet{display:none}
 .ps{width:100%;max-width:277mm;font-family:'Hiragino Sans','Yu Gothic',sans-serif;font-size:8.5pt;color:#111}
@@ -601,6 +602,8 @@ function fitPrintSheet() {
 }
 
 window.doPrint = function(){ buildPrint(); setTimeout(function(){window.print();},100); };
+// Ctrl+P など、印刷ボタン以外から印刷する場合にも組み直す
+window.addEventListener('beforeprint', function(){ try { buildPrint(); } catch(e) {} });
 
 function showSection(name, tabEl) {
   document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
