@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぴーぴ健康データ解析</title>
+<style>
+:root{
+  --blue:#007bff; --bg:#f8f9fa; --card:#ffffff; --line:#e3e7ec; --text:#333;
+  --muted:#6b737c; --coco:#d65f78; --nono:#7569b6; --momo:#4d8b78; --bibi:#d6924a;
+  --accent:#4f7fb5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  font-size:15px;line-height:1.6}
+header{background:var(--blue);color:#fff;padding:14px 16px;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+header h1{margin:0;font-size:1.25em}
+header nav{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+header nav a{background:rgba(255,255,255,.18);color:#fff;text-decoration:none;
+  padding:5px 12px;border-radius:6px;font-size:.85em}
+.wrap{max-width:860px;margin:16px auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:1.05em}
+.card h3{margin:18px 0 8px;font-size:.98em;color:#444}
+.card h3:first-child{margin-top:0}
+button{cursor:pointer;font-size:14px;padding:8px 14px;border:1px solid var(--line);
+  border-radius:6px;background:#fff;color:#333}
+button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+button:disabled{opacity:.5;cursor:default}
+select,input[type=date],input[type=text]{font-size:14px;padding:7px 8px;border:1px solid #ccc;border-radius:6px;background:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>label{font-size:.85em;color:var(--muted);font-weight:bold}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{border-radius:20px}
+.tabs button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.muted{color:var(--muted);font-size:.85em}
+.note{background:#fff8e6;border-left:4px solid #e8b23a;padding:8px 12px;border-radius:0 6px 6px 0;font-size:.85em;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:.88em}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#f2f5f8;font-weight:bold;white-space:nowrap}
+td.num,th.num{text-align:right;white-space:nowrap}
+tr.thin td{color:#999}
+.tablewrap{overflow-x:auto}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{flex:1 1 130px;background:#f5f8fb;border:1px solid var(--line);border-radius:8px;padding:10px}
+.stat .k{font-size:.78em;color:var(--muted)}
+.stat .v{font-size:1.3em;font-weight:bold}
+.stat .s{font-size:.75em;color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8em;margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+svg{width:100%;height:auto;display:block}
+.gridline{stroke:#e6eaee;stroke-width:1}
+.axis{fill:#8a929b;font-size:10px}
+.bar{fill:var(--accent)}
+.kwlist{display:flex;flex-wrap:wrap;gap:6px}
+.kw{border:1px solid var(--line);background:#f5f8fb;border-radius:16px;padding:4px 10px;font-size:.85em;cursor:pointer}
+.kw.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.memoitem{border-bottom:1px solid var(--line);padding:8px 0}
+.memoitem .d{font-size:.8em;color:var(--muted)}
+.memoitem .t{white-space:pre-wrap;word-break:break-word}
+mark{background:#ffe680}
+#authSection{text-align:center}
+#status{font-size:.85em;color:var(--muted);margin-top:6px}
+.hidden{display:none!important}
+@media(max-width:520px){ .wrap{padding:0 8px} .card{padding:12px} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📊 ぴーぴ健康データ解析</h1>
+  <nav>
+    <a href="index.html">🐾 健康管理手帳</a>
+    <a href="gohan.html">🍚 ごはん管理表</a>
+    <a href="watashi.html">🌿 ヒトミの健康アプリ</a>
+  </nav>
+</header>
+
+<div class="wrap">
+
+  <div class="card" id="authSection">
+    <p id="authStatus">🔄 認証状態を確認中...</p>
+    <button id="loginButton" class="primary hidden">Googleアカウントでログイン</button>
+    <button id="logoutButton" class="hidden">ログアウト</button>
+  </div>
+
+  <main id="mainContent" class="hidden">
+
+    <div class="card">
+      <div class="row">
+        <label for="periodSelect">期間</label>
+        <select id="periodSelect">
+          <option value="all">全期間</option>
+          <option value="365">直近1年</option>
+          <option value="180">直近6か月</option>
+          <option value="90">直近3か月</option>
+          <option value="30">直近30日</option>
+          <option value="custom">期間を指定</option>
+        </select>
+        <span id="customRange" class="row hidden">
+          <input type="date" id="dateFrom"> 〜 <input type="date" id="dateTo">
+        </span>
+        <button id="reloadButton">🔄 データ再読込</button>
+        <button id="csvButton">⬇ CSV出力</button>
+      </div>
+      <p id="status"></p>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="active" data-tab="summary">概要</button>
+      <button data-tab="monthly">月別・季節別</button>
+      <button data-tab="cross">項目どうしの関連</button>
+      <button data-tab="tally">集計一覧</button>
+      <button data-tab="memo">メモ解析</button>
+    </div>
+
+    <section id="panel-summary" class="panel"></section>
+    <section id="panel-monthly" class="panel hidden"></section>
+    <section id="panel-cross" class="panel hidden"></section>
+    <section id="panel-tally" class="panel hidden"></section>
+    <section id="panel-memo" class="panel hidden"></section>
+
+  </main>
+</div>
+
+<script src="bunseki.js" type="module"></script>
+</body>
+</html>
