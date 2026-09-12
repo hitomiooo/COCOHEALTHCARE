@@ -333,16 +333,36 @@ input[type="file"] {
     border: 1px solid var(--glass-line);
 }
 
-/* 体調チェック (ココ、ノノなど) */
-fieldset label[for^="condition"] {
-    display: inline-block;
-    width: auto;
-    margin-right: 5px;
+/* 体調チェック・食欲の並び（ラベル＋プルダウンを1組にして整列） */
+.select-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+    margin-bottom: 6px;
 }
-fieldset select[id^="condition"] {
-    width: auto;
-    margin-right: 10px;
-    margin-bottom: 8px;
+/* 食欲（朝・昼・晩）は狭い画面では縦、広い画面では横3列 */
+.select-grid.grid-3 { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 520px) {
+    .select-grid.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.select-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+}
+.select-item label {
+    margin: 0;
+    flex: 0 0 auto;
+    font-size: 0.88em;
+    font-weight: 700;
+    color: var(--ink-2);
+    white-space: nowrap;
+}
+.select-item select {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
     padding: 9px 8px;
 }
 
@@ -361,19 +381,6 @@ fieldset select[id^="condition"] {
     transform: scale(1.2);
     vertical-align: middle;
     accent-color: var(--accent-deep);
-}
-
-/* 食欲 (朝昼晩) */
-fieldset label[for^="appetite"] {
-    display: inline-block;
-    width: auto;
-    margin-right: 5px;
-}
-fieldset select[id^="appetite"] {
-    width: auto;
-    margin-right: 10px;
-    margin-bottom: 8px;
-    padding: 9px 8px;
 }
 
 /* スタンプボタン */
@@ -569,27 +576,16 @@ label[for="date"] {
     margin-right: 5px;
 }
 
-/* --- 食欲欄のスマホ表示を修正 --- */
+/* --- スマホ表示の調整 --- */
 @media (max-width: 480px) {
-    main, #authSection {
-        margin: 12px 10px;
-        padding: 15px;
+    main {
+        margin: 10px 10px 14px;
+        padding: 14px;
         border-radius: var(--radius);
     }
-    form#healthForm fieldset label[for^="appetite"] {
-        display: block;
-        width: 100%;
-        margin-bottom: 3px;
-        margin-top: 10px;
-        margin-right: 0;
-    }
-    form#healthForm fieldset select[id^="appetite"] {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 5px;
-    }
-    form#healthForm fieldset label[for="appetiteMorning"] {
-        margin-top: 0;
+    #authSection {
+        margin: 10px 10px 0;
+        border-radius: var(--radius);
     }
 }
 
