@@ -225,6 +225,50 @@ body.has-savebar #bgSettingsBtn { bottom: calc(78px + env(safe-area-inset-bottom
 #bgFileInput { display: none; }
 
 /* =========================================================
+   共通メニュー（theme.js が全ページに差し込む）
+   ========================================================= */
+.app-nav {
+    display: flex;
+    gap: 6px;
+    max-width: 600px;
+    margin: 12px auto 0;
+    padding: 0 12px;
+    box-sizing: border-box;
+}
+.app-nav-link {
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.50);
+    border: 1px solid var(--glass-line-soft);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+    transition: background .15s ease;
+}
+.app-nav-link:hover { background: rgba(255, 255, 255, 0.80); }
+.app-nav-link.current {
+    background: rgba(255, 255, 255, 0.86);
+    border-color: var(--glass-line);
+    box-shadow: var(--glass-shadow-sm);
+}
+/* ページ側が置き場所（#appNavSlot）を用意している場合はその中に収める */
+#appNavSlot .app-nav {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* =========================================================
    汎用ガラスクラス
    ========================================================= */
 .glass {
@@ -307,6 +351,7 @@ body.has-savebar #bgSettingsBtn { bottom: calc(78px + env(safe-area-inset-bottom
     --lav-soft: rgba(155, 142, 208, 0.18);
     --rose-soft: rgba(229, 138, 161, 0.20);
 }
+.topbar-spacer { flex: 0 0 32px; }
 .topbar {
     background: var(--glass-strong) !important;
     border-bottom: 1px solid var(--glass-line) !important;

@@ -104,9 +104,56 @@
         return false;
     }
 
+    /* ---------- 共通メニュー ---------- */
+
+    var NAV_ITEMS = [
+        { file: 'index.html', label: '🐾 手帳' },
+        { file: 'gohan.html', label: '🍚 ごはん' },
+        { file: 'watashi.html', label: '🌿 ヒトミ' },
+        { file: 'bunseki.html', label: '📊 解析' }
+    ];
+
+    function currentFile() {
+        var path = window.location.pathname;
+        var name = path.substring(path.lastIndexOf('/') + 1);
+        return name === '' ? 'index.html' : name;
+    }
+
+    function buildNav() {
+        if (document.querySelector('.app-nav')) return;
+
+        var current = currentFile();
+        var nav = document.createElement('nav');
+        nav.className = 'app-nav';
+        nav.setAttribute('aria-label', 'ページ切り替え');
+
+        NAV_ITEMS.forEach(function (item) {
+            var link = document.createElement('a');
+            link.className = 'app-nav-link' + (item.file === current ? ' current' : '');
+            link.href = item.file;
+            link.textContent = item.label;
+            if (item.file === current) link.setAttribute('aria-current', 'page');
+            nav.appendChild(link);
+        });
+
+        // ページ側が置き場所を用意していればそこへ、なければヘッダーの直後／先頭へ
+        var slot = document.getElementById('appNavSlot');
+        if (slot) {
+            slot.appendChild(nav);
+            return;
+        }
+        var header = document.querySelector('body > header, body > .topbar, body > .site-header');
+        if (header) {
+            header.insertAdjacentElement('afterend', nav);
+        } else {
+            document.body.insertBefore(nav, document.body.firstChild);
+        }
+    }
+
     /* ---------- UI ---------- */
 
     function buildUI() {
+        buildNav();
         if (document.getElementById('bgSettingsBtn')) return;
 
         // 背景レイヤー

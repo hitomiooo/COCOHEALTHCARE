@@ -90,28 +90,7 @@ main {
     line-height: 1.4;
 }
 
-/* ページ移動リンク */
-.nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.nav-link {
-    display: inline-flex;
-    align-items: center;
-    flex: 1 1 auto;
-    justify-content: center;
-    padding: 7px 10px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-size: 0.78em;
-    font-weight: 700;
-    color: var(--ink);
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid var(--glass-line-soft);
-    transition: background .15s ease;
-}
-.nav-link:hover { background: rgba(255, 255, 255, 0.82); }
+/* 共通メニューは theme.css / theme.js 側で定義（#appNavSlot に挿入される） */
 .nav-link.gohan { color: var(--mint-deep); }
 .nav-link.watashi { color: var(--lav-deep); }
 .nav-link.bunseki { color: var(--amber-deep); }
