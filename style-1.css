@@ -59,16 +59,8 @@ main {
     background: rgba(255, 255, 255, 0.46);
     border-color: var(--glass-line);
 }
-.records-panel h2 { margin-top: 2px; }
-.records-note {
-    margin: -6px 0 14px;
-    font-size: 0.82em;
-    color: var(--ink-2);
-}
-.records-note a {
-    color: var(--accent-deep);
-    font-weight: 700;
-}
+.records-panel h2 { margin-top: 14px; }
+.records-panel > .collapse-card { background: rgba(255, 255, 255, 0.38); }
 
 /* === 上部のログイン表示（コンパクト） === */
 #authSection {

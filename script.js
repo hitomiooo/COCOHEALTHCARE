@@ -627,90 +627,13 @@ async function loadAllRecordsFromFirestore() {
         const todayString = document.getElementById('date').value;
         loadRecordForDate(todayString);
 
-        const chartContainer = document.getElementById('appetiteChartContainer');
-        if (chartContainer) {
-            chartContainer.innerHTML = generateAppetiteChart('Coco');
-        }
-
     } catch (error) {
         console.error("読み込みエラー:", error);
         recordListDiv.innerHTML = '<p>⚠️ データの読み込みに失敗しました。</p>';
     }
 }
 
-// ★追加: 食欲グラフ生成関数
-function generateAppetiteChart(targetDog = 'Coco') {
-    const last30Days = allRecordsCache
-        .filter(r => r.date)
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(-30);
-
-    updateAIAdvice(last30Days);
-
-    if (last30Days.length === 0) return '<p style="font-size:0.8em; color:#999;">データが不足しています</p>';
-
-    const scoreMap = { "完食": 3, "少し残す": 2, "半分": 1, "ほぼ食べず": 0 };
-    const points = last30Days.map((r, index) => {
-        const morning = scoreMap[r.appetiteMorning] || 0;
-        const noon = scoreMap[r.appetiteNoon] || 0;
-        const night = scoreMap[r.appetiteNight] || 0;
-        const totalScore = morning + noon + night;
-        const x = (index / 29) * 300 + 20; 
-        const y = 100 - (totalScore / 9) * 80; 
-        return `${x},${y}`;
-    }).join(' ');
-
-    return `
-        <svg viewBox="0 0 340 120" style="width:100%; height:auto; background:rgba(255,255,255,0.45); border-radius:12px;">
-            <line x1="20" y1="20" x2="320" y2="20" stroke="#eee" />
-            <line x1="20" y1="100" x2="320" y2="100" stroke="#ccc" />
-            <polyline fill="none" stroke="#ff6b6b" stroke-width="3" points="${points}" stroke-linejoin="round" />
-            ${points.split(' ').map(p => `<circle cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3" fill="#ff6b6b" />`).join('')}
-            <text x="20" y="115" font-size="8" fill="#999">30日前</text>
-            <text x="280" y="115" font-size="8" fill="#999">今日</text>
-        </svg>
-    `;
-}
-
-// ★追加: AI健康アドバイス生成関数
-function updateAIAdvice(last30Days) {
-    const adviceDiv = document.getElementById('aiAdviceContainer');
-    if (!adviceDiv) return;
-
-    if (last30Days.length < 3) {
-        adviceDiv.innerHTML = "🐾 3日分以上のデータが貯まると、AIが健康トレンドを解析します。";
-        return;
-    }
-
-    const scoreMap = { "完食": 3, "少し残す": 2, "半分": 1, "ほぼ食べず": 0 };
-    const dailyScores = last30Days.map(r => {
-        return (scoreMap[r.appetiteMorning] || 0) + (scoreMap[r.appetiteNoon] || 0) + (scoreMap[r.appetiteNight] || 0);
-    });
-
-    const recent3 = dailyScores.slice(-3); 
-    const todayScore = recent3[2];
-    const prevScore = recent3[1];
-    const diff = todayScore - prevScore;
-
-    let message = "";
-    let icon = "💡";
-
-    if (todayScore <= 3) {
-        icon = "⚠️";
-        message = "ココちゃんの食欲がかなり低下しています。スタンプにある「嘔吐」や「咳」が出ていないか確認し、続く場合は早めに先生に相談しましょう。";
-    } else if (diff <= -3) {
-        icon = "📉";
-        message = "昨日より食欲が急に落ちています。気圧や気温の変化による疲れかもしれません。ゆっくり休ませてあげてください。";
-    } else if (todayScore >= 8) {
-        icon = "✨";
-        message = "バッチリ完食が続いていますね！体調はとても良さそうです。この調子で投薬も忘れずに進めましょう。";
-    } else {
-        icon = "🐾";
-        message = "食欲は安定しています。日々の記録を続けることで、小さな変化にも気づきやすくなります。";
-    }
-
-    adviceDiv.innerHTML = `<strong>${icon} AIアドバイス:</strong><br>${message}`;
-}
+// ※ 食欲グラフとアドバイスは解析ページ（bunseki.html / bunseki.js）へ移動しました
 
 function loadRecordForDate(dateString) {
     const record = allRecordsCache.find(r => r.date === dateString);

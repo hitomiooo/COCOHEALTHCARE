@@ -390,6 +390,7 @@ function renderSummary() {
     <p class="muted" style="margin-top:10px">体調スコアは ○=100点 / △=50点 / ×=0点 として平均した値です（このページ独自の計算です）。</p>
   </div>
   ${markListCard()}
+  ${appetiteTrendCard()}
   <div class="card">
     <h2>月別の体調スコア</h2>
     ${months.length ? lineChartSvg({ labels, series, yMin: 0, yMax: 100, yFormat: v => v.toFixed(0) }) + legendHtml(series) : '<p class="muted">データがありません。</p>'}
@@ -399,6 +400,58 @@ function renderSummary() {
     summaryMark = b.dataset.mark;
     renderSummary();
   });
+}
+
+/* 直近30日の食欲推移（ココ）と食欲メモ
+   ※ 健康管理手帳のトップページから移動してきた機能 */
+function appetiteTrendCard() {
+  const last30 = allRecords.slice(-30);
+  if (!last30.length) {
+    return `<div class="card"><h2>直近30日の食欲推移（ココ）</h2><p class="muted">データがありません。</p></div>`;
+  }
+
+  const labels = last30.map(r => r.date.slice(5).replace('-', '/'));
+  const values = last30.map(r => {
+    const scores = MEALS.map(m => APPETITE_SCORE[r[m.key]]).filter(isNum);
+    return scores.length ? scores.reduce((a, b) => a + b, 0) : null;
+  });
+  const series = [{ name: 'ココの食欲（朝＋昼＋晩）', color: '#d65f78', values }];
+
+  return `
+  <div class="card">
+    <h2>直近30日の食欲推移（ココ）</h2>
+    ${lineChartSvg({ labels, series, yMin: 0, yMax: 9, yFormat: v => v.toFixed(0) })}
+    ${legendHtml(series)}
+    <p class="muted" style="margin-top:8px">完食=3点 / 少し残す=2点 / 半分=1点 / ほぼ食べず=0点 として、朝・昼・晩を合計した値です（9点満点）。上の期間の絞り込みとは関係なく、記録がある直近30日分を表示します。</p>
+    ${appetiteAdviceHtml(values)}
+  </div>`;
+}
+
+function appetiteAdviceHtml(values) {
+  const scores = values.filter(isNum);
+  if (scores.length < 3) {
+    return `<div class="note">🐾 3日分以上の記録が貯まると、食欲の傾向を表示します。</div>`;
+  }
+
+  const latest = scores[scores.length - 1];
+  const prev = scores[scores.length - 2];
+  const diff = latest - prev;
+
+  let icon = '🐾';
+  let message = '食欲は安定しています。日々の記録を続けることで、小さな変化にも気づきやすくなります。';
+
+  if (latest <= 3) {
+    icon = '⚠️';
+    message = 'ココの食欲がかなり低下しています。「嘔吐」や「咳」などの記録がないか確認し、続く場合は早めに先生に相談しましょう。';
+  } else if (diff <= -3) {
+    icon = '📉';
+    message = '前回の記録より食欲が急に落ちています。気圧や気温の変化による疲れかもしれません。ゆっくり休ませてあげてください。';
+  } else if (latest >= 8) {
+    icon = '✨';
+    message = '完食が続いていますね。体調はとても良さそうです。この調子で投薬も忘れずに進めましょう。';
+  }
+
+  return `<div class="note">${icon} <strong>食欲メモ：</strong>${esc(message)}（直近の記録 ${latest} 点 / 9点）</div>`;
 }
 
 /* マークを付けた日の一覧（日付を押すとその日の記録を表示） */
