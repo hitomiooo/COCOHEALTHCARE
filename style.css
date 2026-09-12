@@ -91,9 +91,6 @@ main {
 }
 
 /* 共通メニューは theme.css / theme.js 側で定義（#appNavSlot に挿入される） */
-.nav-link.gohan { color: var(--mint-deep); }
-.nav-link.watashi { color: var(--lav-deep); }
-.nav-link.bunseki { color: var(--amber-deep); }
 
 /* === フォームの基本スタイル === */
 form {

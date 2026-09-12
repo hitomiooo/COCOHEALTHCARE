@@ -19,8 +19,8 @@
     .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mini{padding:16px}.mini .comment{min-height:82px}.savebar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(248,245,248,.94);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.save{display:block;width:min(100%,690px);margin:auto;border:0;border-radius:13px;padding:13px;background:var(--lav);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 5px 14px rgba(117,105,182,.25)}.preview-note{text-align:center;color:var(--muted);font-size:11px;margin-top:10px}
     @media(max-width:540px){.two-col{grid-template-columns:1fr}.hello h1{font-size:22px}.card{border-radius:15px;padding:15px}.scale{gap:3px}.pain-btn{height:40px;font-size:13px}}
   </style>
-  <link rel="stylesheet" href="theme.css">
-  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css?v=20260912b">
+  <script src="theme.js?v=20260912b"></script>
 </head>
 <body>
   <header class="topbar"><span class="topbar-spacer"></span><strong>ヒトミの健康アプリ</strong><button class="avatar" id="logoutButton" title="ログアウト">🌿</button></header>
@@ -64,6 +64,6 @@
     <section class="card"><label class="field-label" for="dailyMemo">今日のメモ</label><textarea id="dailyMemo" class="comment" placeholder="受診したこと、薬、睡眠、食事など自由に記録"></textarea><p class="status" id="saveStatus"></p></section>
   </main>
   <div class="savebar" id="savebar" hidden><button class="save" type="button" id="saveButton">今日の記録を保存</button><button class="delete" type="button" id="deleteButton">この日の記録を削除</button></div>
-  <script type="module" src="watashi.js"></script>
+  <script type="module" src="watashi.js?v=20260912b"></script>
 </body>
 </html>
