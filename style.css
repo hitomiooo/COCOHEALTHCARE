@@ -34,53 +34,69 @@ header h1 {
     letter-spacing: 0.02em;
 }
 
-main, #authSection {
+main {
     max-width: 600px;
-    margin: 16px auto;
-    padding: 18px;
-    background: var(--glass);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-line);
+    margin: 12px auto 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.26);
+    -webkit-backdrop-filter: saturate(150%) blur(12px);
+    backdrop-filter: saturate(150%) blur(12px);
+    border: 1px solid var(--glass-line-soft);
     border-radius: var(--radius-lg);
-    box-shadow: var(--glass-shadow);
+    box-shadow: var(--glass-shadow-sm);
 }
 
-#authSection { text-align: center; }
+/* === 上部のログイン表示（コンパクト） === */
+#authSection {
+    max-width: 600px;
+    margin: 10px auto 0;
+    padding: 9px 12px;
+    background: rgba(255, 255, 255, 0.34);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+    border: 1px solid var(--glass-line-soft);
+    border-radius: var(--radius);
+}
+
+.auth-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 7px;
+}
 #authStatus {
-    font-size: 0.95em;
+    margin: 0;
+    margin-right: auto;
+    font-size: 0.75em;
+    font-weight: 500;
     color: var(--ink-2);
-    margin-bottom: 14px;
-    line-height: 1.6;
+    line-height: 1.4;
 }
 
 /* ページ移動リンク */
 .nav-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-bottom: 14px;
+    gap: 6px;
 }
 .nav-link {
     display: inline-flex;
     align-items: center;
-    padding: 8px 14px;
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 7px 10px;
     border-radius: 999px;
     text-decoration: none;
-    font-size: 0.85em;
+    font-size: 0.78em;
     font-weight: 700;
     color: var(--ink);
-    background: rgba(255, 255, 255, 0.62);
-    border: 1px solid var(--glass-line);
-    -webkit-backdrop-filter: var(--glass-blur-sm);
-    backdrop-filter: var(--glass-blur-sm);
-    transition: transform .15s ease, background .15s ease;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--glass-line-soft);
+    transition: background .15s ease;
 }
-.nav-link:hover {
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.82);
-}
+.nav-link:hover { background: rgba(255, 255, 255, 0.82); }
 .nav-link.gohan { color: var(--mint-deep); }
 .nav-link.watashi { color: var(--lav-deep); }
 .nav-link.bunseki { color: var(--amber-deep); }
@@ -154,11 +170,14 @@ button {
 }
 #deleteButton:hover { background: rgba(255, 240, 243, 0.9); }
 
-/* ログイン・ログアウトボタン */
+/* ログイン・ログアウトボタン（コンパクト） */
 #loginButton, #logoutButton {
-    font-size: 15px;
-    padding: 13px;
-    border-radius: var(--radius-sm);
+    width: auto;
+    margin: 0;
+    padding: 6px 13px;
+    font-size: 0.78em;
+    font-weight: 700;
+    border-radius: 999px;
 }
 #loginButton {
     background: var(--accent-deep);
@@ -166,7 +185,8 @@ button {
     color: #fff;
 }
 #logoutButton {
-    background: rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.55);
+    border-color: var(--glass-line-soft);
     color: var(--ink-2);
 }
 
@@ -205,7 +225,64 @@ fieldset legend {
     border-color: rgba(227, 180, 95, 0.5);
 }
 
-/* 気象情報カード */
+/* === 折りたたみパネル（気象情報・動物病院） === */
+.info-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.collapse-card {
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.44);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+    overflow: hidden;
+}
+.collapse-card > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 13px 15px;
+    font-size: 0.92em;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+}
+.collapse-card > summary::-webkit-details-marker { display: none; }
+.collapse-card > summary::after {
+    content: "▾";
+    color: var(--ink-3);
+    font-size: 0.95em;
+    transition: transform 0.2s;
+}
+.collapse-card[open] > summary::after { transform: rotate(180deg); }
+.collapse-card > summary:hover { background: rgba(255, 255, 255, 0.38); }
+.collapse-card[open] > summary { border-bottom: 1px solid var(--glass-line); }
+
+.collapse-body { padding: 14px 15px; }
+
+/* 病院カードを折りたたみ内で使うときは枠を外す */
+.collapse-card .hospital-status-card {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+/* 休診などで要確認のときは閉じていても分かるようにする */
+.collapse-card:has(.needs-review) > summary {
+    background: rgba(227, 180, 95, 0.24);
+    color: #8a6516;
+}
+
+/* 気象情報カード（折りたたみを使わない場合用） */
 .weather-card {
     padding: 15px 16px;
     margin-bottom: 18px;

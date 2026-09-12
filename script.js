@@ -94,7 +94,7 @@ function showAccessDenied(user) {
 function showApp(user) {
     mainContent.style.display = 'block';
     authSection.style.display = 'block';
-    authStatus.innerHTML = `ようこそ、 ${user.displayName} さん<br><strong>(${user.email})</strong>`;
+    authStatus.textContent = `${user.displayName} さん`;
     loginButton.style.display = 'none';
     logoutButton.style.display = 'block';
     initializeAppLogic();

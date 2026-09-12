@@ -16,42 +16,49 @@
     
     <div id="authSection">
         <nav class="nav-links">
-            <a href="gohan.html" class="nav-link gohan">🍚 ごはん管理表</a>
-            <a href="watashi.html" class="nav-link watashi">🌿 ヒトミの健康アプリ</a>
-            <a href="bunseki.html" class="nav-link bunseki">📊 データ解析</a>
+            <a href="gohan.html" class="nav-link gohan">🍚 ごはん</a>
+            <a href="watashi.html" class="nav-link watashi">🌿 ヒトミ</a>
+            <a href="bunseki.html" class="nav-link bunseki">📊 解析</a>
         </nav>
-        <p id="authStatus">🔄 認証状態を確認中...</p>
-        <button id="loginButton" style="display: none;">Googleアカウントでログイン</button>
-        <button id="logoutButton" style="display: none;">ログアウト</button>
+        <div class="auth-bar">
+            <p id="authStatus">🔄 確認中...</p>
+            <button id="loginButton" style="display: none;">Googleでログイン</button>
+            <button id="logoutButton" style="display: none;">ログアウト</button>
+        </div>
     </div>
 
     <main id="mainContent" style="display: none;">
-        
+
+        <div class="info-panels">
+            <details class="collapse-card" id="weatherPanel">
+                <summary>📍 飯田市の気象情報</summary>
+                <div id="iidaWeatherSection" class="collapse-body">
+                    <div id="todayWeatherDetail">
+                        <span id="todayTempRange">🌡️ 気温: 取得中...</span>
+                        <span id="pressureAlertContainer">🌤️ 気圧: 取得中...</span>
+                    </div>
+
+                    <div id="weeklyForecastContainer">
+                        <p>🔄 週間予報を読み込み中...</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="collapse-card" id="hospitalPanel">
+                <summary>🏥 トロッコ動物病院</summary>
+                <section id="hospitalStatusCard" class="hospital-status-card collapse-body" aria-live="polite">
+                    <div>
+                        <p id="hospitalStatusMessage">診療カレンダーを確認中...</p>
+                        <small id="hospitalStatusCheckedAt"></small>
+                    </div>
+                    <a href="http://torocco-vet.com/schedule/" target="_blank" rel="noopener noreferrer">公式カレンダーを開く</a>
+                </section>
+            </details>
+        </div>
+
+        <div id="hospitalHealthAlert" class="hospital-health-alert" hidden></div>
+
         <form id="healthForm">
-            <div id="iidaWeatherSection" class="weather-card">
-                <h3>📍 飯田市の気象情報</h3>
-
-                <div id="todayWeatherDetail">
-                    <span id="todayTempRange">🌡️ 気温: 取得中...</span>
-                    <span id="pressureAlertContainer">🌤️ 気圧: 取得中...</span>
-                </div>
-
-                <div id="weeklyForecastContainer">
-                    <p>🔄 週間予報を読み込み中...</p>
-                </div>
-            </div>
-
-            <section id="hospitalStatusCard" class="hospital-status-card" aria-live="polite">
-                <div>
-                    <h3>🏥 トロッコ動物病院</h3>
-                    <p id="hospitalStatusMessage">診療カレンダーを確認中...</p>
-                    <small id="hospitalStatusCheckedAt"></small>
-                </div>
-                <a href="http://torocco-vet.com/schedule/" target="_blank" rel="noopener noreferrer">公式カレンダーを開く</a>
-            </section>
-
-            <div id="hospitalHealthAlert" class="hospital-health-alert" hidden></div>
-
             <input type="hidden" id="recordId">
             
             <h3>記録フォーム</h3>
