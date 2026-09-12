@@ -356,7 +356,7 @@ async function updateIidaWeather() {
                 const icon = weatherMap[data.daily.weathercode[i]] || "❓";
                 
                 const dayEl = document.createElement('div');
-                dayEl.style.cssText = "min-width:65px; text-align:center; background:#fff; padding:8px; border-radius:8px; border:1px solid #e0e0e0; flex-shrink:0;";
+                dayEl.style.cssText = "min-width:65px; text-align:center; background:rgba(255,255,255,0.62); -webkit-backdrop-filter:saturate(160%) blur(10px); backdrop-filter:saturate(160%) blur(10px); padding:8px; border-radius:12px; border:1px solid rgba(255,255,255,0.7); flex-shrink:0;";
                 dayEl.innerHTML = `
                     <div style="font-size:0.75em; color:#666;">${dayLabel}</div>
                     <div style="font-size:1.4em; margin:4px 0;">${icon}</div>
@@ -661,7 +661,7 @@ function generateAppetiteChart(targetDog = 'Coco') {
     }).join(' ');
 
     return `
-        <svg viewBox="0 0 340 120" style="width:100%; height:auto; background:#fdfdfd; border-radius:5px;">
+        <svg viewBox="0 0 340 120" style="width:100%; height:auto; background:rgba(255,255,255,0.45); border-radius:12px;">
             <line x1="20" y1="20" x2="320" y2="20" stroke="#eee" />
             <line x1="20" y1="100" x2="320" y2="100" stroke="#ccc" />
             <polyline fill="none" stroke="#ff6b6b" stroke-width="3" points="${points}" stroke-linejoin="round" />

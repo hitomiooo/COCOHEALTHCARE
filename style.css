@@ -1,41 +1,89 @@
+/* ==========================================================
+   style.css  —  ぴーぴ健康管理手帳（index.html）
+   白のすりガラス（frosted glass）デザイン
+   ※共通の色・背景写真は theme.css / theme.js 側で定義
+   ========================================================== */
+
 /* === 基本スタイル === */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
     margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #333;
+    padding: 0 0 40px;
+    color: var(--ink, #2d2f38);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 14px 20px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--ink);
+    background: var(--glass-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-line);
+    box-shadow: 0 2px 18px rgba(90, 95, 125, 0.07);
 }
 header h1 {
     margin: 0;
-    font-size: 1.5em;
+    font-size: 1.15em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 main, #authSection {
     max-width: 600px;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin: 16px auto;
+    padding: 18px;
+    background: var(--glass);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
 }
 
-#authSection {
-    text-align: center;
-}
+#authSection { text-align: center; }
 #authStatus {
-    font-size: 1.1em;
-    margin-bottom: 15px;
-    line-height: 1.5;
+    font-size: 0.95em;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+    line-height: 1.6;
 }
+
+/* ページ移動リンク */
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.62);
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+    transition: transform .15s ease, background .15s ease;
+}
+.nav-link:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.82);
+}
+.nav-link.gohan { color: var(--mint-deep); }
+.nav-link.watashi { color: var(--lav-deep); }
+.nav-link.bunseki { color: var(--amber-deep); }
 
 /* === フォームの基本スタイル === */
 form {
@@ -44,10 +92,10 @@ form {
 }
 
 label, fieldset legend {
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 5px;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--ink-2);
+    margin-bottom: 6px;
     display: block;
 }
 
@@ -57,92 +105,140 @@ select,
 textarea,
 button {
     font-size: 16px;
-    padding: 10px 8px;
+    font-family: inherit;
+    padding: 11px 12px;
     line-height: 1.4;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.62);
+    color: var(--ink);
+}
+input[type="text"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 3px rgba(122, 167, 217, 0.18);
 }
 
-textarea {
-    line-height: 1.5;
-}
+textarea { line-height: 1.6; }
 
 button {
     cursor: pointer;
-    border: none;
-    color: white;
+    font-weight: 700;
 }
 
 /* 記録ボタン */
 #saveButton {
-    background-color: #007bff;
-    font-size: 18px;
-    font-weight: bold;
+    margin-top: 6px;
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    color: #fff;
+    font-size: 17px;
+    padding: 14px;
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(74, 127, 184, 0.28);
 }
-#saveButton:hover {
-    background-color: #0056b3;
-}
+#saveButton:hover { background: #3d6d9f; }
 
 /* 削除ボタン */
 #deleteButton {
-    background-color: #f44336;
-    font-weight: bold;
+    background: rgba(255, 255, 255, 0.66);
+    color: var(--pink-deep);
+    border: 1px solid rgba(229, 138, 161, 0.55);
 }
-#deleteButton:hover {
-    background-color: #c62828;
-}
+#deleteButton:hover { background: rgba(255, 240, 243, 0.9); }
 
 /* ログイン・ログアウトボタン */
 #loginButton, #logoutButton {
-    font-size: 16px;
-    padding: 12px;
+    font-size: 15px;
+    padding: 13px;
+    border-radius: var(--radius-sm);
 }
 #loginButton {
-    background-color: #4285F4;
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    color: #fff;
 }
 #logoutButton {
-    background-color: #6c757d;
+    background: rgba(255, 255, 255, 0.62);
+    color: var(--ink-2);
 }
 
 /* === フォームの個別調整 === */
 
 fieldset {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px 12px;
+    margin-bottom: 16px;
+    padding: 14px 15px 8px;
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.34);
 }
 fieldset legend {
-    font-size: 1em;
-    padding: 0 5px;
+    font-size: 0.92em;
+    padding: 0 6px;
+    color: var(--ink-2);
 }
 
 .condition-highlight {
     margin: 4px 0 20px;
-    padding: 14px 16px 4px;
-    border: 3px solid #f2c94c;
-    border-radius: 10px;
-    background: #fff9d9;
-    box-shadow: 0 2px 6px rgba(191, 145, 0, 0.14);
+    padding: 15px 16px 8px;
+    border: 1px solid rgba(227, 180, 95, 0.55);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 233, 0.55);
+    box-shadow: var(--glass-shadow-sm);
 }
 .condition-highlight legend {
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 999px;
-    background: #f2c94c;
-    color: #4f3b00;
-    font-size: 1.05em;
+    background: rgba(227, 180, 95, 0.32);
+    color: #8a6516;
+    font-size: 0.95em;
 }
 .condition-highlight select {
-    background: #fff;
-    border-color: #d9b438;
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(227, 180, 95, 0.5);
+}
+
+/* 気象情報カード */
+.weather-card {
+    padding: 15px 16px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(122, 167, 217, 0.45);
+    border-radius: var(--radius);
+    background: rgba(233, 244, 255, 0.52);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+}
+.weather-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.02em;
+    color: var(--ink);
+}
+#todayWeatherDetail {
+    margin-bottom: 10px;
+    font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: var(--ink-2);
+}
+#weeklyForecastContainer {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 5px;
 }
 
 /* ファイル選択欄 */
 input[type="file"] {
     border: none;
+    background: transparent;
     padding-left: 0;
 }
 
@@ -156,8 +252,8 @@ input[type="file"] {
 .photo-preview img {
     width: 100%;
     height: auto;
-    border-radius: 4px;
-    border: 1px solid #eee;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-line);
 }
 
 /* 体調チェック (ココ、ノノなど) */
@@ -169,8 +265,8 @@ fieldset label[for^="condition"] {
 fieldset select[id^="condition"] {
     width: auto;
     margin-right: 10px;
-    margin-bottom: 5px;
-    padding: 8px 5px;
+    margin-bottom: 8px;
+    padding: 9px 8px;
 }
 
 /* チェックボックスグループ (薬, お通じ) */
@@ -178,14 +274,16 @@ fieldset select[id^="condition"] {
     display: inline-block;
     width: auto;
     margin-right: 15px;
-    margin-bottom: 5px;
-    font-weight: normal;
+    margin-bottom: 7px;
+    font-weight: 400;
+    color: var(--ink);
 }
 .checkbox-group input[type="checkbox"] {
     width: auto;
     margin-right: 5px;
     transform: scale(1.2);
     vertical-align: middle;
+    accent-color: var(--accent-deep);
 }
 
 /* 食欲 (朝昼晩) */
@@ -197,134 +295,166 @@ fieldset label[for^="appetite"] {
 fieldset select[id^="appetite"] {
     width: auto;
     margin-right: 10px;
-    margin-bottom: 5px;
-    padding: 8px 5px;
+    margin-bottom: 8px;
+    padding: 9px 8px;
 }
 
 /* スタンプボタン */
 .stamp-pad {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 6px;
     margin-bottom: 10px;
 }
 .stamp-btn {
     width: auto;
-    font-size: 14px;
-    padding: 5px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 11px;
     margin-bottom: 0;
     flex-grow: 1;
-    min-width: 50px;
-    background-color: #f1f1f1;
-    color: #333;
-    border: 1px solid #ccc;
+    min-width: 52px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.58);
+    color: var(--ink-2);
+    border: 1px solid var(--glass-line);
 }
 .stamp-btn:hover {
-    background-color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--ink);
 }
 
 /* === 記録リスト === */
 hr {
     border: none;
-    border-top: 2px solid #eee;
-    margin: 25px 0;
+    border-top: 1px solid var(--glass-line);
+    margin: 26px 0;
 }
 
 h2 {
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
+    font-size: 1.15em;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--glass-line);
+    color: var(--ink);
 }
+
+h3 { color: var(--ink); }
+
+/* グラフ */
+.chart-card {
+    padding: 16px;
+    margin-bottom: 18px;
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.48);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
+}
+.chart-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.02em;
+}
+.ai-advice {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--pink);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: rgba(255, 240, 244, 0.55);
+    font-size: 0.88em;
+    min-height: 40px;
+    color: var(--ink-2);
+}
+.ai-advice p { margin: 0; }
 
 /* 月ごとアコーディオン */
 .month-header {
-    background-color: #e9ecef;
-    padding: 12px 15px;
+    padding: 13px 15px;
     margin-top: 10px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #ddd;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
 }
-.month-header:hover {
-    background-color: #dde1e5;
-}
+.month-header:hover { background: rgba(255, 255, 255, 0.78); }
 .month-header h3 {
     margin: 0;
-    font-size: 1.2em;
-    color: #333;
+    font-size: 1.05em;
+    color: var(--ink);
 }
 
 .month-body {
     display: none;
-    padding-left: 15px;
-    border-left: 2px solid #eee;
-    margin-left: 5px;
+    padding-left: 12px;
+    border-left: 1px solid var(--glass-line);
+    margin-left: 6px;
 }
 
 /* 日ごとのアコーディオン */
 .record-item {
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius-sm);
     margin-top: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.44);
+    overflow: hidden;
 }
 /* 月グループ内の日ごとのアイテム */
 .month-body .record-item {
     margin-top: 5px;
     margin-bottom: 5px;
-    box-shadow: none;
+    background: transparent;
     border-width: 1px 0 0 0;
     border-radius: 0;
 }
-.month-body .record-item:first-child {
-    border-top: none;
-}
+.month-body .record-item:first-child { border-top: none; }
 
 .record-header {
-    padding: 10px 12px;
-    background-color: #fdfdfd;
+    padding: 11px 13px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 5px 5px 0 0;
 }
+.record-header:hover { background: rgba(255, 255, 255, 0.42); }
 .record-header h4 {
     margin: 0;
-    font-size: 1.1em;
+    font-size: 1.02em;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 8px; /* 日付とマークの隙間 */
+    gap: 8px;
+    color: var(--ink);
 }
 /* ★重要マークの表示★ */
 .event-mark-badge {
-    background-color: #fff3cd; /* 薄い黄色背景 */
-    color: #856404;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    border: 1px solid #ffeeba;
+    background: rgba(227, 180, 95, 0.24);
+    color: #8a6516;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.85em;
+    border: 1px solid rgba(227, 180, 95, 0.45);
 }
 
 .toggle-icon {
-    font-size: 0.9em;
-    color: #555;
+    font-size: 0.85em;
+    color: var(--ink-3);
     transition: transform 0.2s;
 }
 
 .record-body {
     display: none;
-    padding: 12px;
-    border-top: 1px solid #eee;
-    line-height: 1.6;
+    padding: 13px;
+    border-top: 1px solid var(--glass-line);
+    line-height: 1.7;
 }
-.record-body p {
-    margin: 5px 0 10px 0;
-}
+.record-body p { margin: 5px 0 10px 0; }
 .record-body p strong {
-    color: #007bff;
+    color: var(--accent-deep);
     margin-right: 5px;
 }
 .record-body .record-photo {
@@ -334,20 +464,20 @@ h2 {
 .record-body .record-photo img {
     width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .edit-btn-small {
-    font-size: 15px;
+    font-size: 14px;
     width: 100%;
     max-width: 200px;
-    padding: 8px;
+    padding: 9px;
     margin-top: 10px;
-    background-color: #28a745;
+    background: rgba(124, 192, 168, 0.26);
+    border: 1px solid rgba(124, 192, 168, 0.55);
+    color: var(--mint-deep);
 }
-.edit-btn-small:hover {
-    background-color: #218838;
-}
+.edit-btn-small:hover { background: rgba(124, 192, 168, 0.4); }
 
 /* --- 日付入力欄の調整 --- */
 input#date {
@@ -364,6 +494,11 @@ label[for="date"] {
 
 /* --- 食欲欄のスマホ表示を修正 --- */
 @media (max-width: 480px) {
+    main, #authSection {
+        margin: 12px 10px;
+        padding: 15px;
+        border-radius: var(--radius);
+    }
     form#healthForm fieldset label[for^="appetite"] {
         display: block;
         width: 100%;
@@ -384,66 +519,71 @@ label[for="date"] {
 /* ▼ 天気ボタンのデザイン ▼ */
 .weather-btn-group {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 .weather-btn-group button {
     flex: 1;
-    padding: 10px 0;
-    font-size: 1.5em;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    color: #333;
+    padding: 11px 0;
+    font-size: 1.4em;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--glass-line);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
     margin-bottom: 0;
-    transition: background-color 0.2s;
+    transition: all 0.18s;
 }
 .weather-btn-group button.active {
-    background-color: #e3f2fd;
-    border-color: #2196f3;
-    color: #2196f3;
-    font-weight: bold;
-    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+    background: rgba(122, 167, 217, 0.28);
+    border-color: rgba(122, 167, 217, 0.7);
+    box-shadow: 0 4px 12px rgba(122, 167, 217, 0.25);
+    transform: translateY(-1px);
 }
 
-/* ▼ 新機能: 重要マークのデザイン ▼ */
+/* ▼ 重要マークのデザイン ▼ */
 .mark-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 .mark-option {
     cursor: pointer;
-    background: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--glass-line);
+    border-radius: 999px;
+    padding: 6px 12px;
     display: flex;
     align-items: center;
-    transition: all 0.2s;
+    font-size: 0.88em;
+    font-weight: 500;
+    color: var(--ink-2);
+    transition: all 0.18s;
 }
-.mark-option:hover {
-    background: #e2e6ea;
-}
+.mark-option:hover { background: rgba(255, 255, 255, 0.82); }
 .mark-option input[type="radio"] {
     margin-bottom: 0;
     margin-right: 5px;
     width: auto;
+    accent-color: var(--amber-deep);
 }
 /* 選ばれたラジオボタンの親ラベルを目立たせる */
 .mark-option:has(input:checked) {
-    background-color: #fff3cd;
-    border-color: #ffecb5;
-    font-weight: bold;
+    background: rgba(227, 180, 95, 0.26);
+    border-color: rgba(227, 180, 95, 0.6);
+    color: #8a6516;
+    font-weight: 700;
 }
 
+/* LINE通知カード */
 .line-notification-card {
     margin: 22px 0;
     padding: 16px;
-    border: 2px solid #06c755;
-    border-radius: 12px;
-    background: #f4fff7;
+    border: 1px solid rgba(124, 192, 168, 0.55);
+    border-radius: var(--radius);
+    background: rgba(238, 250, 245, 0.52);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
 }
 .line-notification-heading {
     display: flex;
@@ -452,29 +592,31 @@ label[for="date"] {
     justify-content: space-between;
     gap: 12px;
 }
-.line-notification-heading h3 { margin: 0 0 4px; }
+.line-notification-heading h3 { margin: 0 0 4px; font-size: 1em; }
 .line-notification-heading p,
 .line-notification-note {
     margin: 0;
-    color: #52615a;
-    font-size: 0.9em;
+    color: var(--ink-2);
+    font-size: 0.85em;
 }
 .line-notification-toggle {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 12px;
+    padding: 9px 14px;
     border-radius: 999px;
-    background: #06c755;
+    background: rgba(6, 199, 85, 0.82);
     color: #fff;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.85em;
     cursor: pointer;
+    margin-bottom: 0;
 }
 .line-notification-toggle input { width: auto; margin: 0; }
 .line-notification-editor {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid #b8e8c8;
+    border-top: 1px solid rgba(124, 192, 168, 0.4);
 }
 .line-notification-editor[hidden] { display: none; }
 .line-notification-editor textarea {
@@ -492,13 +634,16 @@ label[for="date"] {
 .line-notification-actions .secondary-btn {
     width: auto;
     margin: 0;
-    padding: 8px 12px;
-    background: #fff;
-    color: #087c35;
-    border: 1px solid #06c755;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--mint-deep);
+    border: 1px solid rgba(124, 192, 168, 0.6);
+    font-size: 0.88em;
 }
-#lineNotificationCount { color: #637168; font-size: 0.85em; }
+#lineNotificationCount { color: var(--ink-3); font-size: 0.8em; }
 
+/* 動物病院カード */
 .hospital-status-card {
     display: flex;
     flex-wrap: wrap;
@@ -507,32 +652,38 @@ label[for="date"] {
     gap: 12px;
     margin-bottom: 18px;
     padding: 14px 16px;
-    border: 1px solid #9ec5a8;
-    border-radius: 10px;
-    background: #f5fff7;
+    border: 1px solid rgba(124, 192, 168, 0.5);
+    border-radius: var(--radius);
+    background: rgba(240, 250, 245, 0.5);
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
 }
 .hospital-status-card.needs-review {
-    border-color: #e6b84b;
-    background: #fff9e9;
+    border-color: rgba(227, 180, 95, 0.6);
+    background: rgba(255, 250, 233, 0.55);
 }
-.hospital-status-card h3,
-.hospital-status-card p { margin: 0 0 4px; }
+.hospital-status-card h3 { margin: 0 0 4px; font-size: 1em; }
+.hospital-status-card p { margin: 0 0 4px; font-size: 0.9em; color: var(--ink-2); }
+.hospital-status-card small { color: var(--ink-3); font-size: 0.78em; }
 .hospital-status-card a {
-    padding: 8px 12px;
-    border-radius: 7px;
-    background: #fff;
-    border: 1px solid #408a54;
-    color: #286b3a;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(124, 192, 168, 0.6);
+    color: var(--mint-deep);
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 0.85em;
 }
 .hospital-health-alert {
     margin: 0 0 18px;
     padding: 14px 16px;
-    border: 2px solid #dc3545;
-    border-radius: 10px;
-    background: #fff1f2;
-    color: #8b1723;
-    font-weight: bold;
-    line-height: 1.6;
+    border: 1px solid rgba(229, 138, 161, 0.6);
+    border-radius: var(--radius);
+    background: rgba(255, 240, 244, 0.6);
+    color: #a63b52;
+    font-weight: 700;
+    line-height: 1.7;
+    -webkit-backdrop-filter: var(--glass-blur-sm);
+    backdrop-filter: var(--glass-blur-sm);
 }

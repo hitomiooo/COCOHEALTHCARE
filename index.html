@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7fbff">
     <title>ぴーぴ健康管理手帳 (Firebase版)</title>
+    <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
 </head>
 <body>
     <header>
@@ -12,9 +15,11 @@
     </header>
     
     <div id="authSection">
-        <a href="gohan.html" style="display:inline-block;margin:8px 0;padding:6px 14px;background:#4CAF50;color:#fff;border-radius:6px;text-decoration:none;font-size:0.9em;">🍚 ごはん管理表</a>
-        <a href="watashi.html" style="display:inline-block;margin:8px 0;padding:6px 14px;background:#7c6fc9;color:#fff;border-radius:6px;text-decoration:none;font-size:0.9em;">🌿 ヒトミの健康アプリ</a>
-        <a href="bunseki.html" style="display:inline-block;margin:8px 0;padding:6px 14px;background:#e07b39;color:#fff;border-radius:6px;text-decoration:none;font-size:0.9em;">📊 データ解析</a>
+        <nav class="nav-links">
+            <a href="gohan.html" class="nav-link gohan">🍚 ごはん管理表</a>
+            <a href="watashi.html" class="nav-link watashi">🌿 ヒトミの健康アプリ</a>
+            <a href="bunseki.html" class="nav-link bunseki">📊 データ解析</a>
+        </nav>
         <p id="authStatus">🔄 認証状態を確認中...</p>
         <button id="loginButton" style="display: none;">Googleアカウントでログイン</button>
         <button id="logoutButton" style="display: none;">ログアウト</button>
@@ -23,15 +28,15 @@
     <main id="mainContent" style="display: none;">
         
         <form id="healthForm">
-            <div id="iidaWeatherSection" style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #90caf9;">
-                <h3 style="margin-top:0; font-size: 1.1em;">📍 飯田市の気象情報</h3>
-                
-                <div id="todayWeatherDetail" style="margin-bottom: 10px; font-weight: bold; display: flex; flex-wrap: wrap; gap: 10px;">
+            <div id="iidaWeatherSection" class="weather-card">
+                <h3>📍 飯田市の気象情報</h3>
+
+                <div id="todayWeatherDetail">
                     <span id="todayTempRange">🌡️ 気温: 取得中...</span>
                     <span id="pressureAlertContainer">🌤️ 気圧: 取得中...</span>
                 </div>
 
-                <div id="weeklyForecastContainer" style="display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px;">
+                <div id="weeklyForecastContainer">
                     <p>🔄 週間予報を読み込み中...</p>
                 </div>
             </div>
@@ -112,7 +117,7 @@
                 <button type="button" data-val="☂️">☂️</button>
                 <button type="button" data-val="☃️">☃️</button>
             </div>
-            <input type="text" id="weather" readonly placeholder="ボタンを押して選択" style="background-color: #f9f9f9; cursor: default;">
+            <input type="text" id="weather" readonly placeholder="ボタンを押して選択" style="cursor: default;">
             
             <label for="temperatureFeel">体感気温👫:</label>
             <select id="temperatureFeel">
@@ -239,11 +244,11 @@
             <button type="button" id="deleteButton" class="delete-btn" style="display: none;">この日の記録を削除</button>
         </form>
 
-        <section id="chartSection" style="background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <section id="chartSection" class="chart-card">
             <h3>過去30日の食欲推移 (ココ)</h3>
             <div id="appetiteChartContainer"></div>
 
-            <div id="aiAdviceContainer" style="margin-top: 10px; padding: 10px; border-left: 4px solid #ff6b6b; background: #fff5f5; font-size: 0.9em; min-height: 40px;">
+            <div id="aiAdviceContainer" class="ai-advice">
                 <p>🔄 データを解析中...</p>
             </div>
         </section>
